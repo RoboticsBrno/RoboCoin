@@ -32,7 +32,7 @@ export default function Home() {
 	}
 
 	return (
-		<div className="flex justify-center">
+		<div className="container flex justify-center">
 			{isLoggedIn && !isAdmin ? (
 				<Inventory />
 			) : !isAdmin ? (
