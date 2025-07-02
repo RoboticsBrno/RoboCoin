@@ -49,13 +49,13 @@ export function Header() {
 								</div>
 							</div>
 						) : (
-							<div className="flex items-center gap-4 max-md:flex-col">
-								<div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
-									<div className="text-white/90 font-semibold mb-2">ÚČASTNÍK</div>
+							<div className="flex items-center gap-4 max-sm:flex-wrap justify-center">
+								<div className="bg-white/10 min-md:backdrop-blur-sm rounded-2xl min-md:px-6 min-md:py-4 text-center">
+									<div className="text-white/90 font-semibold mb-2 max-md:hidden">ÚČASTNÍK</div>
 									<Button variant="success" size="sm"><Link href="/">Přihlásit</Link></Button>
 								</div>
-								<div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
-									<div className="text-white/90 font-semibold mb-2">ORGANIZÁTOR</div>
+								<div className="min-md:bg-white/10 min-md:backdrop-blur-sm rounded-2xl min-md:px-6 min-md:py-4 text-center">
+									<div className="text-white/90 font-semibold mb-2 max-md:hidden">ORGANIZÁTOR</div>
 									<div className="flex gap-2">
 										<Button variant="info" size="sm"><Link href="/login">Přihlásit</Link></Button>
 										<Button variant="primary" size="sm"><Link href="register">Registrovat</Link></Button>
