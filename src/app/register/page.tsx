@@ -1,6 +1,6 @@
 'use client';
-import { BaseForm, FormGroup, FormSubmit, FormTitle, FormInput, FormLabel } from '@/components/Form';
-import Button from 'react-bootstrap/esm/Button';
+import { BaseForm, FormGroup, FormTitle, FormInput, FormLabel, FormSubmit } from '@/components/Form';
+import Button from '@/components/ui/Button';
 
 export default function Page() {
 
@@ -45,7 +45,7 @@ export default function Page() {
 					<FormInput name='password' type='password' id='password' placeholder='Heslo' />
 				</FormGroup>
 				<FormSubmit>
-					Registrovat se
+					Registrovat se 🚀
 				</FormSubmit>
 			</BaseForm>
 

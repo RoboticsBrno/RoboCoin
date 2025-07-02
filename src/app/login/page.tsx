@@ -5,7 +5,7 @@ import { login } from '@/lib/account';
 import { LoginResponseData } from '@/types/login';
 import { useAuth } from '@/utils/auth-context';
 import Link from 'next/link';
-import Button from 'react-bootstrap/esm/Button';
+import Button from '@/components/ui/Button';
 
 export default function Login() {
 	const { isLoggedIn, setIsLoggedIn, isAdmin } = useAuth();
@@ -65,7 +65,7 @@ export default function Login() {
 						<FormInput name='password' type='password' id='password' placeholder='Heslo' />
 					</FormGroup>
 					<FormSubmit>
-						Přihlásit se
+						Přihlásit se 🚀
 					</FormSubmit>
 				</BaseForm>
 			)}

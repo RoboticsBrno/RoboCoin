@@ -1,84 +1,56 @@
-import Button from 'react-bootstrap/esm/Button';
+import Button from '@/components/ui/Button';
 
-export function BaseForm({
-	children,
-	className,
-	...props
-}: React.HTMLAttributes<HTMLFormElement>) {
+export function BaseForm({ children, className = '', ...props }) {
 	return (
 		<form
-			className={`max-md:min-w-full min-w-1/2  bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 ${className ?? ''}`}
+			className={`max-w-lg mx-auto bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-10 py-12 border border-white/20 ${className}`}
 			{...props}
 		>
-			{children}
+			<div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-3xl"></div>
+			<div className="relative">
+				{children}
+			</div>
 		</form>
 	);
 }
 
-export function FormGroup({
-	children,
-	className,
-	...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function FormTitle({ children, className = '', ...props }) {
 	return (
-		<div className={`mb-3 flex flex-col ${className ?? ''}`} {...props}>
-			{children}
-		</div>
-	);
-}
-
-export function FormTitle({
-	children,
-	className,
-	...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
-	return (
-		<h2 className={`mb-4 ${className ?? ''}`} {...props}>
+		<h2 className={`text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent ${className}`} {...props}>
 			{children}
 		</h2>
 	);
 }
 
-export function FormLabel({
-	children,
-	className,
-	...props
-}: React.HTMLAttributes<HTMLLabelElement>) {
+export function FormGroup({ children, className = '', ...props }) {
 	return (
-		<label className={`form-label ${className ?? ''}`} {...props}>
+		<div className={`mb-6 ${className}`} {...props}>
+			{children}
+		</div>
+	);
+}
+
+export function FormLabel({ children, className = '', ...props }) {
+	return (
+		<label className={`block text-gray-700 font-semibold mb-2 text-lg ${className}`} {...props}>
 			{children}
 		</label>
 	);
 }
 
-export function FormInput({
-	children,
-	className,
-	...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
+export function FormInput({ className = '', ...props }) {
 	return (
 		<input
-			className={`form-control ${className ?? ''}`}
+			className={`w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all duration-300 text-lg bg-white/80 backdrop-blur-sm ${className}`}
 			{...props}
-		>
-			{children}
-		</input>
+		/>
 	);
 }
 
-export function FormSubmit({
-	children,
-	className,
-	...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function FormSubmit({ children, className = '', ...props }) {
 	return (
-		<Button
-			type="submit"
-			variant="success"
-			className={`w-full ${className ?? ''}`}
-			{...props}
-		>
+		<Button variant="success" type="submit" className={`w-full text-xl py-4 ${className}`} >
 			{children}
-		</Button>
+		</ Button>
 	);
 }

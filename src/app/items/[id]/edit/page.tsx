@@ -3,6 +3,7 @@
 import { BaseForm, FormGroup, FormInput, FormLabel, FormSubmit, FormTitle } from '@/components/Form';
 import { Item } from '@/types/item';
 import { useItem } from '@/utils/ItemContext';
+import Button from '@/components/ui/Button';
 
 export default function EditItem() {
 	const item: Item = useItem();
@@ -37,8 +38,7 @@ export default function EditItem() {
 					<FormLabel htmlFor="value">Hodnota</FormLabel>
 					<FormInput name="value" id="value" type="number" defaultValue={item.value} required />
 				</FormGroup>
-
-				<FormSubmit className="mt-4" variant="primary">
+				<FormSubmit>
 					Uložit změny
 				</FormSubmit>
 			</BaseForm>

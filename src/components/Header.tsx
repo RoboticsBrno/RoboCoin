@@ -2,9 +2,10 @@
 
 import { logout } from "@/lib/account";
 import { useAuth } from "@/utils/auth-context";
-import Link from "next/link";
-import Button from 'react-bootstrap/Button';
+import Button from "@/components/ui/Button";
 import { useEffect, useState } from "react";
+import { Coins, Users } from "lucide-react";
+import Link from "next/link";
 
 export function Header() {
 	const { isLoggedIn, setIsLoggedIn, isAdmin } = useAuth();
@@ -26,34 +27,45 @@ export function Header() {
 	}, [isLoggedIn]);
 
 	return (
-		<header className="bg-orange-500">
-			<div className={`pt-3 pb-1 container flex items-center justify-between max-sm:flex-col ${isLoggedIn ? 'pb-3' : null}`}>
-				<Link href={isAdmin ? '/dashboard' : '/'}><h1 className="text-white">RoboCoin</h1></Link>
-				<nav className="text-white flex items-center">
-					{isLoggedIn ? (
-						<div className="flex items-center">
-							<Button variant="secondary" onClick={handleLogout}>Odhlásit</Button>
-							<div className="ml-4">
-								{name}
-							</div>
+		<header className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 shadow-2xl">
+			<div className="container mx-auto px-6 py-6">
+				<div className="flex items-center justify-between max-sm:flex-col gap-4">
+					<div className="flex items-center gap-4">
+						<div className="bg-white/20 rounded-full p-3 animate-pulse">
+							<Coins className="text-white text-2xl" />
 						</div>
-					) : (
-						<div className="flex items-center max-md:flex-wrap justify-center mb-1">
-							<div className="mr-4 mb-2 min-md:bg-orange-400 rounded-md max-md:p-0 min-md:px-4 min-md:py-3 flex flex-col items-center">
-								<div className="mb-2 max-md:hidden">ÚČASTNÍK</div>
-								<Button variant="success"><Link href="/" className="hover:underline user-after">Přihlásit</Link></Button>
-							</div>
-							<div className="flex flex-col mb-2 items-center justify-center rounded-md min-md:bg-orange-700 max-md:p-0 min-md:px-4 min-md:py-3">
-								<div className="mb-2 max-md:hidden">ORG</div>
-								<div className="flex items-center">
-									<Button variant="success" className="mr-4"><Link href="/login" className="hover:underline org-after">Příhlásit</Link></Button>
-									<Button variant="info"><Link href="/register" className="hover:underline org-after">Registrovat</Link></Button>
+						<h1 className="text-4xl font-bold text-white tracking-wider">RoboCoin</h1>
+					</div>
+
+					<nav className="flex items-center gap-4">
+						{isLoggedIn ? (
+							<div className="flex items-center gap-6 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
+								<Button variant="secondary" size="sm" onClick={handleLogout}>Odhlásit</Button>
+								<div className="flex items-center gap-2">
+									<div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+										<Users className="text-white text-sm" />
+									</div>
+									<span className="text-white font-semibold">{name}</span>
 								</div>
 							</div>
-						</div>
-					)}
-				</nav>
+						) : (
+							<div className="flex items-center gap-4 max-md:flex-col">
+								<div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
+									<div className="text-white/90 font-semibold mb-2">ÚČASTNÍK</div>
+									<Button variant="success" size="sm"><Link href="/">Přihlásit</Link></Button>
+								</div>
+								<div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
+									<div className="text-white/90 font-semibold mb-2">ORGANIZÁTOR</div>
+									<div className="flex gap-2">
+										<Button variant="info" size="sm"><Link href="/login">Přihlásit</Link></Button>
+										<Button variant="primary" size="sm"><Link href="register">Registrovat</Link></Button>
+									</div>
+								</div>
+							</div>
+						)}
+					</nav>
+				</div>
 			</div>
-		</header >
+		</header>
 	)
 }

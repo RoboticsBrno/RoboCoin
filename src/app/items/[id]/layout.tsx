@@ -2,8 +2,8 @@ import { items } from '@/mock/items';
 import { ItemProvider } from '@/utils/ItemContext';
 import Link from 'next/link';
 import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/esm/Button';
 import { Item } from '@/types/item';
+import Button from '@/components/ui/Button';
 
 export default async function Layout({
 	params,

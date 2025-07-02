@@ -20,3 +20,15 @@ button.mr-4 {
 		content: " (ÚČASTNÍK)";
 	}
 }
+
+button.rounded-xl {
+	@apply rounded-xl;
+}
+
+button.text-xl {
+	@apply text-xl;
+}
+
+button.mb-8 {
+	@apply mb-8;
+}

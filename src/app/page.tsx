@@ -1,7 +1,7 @@
 "use client";
 
 import { loginUser } from "@/lib/account";
-import Button from "react-bootstrap/esm/Button";
+import Button from "@/components/ui/Button";
 import { useAuth } from "@/utils/auth-context";
 import { LoginResponseData } from "@/types/login";
 import { BaseForm, FormGroup, FormInput, FormLabel, FormSubmit, FormTitle } from "@/components/Form";
@@ -32,11 +32,9 @@ export default function Home() {
 	}
 
 	return (
-		<div className="container flex justify-center">
+		<div className="flex justify-center">
 			{isLoggedIn && !isAdmin ? (
-				<div className='mt-10'>
-					<Inventory />
-				</div>
+				<Inventory />
 			) : !isAdmin ? (
 				<BaseForm className="mt-10" onSubmit={handleLoginUser}>
 					<FormTitle>Přihlášení účastníka</FormTitle>
@@ -50,7 +48,7 @@ export default function Home() {
 						<FormInput name='password' type='password' id='password' placeholder='Přidělené ID' />
 					</FormGroup>
 					<FormSubmit>
-						Přihlásit se
+						Přihlásit se 🚀
 					</FormSubmit>
 				</BaseForm>
 			) : (
