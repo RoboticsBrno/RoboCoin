@@ -61,7 +61,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 					<div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-3xl"></div>
 					<div className="relative">
 						<div className="flex items-center gap-6">
-							<div className="relative">
+							<div className="relative max-md:hidden">
 								<div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-xl">
 									{user.name.charAt(0)}
 								</div>

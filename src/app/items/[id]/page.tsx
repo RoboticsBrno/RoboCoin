@@ -20,7 +20,7 @@ export default function Page() {
 					<div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-3xl"></div>
 					<div className="relative">
 						<div className="flex items-start gap-6 mb-8">
-							<div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl p-4 shadow-lg">
+							<div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl p-4 shadow-lg max-md:hidden">
 								<Gift className="text-white text-3xl" />
 							</div>
 							<div className="flex-1">

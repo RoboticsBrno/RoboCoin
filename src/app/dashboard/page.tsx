@@ -70,14 +70,14 @@ function ItemCard({ item }: { item: Item }) {
 export default function Page() {
 
 	return (
-		<div className="container mt-10 flex ">
-			<div className="w-1/2 pr-5">
+		<div className="container mt-10 flex max-md:flex-col">
+			<div className="min-md:w-1/2 mi-md:pr-5">
 				{users.map(user => (
 					<UserCard user={user} key={user.id} />
 				))}
 			</div>
 
-			<div className="w-1/2 pl-5">
+			<div className="min-md:w-1/2 min-md:pl-5">
 				{items.map(item => (
 					<ItemCard item={item} key={item.id} />
 				))}
