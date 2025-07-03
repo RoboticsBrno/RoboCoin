@@ -8,6 +8,7 @@ public
 .DS_Store
 .idea
 .next
+.env
 yarn-error.log
 npm-debug.log
 deploy*
