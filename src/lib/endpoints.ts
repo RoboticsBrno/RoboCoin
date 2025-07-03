@@ -1,6 +1,6 @@
 import { BACKEND_URL } from "@/config";
 import { AcquiredItem, Item } from "@/types/item";
-import { UserInfo, User } from "@/types/user";
+import { UserInfo, User, UserLeaderboard } from "@/types/user";
 
 /*
 	   /$$ /$$   /$$                                      
@@ -15,7 +15,7 @@ import { UserInfo, User } from "@/types/user";
 */
 
 export async function getUserItems(id: string, token?: string): Promise<AcquiredItem[]> {
-	let url = new URL(BACKEND_URL + '/items');
+	const url = new URL(BACKEND_URL + '/items');
 	url.searchParams.append('id', id);
 	const response = await fetch(url, {
 		method: "GET",
@@ -31,7 +31,7 @@ export async function getUserItems(id: string, token?: string): Promise<Acquired
 	}
 
 	const data = await response.json();
-	const output: AcquiredItem[] = data.map((item: any) => ({
+	const output: AcquiredItem[] = data.map((item: { item: { id: number, name: string, description: string, price: number }, time: string }) => ({
 		id: item.item.id,
 		name: item.item.name,
 		description: item.item.description,
@@ -60,9 +60,9 @@ export async function getAllItems(token?: string): Promise<Item[]> {
 	console.log("All items: ", data);
 	return data;
 }
-export async function putItemUsers(id: string, ids: number[], token?: string): Promise<void> {
+export async function putItemUsers(id: string, ids: string[], token?: string): Promise<void> {
 	console.log("Putting items users for item ID: ", id, " with user IDs: ", ids);
-	let url = new URL(BACKEND_URL + '/items');
+	const url = new URL(BACKEND_URL + '/items');
 	url.searchParams.append('id', id);
 	const response = await fetch(url, {
 		method: "PUT",
@@ -217,7 +217,7 @@ export async function removeItemUsers(item: Item, users: User[], token?: string)
 
 */
 export async function getUser(id: string, token?: string): Promise<{ info: UserInfo, user: User }> {
-	let url = new URL(BACKEND_URL + '/user');
+	const url = new URL(BACKEND_URL + '/user');
 	url.searchParams.append('id', id);
 	const response = await fetch(url, {
 		method: "GET",
@@ -258,8 +258,8 @@ export async function getUser(id: string, token?: string): Promise<{ info: UserI
 |__/     \______/ |_______/  \_______/|__/      |_______/ 
 
 */
-export async function getItemUsers(id: number, token?: string): Promise<User[]> {
-	let url = new URL(BACKEND_URL + '/users');
+export async function getItemUsers(id: string, token?: string): Promise<User[]> {
+	const url = new URL(BACKEND_URL + '/users');
 	url.searchParams.append('id', String(id));
 	const response = await fetch(url, {
 		method: "GET",
@@ -274,7 +274,7 @@ export async function getItemUsers(id: number, token?: string): Promise<User[]> 
 	}
 
 	const data = await response.json();
-	const output: User[] = data.map((user: any) => ({
+	const output: User[] = data.map((user: { id: number, name: string }) => ({
 		id: user.id,
 		name: user.name,
 	}));
@@ -300,9 +300,9 @@ export async function getAllUsers(token?: string): Promise<User[]> {
 	return data;
 }
 
-export async function putUserItems(id: string, ids: number[], token?: string): Promise<void> {
+export async function putUserItems(id: string, ids: string[], token?: string): Promise<void> {
 	console.log("Putting users items for user ID: ", id, " with item IDs: ", ids);
-	let url = new URL(BACKEND_URL + '/users');
+	const url = new URL(BACKEND_URL + '/users');
 	url.searchParams.append('id', id);
 	const response = await fetch(url, {
 		method: "PUT",
@@ -332,7 +332,7 @@ export async function putUserItems(id: string, ids: number[], token?: string): P
 							|__/      
 */
 
-export async function getTop(token?: string): Promise<User[]> {
+export async function getTop(token?: string): Promise<UserLeaderboard[]> {
 	const url = new URL(BACKEND_URL + '/top');
 	const response = await fetch(url, {
 		method: "GET",
@@ -401,7 +401,7 @@ export async function getInfo(token?: string): Promise<{ users: number, points: 
 */
 
 export async function checkToken(token?: string): Promise<boolean> {
-	let url = new URL(BACKEND_URL + '/admin');
+	const url = new URL(BACKEND_URL + '/admin');
 	url.searchParams.append('token', token || '');
 
 	const response = await fetch(url, {

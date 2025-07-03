@@ -1,5 +1,5 @@
 import { Item } from "@/types/item";
-import { User, UserInfo } from "@/types/user";
+import { User } from "@/types/user";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { ChevronRight, Gift, Coins } from "lucide-react";
@@ -36,33 +36,33 @@ function UserCard({ user }: { user: User }) {
 
 function ItemCard({ item }: { item: Item }) {
 	return (
-					<Link href={`/items/${item.id}`}>
-		<div className="group bg-white/90 w-full backdrop-blur-sm rounded-2xl p-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 border border-white/20 mb-3">
-			<div className="flex items-start justify-between">
-				<div className="flex-1">
-					<div className="flex items-center gap-2">
-						<Gift className="text-purple-500" />
-						<h3 className="text-xl font-bold text-gray-800 group-hover:text-purple-600 transition-colors">
-							{item.name}
-						</h3>
-					</div>
-					<p className="text-gray-600 mb-3 leading-relaxed">{item.description}</p>
-					<div className="flex items-center text-sm text-gray-500">
-						<div className="flex items-center  text-yellow-600 font-semibold">
-							<Coins className="text-sm" />
-							{item.price} bodů
+		<Link href={`/items/${item.id}`}>
+			<div className="group bg-white/90 w-full backdrop-blur-sm rounded-2xl p-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 border border-white/20 mb-3">
+				<div className="flex items-start justify-between">
+					<div className="flex-1">
+						<div className="flex items-center gap-2">
+							<Gift className="text-purple-500" />
+							<h3 className="text-xl font-bold text-gray-800 group-hover:text-purple-600 transition-colors">
+								{item.name}
+							</h3>
+						</div>
+						<p className="text-gray-600 mb-3 leading-relaxed">{item.description}</p>
+						<div className="flex items-center text-sm text-gray-500">
+							<div className="flex items-center  text-yellow-600 font-semibold">
+								<Coins className="text-sm" />
+								{item.price} bodů
+							</div>
 						</div>
 					</div>
-				</div>
-				<Button variant="primary" size="sm" className="ml-4 group-hover:scale-110">
+					<Button variant="primary" size="sm" className="ml-4 group-hover:scale-110">
 						<div className="flex items-center gap-2">
 							Detail
 							<ChevronRight className="text-sm" />
 						</div>
-				</Button>
+					</Button>
+				</div>
 			</div>
-		</div>
-					</Link>
+		</Link>
 	);
 }
 
@@ -74,7 +74,7 @@ export default async function Page() {
 	try {
 		users = await getAllUsers(token);
 		console.log("Fetched users:", users);
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error fetching users:", error);
 		return (
 			<div className="container flex justify-center mt-10">
@@ -87,7 +87,7 @@ export default async function Page() {
 	try {
 		items = await getAllItems(token);
 		console.log("Fetched items:", items);
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error fetching items:", error);
 		return (
 			<div className="container flex justify-center mt-10">

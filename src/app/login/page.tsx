@@ -23,7 +23,7 @@ export default function Login() {
 		let loginData: LoginResponseData;
 		try {
 			loginData = await login(email, password)
-		} catch (error) {
+		} catch (error: any) {
 			setError(error.message || String(error));
 			return;
 		}

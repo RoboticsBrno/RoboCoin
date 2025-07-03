@@ -3,7 +3,7 @@ import { NextResponse as Response } from "next/server";
 import { BACKEND_URL, COOKIE_NAME, COOKIE_TOKEN, COOKIE_USER_NAME, COOKIE_USER_TOKEN } from "./config";
 
 export async function middleware(request: Request) {
-	let url = new URL(BACKEND_URL + "/admin");
+	const url = new URL(BACKEND_URL + "/admin");
 
 	const token = request.cookies.get(COOKIE_TOKEN)?.value || "";
 	const isTokenValid = await fetch(url, {

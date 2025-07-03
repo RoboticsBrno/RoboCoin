@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext({
 	isLoggedIn: false,
-	setIsLoggedIn: (value: boolean) => { },
+	setIsLoggedIn: (value: boolean) => { console.warn("setIsLoggedIn function not initialized, Value:", value); },
 	isAdmin: false,
 });
 
@@ -18,7 +18,7 @@ export function AuthProvider({ children, initialIsLoggedIn = false, initialIsAdm
 			setIsLoggedIn(true);
 			setIsAdmin(true);
 		}
-	}, []);
+	}, [isLoggedIn]);
 
 	return (
 		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdmin }}>

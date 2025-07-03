@@ -1,7 +1,6 @@
 "use server";
-import { AcquiredItem, Item } from '@/types/item';
-import { User, UserInfo } from '@/types/user';
-import { users } from '@/mock/users';
+import { Item } from '@/types/item';
+import { User } from '@/types/user';
 import { COOKIE_TOKEN } from '@/config';
 import { getAllItems, getAllUsers, getItemUsers, getUserItems } from '@/lib/endpoints';
 import { DragDrop2Col } from '@/components/DragDropBase';
@@ -14,22 +13,29 @@ export async function DragDrop2ColForUser({ user, acquiredTitle, availableTitle 
 	acquiredTitle?: string;
 	availableTitle?: string;
 }) {
-	let acquiredItems: AcquiredItem[] = []; // Replace with actual data fetching
+	let acquiredItems: Item[] = [];
 	let availableItems: Item[] = [];
 
 	const cookieStore = await cookies();
 	const token = cookieStore.get(COOKIE_TOKEN)?.value;
 	try {
-		acquiredItems = await getUserItems(user.id, token);
+		const items = await getUserItems(user.id, token);
+		acquiredItems = items.map(item => ({
+			id: item.id,
+			name: item.item.name,
+			description: item.item.description,
+			price: item.item.price,
+		}));
+
 		console.log("Fetched acquired items for user:", user.id, acquiredItems);
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 	}
 
 	try {
 		const allItems = await getAllItems(token);
 		availableItems = allItems.filter(item => !acquiredItems.map(acq => acq.id).includes(item.id))
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 	}
 
@@ -60,14 +66,14 @@ export async function DragDrop2ColForItem({ item, acquiredTitle, availableTitle 
 	try {
 		acquiredUsers = await getItemUsers(item.id, token);
 		console.log("Fetched acquired users for item:", item.id, acquiredUsers);
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 	}
 
 	try {
 		const allUsers = await getAllUsers(token);
 		availableUsers = allUsers.filter(item => !acquiredUsers.map(acq => acq.id).includes(item.id))
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 	}
 

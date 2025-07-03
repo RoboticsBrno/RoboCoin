@@ -12,14 +12,14 @@ export default async function Top10Page() {
 	try {
 		topUsers = await getTop(cookieStore.get('COOKIE_TOKEN')?.value);
 		console.log(topUsers)
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error);
 	}
 	let info;
 	try {
 		info = await getInfo(cookieStore.get('COOKIE_TOKEN')?.value);
 		console.log(info);
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error);
 	}
 

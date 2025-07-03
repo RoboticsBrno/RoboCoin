@@ -20,7 +20,7 @@ export default function Home() {
 		let loginData: LoginResponseData;
 		try {
 			loginData = await loginUser(username)
-		} catch (error) {
+		} catch (error: any) {
 			alert('Přihlášení selhalo: ' + error);
 			return;
 		}

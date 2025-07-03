@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button';
 import { useDragAndDrop } from '@formkit/drag-and-drop/react';
 import { Gift, Users, Coins } from 'lucide-react';
 import { Item } from '@/types/item';
-import { UserInfo } from '@/types/user';
+import { User } from '@/types/user';
 
 interface DragDropConfig<T> {
 	acquiredItems: T[];
@@ -12,10 +12,10 @@ interface DragDropConfig<T> {
 	availableTitle?: string;
 	type?: 'items' | 'users';
 	renderItem?: (item: T) => React.ReactNode;
-	saveAction?: (ids: number[]) => void;
+	saveAction?: (ids: string[]) => void;
 }
 
-function renderUser(user: UserInfo) {
+function renderUser(user: User) {
 	return (
 		<li
 			key={user.id}
@@ -54,7 +54,7 @@ function renderItem(item: Item) {
 	);
 }
 
-function DragDropList({ type, title, items, reference, render = renderItem }: { type: 'items' | 'users'; title: string; items: any[], reference: React.RefObject<HTMLUListElement>, render?: (item: any) => React.ReactNode }) {
+function DragDropList({ type, title, items, reference, render = renderItem }: { type: 'items' | 'users'; title: string; items: User[] | Item[], reference: React.RefObject<HTMLUListElement>, render?: (item: any) => React.ReactNode }) {
 	return (
 		<div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
 			<h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -71,20 +71,20 @@ function DragDropList({ type, title, items, reference, render = renderItem }: { 
 }
 
 
-export function DragDrop2Col<T extends { id: string }>({
+export function DragDrop2Col<T extends { id: string, name: string }>({
 	acquiredItems,
 	availableItems,
 	acquiredTitle = 'Získané odměny',
 	availableTitle = 'Dostupné odměny',
 	type = 'items',
-	saveAction = (ids: number[]) => { console.log('Default save logic:', ids); }
+	saveAction = (ids: string[]) => { console.log('Default save logic:', ids); }
 }: DragDropConfig<T>) {
-	const [acquiredList, acquired, setAcquired] = useDragAndDrop<HTMLUListElement, T>(
+	const [acquiredList, acquired] = useDragAndDrop<HTMLUListElement, T>(
 		acquiredItems,
 		{ group: 'items', sortable: false }
 	);
 
-	const [availableList, available, setAvailable] = useDragAndDrop<HTMLUListElement, T>(
+	const [availableList, available] = useDragAndDrop<HTMLUListElement, T>(
 		availableItems,
 		{ group: 'items', sortable: false }
 	);
@@ -97,7 +97,7 @@ export function DragDrop2Col<T extends { id: string }>({
 	return (
 		<div>
 			<div className="text-center mb-8">
-				<Button variant="success" className="text-xl px-8 py-4" onClick={handleSave}>
+				<Button variant="success" className="text-xl px-8 py-4" size='md' onClick={handleSave}>
 					💾 Uložit změny
 				</Button>
 			</div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Coins, Trophy, Sparkles, Medal } from 'lucide-react';
-import { BACKEND_URL, COOKIE_USER_NAME, COOKIE_USER_TOKEN } from '@/config';
+import { BACKEND_URL, COOKIE_USER_TOKEN } from '@/config';
 
 interface InventoryItem {
 	id: number;
@@ -44,7 +44,7 @@ export default function Inventory() {
 				console.log(response);
 				const data: InventoryItem[] = await response.json();
 				setItems(data);
-			} catch (error) {
+			} catch (error: any) {
 				console.error('Error fetching inventory:', error);
 				setError('Chyba při načítání inventáře. Zkuste to prosím znovu později.');
 			} finally {

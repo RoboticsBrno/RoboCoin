@@ -24,6 +24,10 @@ export function Header() {
 
 	useEffect(() => {
 		const storedName = localStorage.getItem(COOKIE_NAME) || localStorage.getItem(COOKIE_USER_NAME);
+		if (!storedName) {
+			setName("Guest");
+			return;
+		}
 		setName(storedName);
 	}, [isLoggedIn]);
 

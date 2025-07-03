@@ -5,28 +5,27 @@ import { COOKIE_TOKEN } from "@/config";
 import { putItemUsers, putUserItems } from "@/lib/endpoints";
 import { redirect } from "next/navigation";
 
-export async function saveUserItems(userId: string, ids: number[]) {
+export async function saveUserItems(userId: string, ids: string[]) {
 	const cookieStore = await cookies();
 	const token = cookieStore.get(COOKIE_TOKEN)?.value;
 
 	try {
 		await putUserItems(userId, ids, token);
 		return { success: true };
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 		return { success: false, error: error.message || String(error) };
 	} finally {
 		redirect("/users/" + userId);
 	}
 }
-export async function saveItemUsers(itemId: string, ids: number[]) {
+export async function saveItemUsers(itemId: string, ids: string[]) {
 	const cookieStore = await cookies();
 	const token = cookieStore.get(COOKIE_TOKEN)?.value;
-
 	try {
 		await putItemUsers(itemId, ids, token);
 		return { success: true };
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 		return { success: false, error: error.message || String(error) };
 	} finally {

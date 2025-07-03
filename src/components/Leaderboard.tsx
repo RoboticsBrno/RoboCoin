@@ -1,9 +1,9 @@
-import { UserInfo } from '@/types/user';
+import { UserLeaderboard } from '@/types/user';
 import { Trophy, Medal, Crown, Star, Coins, Users, Sparkles, Award } from 'lucide-react';
 
 
 // Get rank styling
-function getRankStyling(rank) {
+function getRankStyling(rank: number) {
 	switch (rank) {
 		case 1:
 			return {
@@ -44,16 +44,12 @@ function getRankStyling(rank) {
 	}
 }
 
-type UserLeaderboard = {
-	name: string;
-	cnt_items: number;
-	score: number;
-};
+
 
 // Podium Component for Top 3
 export function Podium({ users }: { users: UserLeaderboard[] }) {
 	let [first, second, third] = users;
-	if( !first ) {
+	if (!first) {
 		first = { name: 'N/A', cnt_items: 0, score: 0 };
 	}
 	if (!second) {

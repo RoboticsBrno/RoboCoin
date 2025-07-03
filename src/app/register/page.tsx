@@ -32,7 +32,7 @@ export default function Page() {
 			}
 
 			window.location.href = '/login'; // Redirect to home page after successful login
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Register error:', error);
 		}
 	}

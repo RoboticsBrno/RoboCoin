@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 
-export default function Button({ variant = 'primary', size = 'md', className = '', children, onClick, ...props }: { variant: 'primary' | 'success' | 'secondary' | 'info' | 'danger'; size: 'sm' | 'md' | 'lg'; className?: string; children: React.ReactNode;[key: string]: any, onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
+export default function Button({ variant = 'primary', size = 'md', className = '', children, onClick, ...props }: { variant: 'primary' | 'success' | 'secondary' | 'info' | 'danger'; size: 'sm' | 'md' | 'lg'; className?: string; children: React.ReactNode; onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void; [key: string]: any }) {
 	const baseClasses = 'font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg';
 	const variants = {
 		primary: 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-blue-500/25',

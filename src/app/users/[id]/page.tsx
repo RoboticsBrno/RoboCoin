@@ -53,7 +53,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 		const data = await getUser(id, cookieStore.get(COOKIE_TOKEN)?.value);
 		user = data.user;
 		userInfo = data.info;
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message || String(error));
 	}
 	console.log(user);

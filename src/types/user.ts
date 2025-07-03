@@ -8,3 +8,9 @@ export type User = {
 	id: string,
 	name: string,
 }
+
+export type UserLeaderboard = {
+	name: string;
+	cnt_items: number;
+	score: number;
+};

@@ -11,15 +11,15 @@ export default async function EditItem({ params }: { params: Promise<{ id: numbe
 	let item: Item;
 	const cookieStore = await cookies();
 	try {
-		item = await getItem(id, cookieStore.get(COOKIE_TOKEN)?.value || '');
-	} catch (error) {
+		item = await getItem(String(id), cookieStore.get(COOKIE_TOKEN)?.value || '');
+	} catch (error: any) {
 		console.error('Error fetching item:', error);
 		return <div className="text-red-500">Chyba při načítání předmětu.</div>;
 	}
 
 	return (
 		<div className="container mt-10">
-			<h1 className="text-2xl font-bold mb-4">Úprava předmětu "{item.name}"</h1>
+			<h1 className="text-2xl font-bold mb-4">Úprava předmětu &quot;{item.name}&quot;</h1>
 			<BaseForm action={updateItemAction}>
 				<input type="hidden" name="id" value={id} />
 				<FormGroup>

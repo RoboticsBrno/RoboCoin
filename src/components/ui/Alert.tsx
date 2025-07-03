@@ -1,6 +1,6 @@
 import { AlertTriangle } from 'lucide-react';
 
-export function Alert({ variant = 'danger', children, className = '', ...props }: { variant: 'danger' | 'info' | 'success', children?: React.ReactNode, className?: string, [key: string]: any }) {
+export function Alert({ variant = 'danger', children, className = '', ...props }: { variant: 'danger' | 'info' | 'success', children?: React.ReactNode, className?: string }) {
 	const variants = {
 		danger: 'bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 text-red-800',
 		info: 'bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 text-blue-800',

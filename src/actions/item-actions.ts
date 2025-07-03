@@ -14,7 +14,7 @@ export async function updateItemAction(formData: FormData) {
 		throw new Error('Unauthorized');
 	}
 
-	const id = Number(formData.get('id'));
+	const id = String(formData.get('id'));
 	const updatedItem: Item = {
 		id,
 		name: formData.get('name') as string,
@@ -24,7 +24,7 @@ export async function updateItemAction(formData: FormData) {
 	console.log('Updating item:', updatedItem);
 	try {
 		await putItem(updatedItem, token);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error updating item:', error);
 		throw error;
 	} finally {
@@ -42,7 +42,7 @@ export async function createItemAction(formData: FormData) {
 	}
 
 	const newItem: Item = {
-		id: -1,
+		id: "-1",
 		name: formData.get('name') as string,
 		description: formData.get('description') as string,
 		price: parseInt(formData.get('value') as string),
@@ -50,7 +50,7 @@ export async function createItemAction(formData: FormData) {
 	console.log('Creating new item:', newItem);
 	try {
 		await postItem(newItem, token);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error creating item:', error);
 		throw error;
 	} finally {
@@ -71,7 +71,7 @@ export async function deleteItemAction(id: string) {
 	try {
 		await deleteItem(id, token);
 		redirect('/dashboard');
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error deleting item:', error);
 		throw error;
 	}
