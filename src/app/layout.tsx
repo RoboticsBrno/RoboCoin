@@ -5,6 +5,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { AuthProvider } from "@/utils/auth-context";
 import { cookies } from "next/headers";
+import { COOKIE_TOKEN, COOKIE_USER_TOKEN } from "@/config";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -25,11 +26,16 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-
 	const cookieStore = await cookies();
-	let id = cookieStore.get("ID");
+	let cookie = cookieStore.get(COOKIE_TOKEN);
+
+	let id = cookie?.value;
+
 	const initialIsAdmin = !!id;
-	id = id ? id : cookieStore.get("userID");
+	if (!id) {
+		cookie = cookieStore.get(COOKIE_USER_TOKEN);
+		id = cookie?.value;
+	}
 	const initialIsLoggedIn = !!id;
 
 	return (

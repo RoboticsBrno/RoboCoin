@@ -1,6 +1,12 @@
 export type Item = {
-	id: string;
+	id: number;
 	name: string;
-	value: number;
+	price: number;
 	description: string;
+}
+
+export type AcquiredItem = {
+	id: number;
+	item: Item;
+	time: string;
 }

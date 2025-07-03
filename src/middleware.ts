@@ -1,16 +1,38 @@
 import { NextRequest as Request } from "next/server";
 import { NextResponse as Response } from "next/server";
+import { BACKEND_URL, COOKIE_NAME, COOKIE_TOKEN, COOKIE_USER_NAME, COOKIE_USER_TOKEN } from "./config";
 
-export function middleware(request: Request) {
-	if (request.cookies.get("ID") && request.cookies.get("name")) {
-		console.log("User is logged in.");
+export async function middleware(request: Request) {
+	let url = new URL(BACKEND_URL + "/admin");
+
+	const token = request.cookies.get(COOKIE_TOKEN)?.value || "";
+	const isTokenValid = await fetch(url, {
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${token}`,
+		},
+		body: token
+	});
+
+	if (!isTokenValid.ok) {
+		console.error("Invalid token or not authorized");
+		return Response.redirect(new URL("/login", request.url), 302);
+	}
+
+	const adminLogged = request.cookies.get(COOKIE_TOKEN) && request.cookies.get(COOKIE_NAME);
+
+
+	const userLogged = request.cookies.get(COOKIE_USER_TOKEN) && request.cookies.get(COOKIE_USER_NAME);
+
+	if (adminLogged) {
 		return Response.next();
 	}
 
-	if (request.cookies.get("userID") && request.cookies.get("userName")) {
-		console.log("User is logged in as user.");
+	if (userLogged) {
 		return Response.redirect(new URL("/", request.url), 302);
 	}
+
 	return Response.redirect(new URL("/login", request.url), 302);
 }
 

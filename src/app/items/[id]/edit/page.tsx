@@ -1,31 +1,27 @@
-'use client';
-
-import { BaseForm, FormGroup, FormInput, FormLabel, FormSubmit, FormTitle } from '@/components/Form';
+import { updateItemAction } from '@/actions/item-actions';
+import { cookies } from 'next/headers';
+import { getItem } from '@/lib/endpoints';
+import { COOKIE_TOKEN } from '@/config';
 import { Item } from '@/types/item';
-import { useItem } from '@/utils/ItemContext';
-import Button from '@/components/ui/Button';
+import { FormGroup, FormLabel, FormInput, FormSubmit, BaseForm } from '@/components/Form';
 
-export default function EditItem() {
-	const item: Item = useItem();
+export default async function EditItem({ params }: { params: Promise<{ id: number }> }) {
+	const { id } = await params;
 
-	const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const formData = new FormData(e.currentTarget);
-		const updatedItem = {
-			id: item.id,
-			name: formData.get('name') as string,
-			description: formData.get('description') as string,
-			value: parseFloat(formData.get('value') as string),
-		};
-
-		console.log('Updated Item:', updatedItem);
-		window.location.href = `/items/${item.id}`;
+	let item: Item;
+	const cookieStore = await cookies();
+	try {
+		item = await getItem(id, cookieStore.get(COOKIE_TOKEN)?.value || '');
+	} catch (error) {
+		console.error('Error fetching item:', error);
+		return <div className="text-red-500">Chyba při načítání předmětu.</div>;
 	}
 
 	return (
 		<div className="container mt-10">
 			<h1 className="text-2xl font-bold mb-4">Úprava předmětu "{item.name}"</h1>
-			<BaseForm onSubmit={handleSave}>
+			<BaseForm action={updateItemAction}>
+				<input type="hidden" name="id" value={id} />
 				<FormGroup>
 					<FormLabel htmlFor="name">Název předmětu</FormLabel>
 					<FormInput name="name" id="name" type="text" defaultValue={item.name} required />
@@ -36,7 +32,7 @@ export default function EditItem() {
 				</FormGroup>
 				<FormGroup>
 					<FormLabel htmlFor="value">Hodnota</FormLabel>
-					<FormInput name="value" id="value" type="number" defaultValue={item.value} required />
+					<FormInput name="value" id="value" type="number" defaultValue={item.price} required />
 				</FormGroup>
 				<FormSubmit>
 					Uložit změny

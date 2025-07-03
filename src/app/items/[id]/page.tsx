@@ -1,15 +1,29 @@
-'use client';
-
 import { BackBtn } from '@/components/BackBtn';
 import { DragDrop2ColForItem } from '@/components/DragDrop2Col';
-import { useItem } from '@/utils/ItemContext';
 import Link from 'next/link';
 import { Item } from '@/types/item';
 import Button from '@/components/ui/Button';
-import { Gift, Coins, Sparkles, Edit } from 'lucide-react';
+import { Gift, Coins, Sparkles, Edit, Trash2 } from 'lucide-react';
+import { cookies } from 'next/headers';
+import { getItem } from '@/lib/endpoints';
+import { COOKIE_TOKEN } from '@/config';
+import { deleteItemAction } from '@/actions/item-actions';
 
-export default function Page() {
-	const item: Item = useItem();
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = await params;
+	let item: Item;
+	const cookieStore = await cookies();
+	try {
+		item = await getItem(id, cookieStore.get(COOKIE_TOKEN)?.value || '');
+	} catch (error) {
+		console.error('Error fetching item:', error);
+		return <div className="text-red-500">Chyba při načítání předmětu.</div>;
+	}
+
+	const handleDelete = async () => {
+		"use server";
+		await deleteItemAction(id);
+	}
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50 p-6">
@@ -42,19 +56,25 @@ export default function Page() {
 										<h3 className="font-semibold text-gray-700 mb-2">Hodnota</h3>
 										<div className="flex items-center gap-2 text-2xl font-bold text-yellow-600">
 											<Coins className="text-yellow-500" />
-											{item.value} bodů
+											{item.price} bodů
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+						<div className='flex justify-start items-center gap-3'>
+							<Button variant="primary" size="lg" className="group">
+								<Link href={`/items/${item.id}/edit`} className="flex items-center gap-2">
+									<Edit className="text-lg group-hover:rotate-12 transition-transform duration-300" />
+									Upravit předmět
+								</Link>
+							</Button>
+							<Button variant="danger" size="lg" className="group flex items-center gap-2" onClick={handleDelete}>
+								<Trash2 className="text-lg group-hover:rotate-12 transition-transform duration-300" />
+								Smazat předmět
+							</Button>
 
-						<Button variant="primary" size="lg" className="group">
-							<Link href={`/items/${item.id}/edit`} className="flex items-center gap-2">
-								<Edit className="text-lg group-hover:rotate-12 transition-transform duration-300" />
-								Upravit předmět
-							</Link>
-						</Button>
+						</div>
 					</div>
 				</div>
 

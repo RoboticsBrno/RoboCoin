@@ -7,6 +7,7 @@ import { LoginResponseData } from "@/types/login";
 import { BaseForm, FormGroup, FormInput, FormLabel, FormSubmit, FormTitle } from "@/components/Form";
 import Link from "next/link";
 import Inventory from "@/components/Inventory";
+import { COOKIE_USER_NAME, COOKIE_USER_TOKEN } from "@/config";
 
 export default function Home() {
 	const { isLoggedIn, setIsLoggedIn, isAdmin } = useAuth();
@@ -15,46 +16,43 @@ export default function Home() {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
 		const username = formData.get('username') as string;
-		const password = formData.get('password') as string;
 
 		let loginData: LoginResponseData;
 		try {
-			loginData = await loginUser(username, password)
+			loginData = await loginUser(username)
 		} catch (error) {
 			alert('Přihlášení selhalo: ' + error);
 			return;
 		}
 		console.log('Login successful:', loginData);
 		setIsLoggedIn(true);
-		localStorage.setItem('userID', loginData.id);
-		localStorage.setItem('userName', loginData.name);
+		localStorage.setItem(COOKIE_USER_TOKEN, loginData.token);
+		localStorage.setItem(COOKIE_USER_NAME, loginData.name);
 
 	}
 
 	return (
-		<div className="container flex justify-center">
+		<div className="flex justify-center">
 			{isLoggedIn && !isAdmin ? (
 				<Inventory />
 			) : !isAdmin ? (
-				<BaseForm className="mt-10" onSubmit={handleLoginUser}>
-					<FormTitle>Přihlášení účastníka</FormTitle>
+				<div className="container">
+					<BaseForm className="mt-10" onSubmit={handleLoginUser}>
+						<FormTitle>Přihlášení účastníka</FormTitle>
 
-					<FormGroup>
-						<FormLabel htmlFor='username'>Uživatelské jméno</FormLabel>
-						<FormInput name='username' type='text' id='username' placeholder='Uživatelské jméno' />
-					</FormGroup>
-					<FormGroup>
-						<FormLabel htmlFor='password'>ID</FormLabel>
-						<FormInput name='password' type='password' id='password' placeholder='Přidělené ID' />
-					</FormGroup>
-					<FormSubmit>
-						Přihlásit se 🚀
-					</FormSubmit>
-				</BaseForm>
+						<FormGroup>
+							<FormLabel htmlFor='username'>Uživatelské jméno</FormLabel>
+							<FormInput name='username' type='text' id='username' placeholder='Uživatelské jméno' />
+						</FormGroup>
+						<FormSubmit>
+							Přihlásit se 🚀
+						</FormSubmit>
+					</BaseForm>
+				</div>
 			) : (
 				<div className='text-center mt-10'>
 					<h2 className='mb-4'>Jste již přihlášeni jako administrátor</h2>
-					<Button variant='secondary'>
+					<Button variant='secondary' size="sm">
 						<Link href="/dashboard" className="text-white">
 							Přejít na dashboard
 						</Link>

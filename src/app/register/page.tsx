@@ -1,34 +1,39 @@
 'use client';
 import { BaseForm, FormGroup, FormTitle, FormInput, FormLabel, FormSubmit } from '@/components/Form';
-import Button from '@/components/ui/Button';
+import { BACKEND_URL } from '@/config';
+import { RegisterBody } from '@/types/api';
 
 export default function Page() {
 
 	const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
-		const username = formData.get('username') as string;
+		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
 		try {
-			const response = await fetch('/api/login', {
+			const body: RegisterBody = {
+				email,
+				password,
+				role: 'NONE',
+			};
+
+			const response = await fetch(BACKEND_URL + '/admin/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ username, password }),
+				body: JSON.stringify(body),
 			});
 
 			if (!response.ok) {
-				throw new Error('Failed to log in');
+				console.error('Register failed:', response.statusText);
+				throw new Error('Register failed');
 			}
 
-			const data = await response.json();
-			console.log('Login successful:', data);
-			window.location.href = '/'; // Redirect to home page after successful login
+			window.location.href = '/login'; // Redirect to home page after successful login
 		} catch (error) {
-			console.error('Login error:', error);
-			alert('Login failed. Please check your credentials and try again.');
+			console.error('Register error:', error);
 		}
 	}
 
@@ -37,8 +42,8 @@ export default function Page() {
 			<BaseForm onSubmit={handleRegister} className='mt-10'>
 				<FormTitle>Registrace ORGa</FormTitle>
 				<FormGroup>
-					<FormLabel htmlFor='username'>Uživatelské jméno</FormLabel>
-					<FormInput name='username' type='text' id='username' placeholder='Uživatelské jméno' />
+					<FormLabel htmlFor='email'>Email</FormLabel>
+					<FormInput name='email' type='email' id='email' placeholder='Email' />
 				</FormGroup>
 				<FormGroup>
 					<FormLabel htmlFor='password'>Heslo</FormLabel>

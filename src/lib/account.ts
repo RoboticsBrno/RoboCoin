@@ -1,85 +1,81 @@
 "use server";
 
+import { BACKEND_URL, COOKIE_NAME, COOKIE_TOKEN, COOKIE_USER_NAME, COOKIE_USER_TOKEN, ORG_NAME } from "@/config";
+import { LoginBody } from "@/types/api";
 import { LoginResponseData } from "@/types/login";
 import { cookies } from "next/headers";
 
 export async function logout() {
 	const cookieStore = await cookies();
-	cookieStore.delete("ID");
-	cookieStore.delete("name");
-	cookieStore.delete("userID");
-	cookieStore.delete("userName");
+	cookieStore.delete(COOKIE_TOKEN);
+	cookieStore.delete(COOKIE_NAME);
+	cookieStore.delete(COOKIE_USER_TOKEN);
+	cookieStore.delete(COOKIE_USER_NAME);
 }
 
-export async function login(username: string, password: string): Promise<LoginResponseData> {
-	if (!username || !password) {
+export async function login(email: string, password: string): Promise<LoginResponseData> {
+	if (!email || !password) {
 		throw new Error("Please fill in both fields.");
 	}
 
-	// For testing purposes
-	if (username === "admin" && password === "admin") {
-		const cookieStore = await cookies();
-		cookieStore.set("ID", "test-id");
-		cookieStore.set("name", "Test Admin");
-		return { id: "test-id", name: "Test Admin" };
-	}
+	const body: LoginBody = {
+		email,
+		password,
+	};
 
-	const response = await fetch("/api/login", {
+	const response = await fetch(BACKEND_URL + '/admin/login', {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ username, password }),
+		body: JSON.stringify(body),
 	});
 	if (!response.ok) {
-		alert(response.error);
-		throw new Error("Login failed");
+		console.error("Login failed:", response.statusText);
+		throw new Error("Login failed: " + response.statusText);
 	}
+
 
 	const data = await response.json();
 	const cookieStore = await cookies();
-	cookieStore.set("ID", data.id);
-	cookieStore.set("name", data.name);
 
-	return data;
+	cookieStore.set(COOKIE_TOKEN, data.token);
+	cookieStore.set(COOKIE_NAME, ORG_NAME);
+
+	const loginData: LoginResponseData = {
+		token: data.token,
+		name: ORG_NAME
+	}
+	return loginData
 }
 
-export async function loginUser(username: string, password: string): Promise<LoginResponseData> {
-	if (!username || !password) {
+export async function loginUser(username: string): Promise<LoginResponseData> {
+	if (!username) {
 		throw new Error("Please fill in both fields.");
 	}
 
-	if (username === "user" && password === "user") {
-		const cookieStore = await cookies();
-		cookieStore.set("userID", "test-id");
-		cookieStore.set("userName", "Test User");
-		return { id: "test-id", name: "Test User" };
-	}
-
-	const response = await fetch("/api/login_user", {
+	const response = await fetch(BACKEND_URL + '/login?name=' + username, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ username, password }),
 	});
+	console.log(response);
 	if (!response.ok) {
-		alert(response.error);
+		console.error("User login error: ", response.statusText);
 		throw new Error("Login failed");
 	}
-
 	const data = await response.json();
-	const cookieStore = await cookies();
-	cookieStore.set("userID", data.id);
-	cookieStore.set("userName", data.name);
 
-	return data;
-}
 
-export async function TESTlogin() {
 	const cookieStore = await cookies();
-	cookieStore.set("ID", "test-id");
-	cookieStore.set("name", "Test User");
-	window.location.href = "/dashboard";
-	return true;
+	cookieStore.set(COOKIE_USER_TOKEN, data.id);
+	cookieStore.set(COOKIE_USER_NAME, username);
+
+	const loginData: LoginResponseData = {
+		token: data.id,
+		name: username
+	}
+	return loginData
+
 }

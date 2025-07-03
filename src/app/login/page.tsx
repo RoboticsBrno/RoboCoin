@@ -6,27 +6,32 @@ import { LoginResponseData } from '@/types/login';
 import { useAuth } from '@/utils/auth-context';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { COOKIE_NAME, COOKIE_TOKEN } from '@/config';
+import { useState } from 'react';
+import { Alert } from '@/components/ui/Alert';
 
 export default function Login() {
 	const { isLoggedIn, setIsLoggedIn, isAdmin } = useAuth();
+	const [error, setError] = useState("");
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const username = formData.get('username') as string;
+		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
 		let loginData: LoginResponseData;
 		try {
-			loginData = await login(username, password)
+			loginData = await login(email, password)
 		} catch (error) {
-			alert('Přihlášení selhalo: ' + error);
+			setError(error.message || String(error));
 			return;
 		}
 		window.location.href = '/dashboard';
 		setIsLoggedIn(true);
-		localStorage.setItem('ID', loginData.id);
-		localStorage.setItem('name', loginData.name);
+		localStorage.setItem(COOKIE_TOKEN, loginData.token);
+
+		localStorage.setItem(COOKIE_NAME, loginData.name);
 	}
 
 	return (
@@ -36,7 +41,7 @@ export default function Login() {
 					{isAdmin ? (
 						<div>
 							<h2 className='mb-4'>Jste již přihlášeni</h2>
-							<Button variant='secondary'>
+							<Button variant='secondary' size='sm'>
 								<Link href="/dashboard" className="text-white">
 									Přejít na dashboard
 								</Link>
@@ -45,7 +50,7 @@ export default function Login() {
 					) : (
 						<div>
 							<h2 className='mb-4'>Jste již přihlášeni jako účastník</h2>
-							<Button variant='secondary'>
+							<Button variant='secondary' size='sm'>
 								<Link href="/" className="text-white">
 									Přejít na inventář
 								</Link>
@@ -54,20 +59,27 @@ export default function Login() {
 					)}
 				</div>
 			) : (
-				<BaseForm className='mt-10' onSubmit={handleLogin}>
-					<FormTitle>Přihlášení ORGa</FormTitle>
-					<FormGroup>
-						<FormLabel htmlFor='username'>Uživatelské jméno</FormLabel>
-						<FormInput name='username' type='text' id='username' placeholder='Uživatelské jméno' />
-					</FormGroup>
-					<FormGroup>
-						<FormLabel htmlFor='password'>Heslo</FormLabel>
-						<FormInput name='password' type='password' id='password' placeholder='Heslo' />
-					</FormGroup>
-					<FormSubmit>
-						Přihlásit se 🚀
-					</FormSubmit>
-				</BaseForm>
+				<div>
+					{error && (
+						<Alert variant='danger' className='mt-10'>
+							{error}
+						</Alert>
+					)}
+					<BaseForm className='mt-10' onSubmit={handleLogin}>
+						<FormTitle>Přihlášení ORGa</FormTitle>
+						<FormGroup>
+							<FormLabel htmlFor='email'>Email</FormLabel>
+							<FormInput name='email' type='email' id='email' placeholder='Email' />
+						</FormGroup>
+						<FormGroup>
+							<FormLabel htmlFor='password'>Heslo</FormLabel>
+							<FormInput name='password' type='password' id='password' placeholder='Heslo' />
+						</FormGroup>
+						<FormSubmit>
+							Přihlásit se 🚀
+						</FormSubmit>
+					</BaseForm>
+				</div>
 			)}
 		</div>
 	);

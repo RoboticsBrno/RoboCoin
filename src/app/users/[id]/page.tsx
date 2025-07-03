@@ -1,14 +1,13 @@
-"use client";
-
 import { BackBtn } from '@/components/BackBtn';
-import { users } from '@/mock/users';
 import Link from 'next/link';
 import Alert from 'react-bootstrap/Alert';
-import { use } from 'react';
 import Button from '@/components/ui/Button';
 import React from 'react';
 import { DragDrop2ColForUser } from '@/components/DragDrop2Col';
 import { AlertTriangle, Home, Users, Star, Coins } from 'lucide-react';
+import { getUser } from '@/lib/endpoints';
+import { cookies } from 'next/headers';
+import { COOKIE_TOKEN } from '@/config';
 
 function UserNotFound({ id }: { id: string }) {
 	return (
@@ -42,16 +41,27 @@ function UserNotFound({ id }: { id: string }) {
 
 }
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
-	const { id } = use(params);
 
-	const user = users.find(user => user.id === id);
-	if (!user) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+	let user;
+	let userInfo;
+
+	const { id } = await params;
+
+	try {
+		const cookieStore = await cookies();
+		const data = await getUser(id, cookieStore.get(COOKIE_TOKEN)?.value);
+		user = data.user;
+		userInfo = data.info;
+	} catch (error) {
+		console.error(error.message || String(error));
+	}
+	console.log(user);
+	if (!user || !userInfo) {
 		return (
 			<UserNotFound id={id} />
 		);
 	}
-
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
 			<div className="container mx-auto max-w-6xl">
@@ -77,13 +87,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<div className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-200 inline-block">
 										<h3 className="font-semibold text-gray-700 mb-1">Pořadí</h3>
-										<p className="text-gray-700 text-xl">2.</p>
+										<p className="text-gray-700 text-xl">{userInfo.rank}.</p>
 									</div>
 									<div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-200">
 										<h3 className="font-semibold text-gray-700 mb-2">Skóre</h3>
 										<div className="flex items-center gap-2 text-2xl font-bold text-yellow-600">
 											<Coins className="text-yellow-500" />
-											420 bodů
+											{userInfo.score} bodů
 										</div>
 									</div>
 								</div>
