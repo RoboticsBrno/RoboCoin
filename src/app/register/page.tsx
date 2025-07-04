@@ -17,7 +17,7 @@ export default function Page() {
 				password,
 				role: 'NONE',
 			};
-
+			console.log('Registering with body:', body);
 			const response = await fetch(BACKEND_URL + '/admin/register', {
 				method: 'POST',
 				headers: {

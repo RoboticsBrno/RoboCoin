@@ -7,6 +7,8 @@ export type Item = {
 
 export type AcquiredItem = {
 	id: string;
-	item: Item;
+	name: string;
+	description: string
+	price: number
 	time: string;
 }

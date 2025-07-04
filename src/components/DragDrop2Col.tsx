@@ -19,14 +19,8 @@ export async function DragDrop2ColForUser({ user, acquiredTitle, availableTitle 
 	const cookieStore = await cookies();
 	const token = cookieStore.get(COOKIE_TOKEN)?.value;
 	try {
-		const items = await getUserItems(user.id, token);
-		acquiredItems = items.map(item => ({
-			id: item.id,
-			name: item.item.name,
-			description: item.item.description,
-			price: item.item.price,
-		}));
-
+		console.log("Fetching acquired items for user:", user.id);
+		acquiredItems = await getUserItems(user.id, token);
 		console.log("Fetched acquired items for user:", user.id, acquiredItems);
 	} catch (error: any) {
 		console.error(error.message || String(error));
