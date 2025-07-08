@@ -61,7 +61,7 @@ function DragDropList({ type, title, items, reference, render = renderItem }: { 
 				{type === 'items' ? <Gift className="text-purple-500" /> : <Users className="text-blue-500" />}
 				{title}
 			</h2>
-			<ul ref={reference} className="space-y-3 min-h-[300px] bg-gray-50/50 rounded-xl p-4 border-2 border-dashed border-gray-200">
+			<ul ref={reference} className="space-y-3 min-h-[300px] bg-gray-50/50 rounded-xl p-4 border-2 border-dashed border-gray-200 h-full">
 				{items.map(item => (
 					render(item)
 				))}
