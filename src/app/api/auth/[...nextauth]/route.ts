@@ -13,21 +13,28 @@ export const authOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.login || !credentials?.password) {
-					return null;
+					throw new Error("Invalid credentials");
 				}
 
 				const user = await prisma.user.findUnique({
 					where: { login: credentials.login },
 				});
 
-				if (user && bcrypt.compareSync(credentials.password, user.password)) {
-					const balance = await prisma.balance.findUnique({
-						where: { user: user.id },
-					});
-					return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin, balance: balance?.amount || 0 };
-				} else {
-					return null;
+				if (!user) {
+					throw new Error("User not found");
 				}
+
+				const isValid = bcrypt.compareSync(credentials.password, user.password);
+
+				if (!isValid) {
+					throw new Error("Invalid password");
+				}
+
+				const balance = await prisma.balance.findUnique({
+					where: { user: user.id },
+				});
+
+				return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin, balance: balance?.amount || 0 };
 			},
 		}),
 	],

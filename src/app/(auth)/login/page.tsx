@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { z } from "zod";
 import FormContainer from "@/components/form/FormContainer";
 import FormTitle from "@/components/form/FormTitle";
 import FormSubtitle from "@/components/form/FormSubtitle";
@@ -11,30 +12,44 @@ import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 
+const loginSchema = z.object({
+	login: z.string().min(1, { message: "Login is required" }),
+	password: z.string().min(1, { message: "Password is required" }),
+});
+
+type LoginSchema = z.infer<typeof loginSchema>;
+
 export default function LoginPage() {
-	const [login, setLogin] = useState("");
-	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const handleSubmit = async (data: LoginSchema) => {
 		setError(null);
-		const result = await signIn("credentials", {
-			login,
-			password,
-			redirect: false,
-		});
+		try {
+			const result = await signIn("credentials", {
+				...data,
+				redirect: false,
+				callbackUrl: "/",
+			});
 
-		if (result?.error) {
-			setError("Invalid login or password");
-		} else {
-			router.push("/");
+			if (result?.error) {
+				if (result.error === "User not found") {
+					setError("User not found. Please check your login and try again.");
+				} else if (result.error === "Invalid password") {
+					setError("Invalid password. Please try again.");
+				} else {
+					setError("An unknown error occurred. Please try again later.");
+				}
+			} else {
+				router.push("/");
+			}
+		} catch (error) {
+			setError("An unexpected error occurred. Please try again later.");
 		}
 	};
 
 	return (
-		<FormContainer onSubmit={handleSubmit}>
+		<FormContainer<LoginSchema> onSubmit={handleSubmit} schema={loginSchema}>
 			<FormTitle>Login</FormTitle>
 			<FormSubtitle>Welcome back! Please enter your details.</FormSubtitle>
 			{error && (
@@ -47,9 +62,6 @@ export default function LoginPage() {
 					name="login"
 					type="text"
 					autoComplete="login"
-					required
-					value={login}
-					onChange={(e) => setLogin(e.target.value)}
 				/>
 			</FormGroup>
 			<FormGroup>
@@ -59,9 +71,6 @@ export default function LoginPage() {
 					name="password"
 					type="password"
 					autoComplete="current-password"
-					required
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
 				/>
 			</FormGroup>
 			<FormSubmit>Login</FormSubmit>
