@@ -21,7 +21,10 @@ export const authOptions = {
 				});
 
 				if (user && bcrypt.compareSync(credentials.password, user.password)) {
-					return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin };
+					const balance = await prisma.balance.findUnique({
+						where: { user: user.id },
+					});
+					return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin, balance: balance?.amount || 0 };
 				} else {
 					return null;
 				}
@@ -42,6 +45,7 @@ export const authOptions = {
 				token.login = user.login;
 				token.is_org = user.is_org;
 				token.is_admin = user.is_admin;
+				token.balance = user.balance;
 			}
 			return token;
 		},
@@ -51,6 +55,7 @@ export const authOptions = {
 				session.user.login = token.login;
 				session.user.is_org = token.is_org;
 				session.user.is_admin = token.is_admin;
+				session.user.balance = token.balance;
 			}
 			return session;
 		},
