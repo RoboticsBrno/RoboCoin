@@ -1,0 +1,25 @@
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
+
+export async function POST(req: Request) {
+	const { login, name, password } = await req.json();
+
+	const hashedPassword = await bcrypt.hash(password, 10);
+	console.log("Creating user:", { login, name });
+	console.log("Hashed password:", hashedPassword);
+	try {
+		const user = await prisma.user.create({
+			data: {
+				login,
+				name,
+				password: hashedPassword,
+				is_org: false,
+				is_admin: false,
+			},
+		});
+		return NextResponse.json(user);
+	} catch (error) {
+		return new NextResponse("Error creating user", { status: 500 });
+	}
+}

@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model drizzle_migrations {
+  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  hash       String  @db.Text
+  created_at BigInt?
+
+  @@map("__drizzle_migrations")
+}
+
+model balance {
+  id                      Int  @id @default(autoincrement())
+  user                    Int  @unique(map: "balance_user_camp_unique")
+  amount                  Int  @default(0)
+  user_balance_userTouser user @relation("balance_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "balance_user_fk")
+
+  @@index([user], map: "balance_user_id_index")
+}
+
+model inventory {
+  id                        Int  @id @default(autoincrement())
+  user                      Int
+  item                      Int
+  quantity                  Int?
+  item_inventory_itemToitem item @relation("inventory_itemToitem", fields: [item], references: [id], onUpdate: Restrict, map: "inventory_item_fk")
+  user_inventory_userTouser user @relation("inventory_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "inventory_user_fk")
+
+  @@index([item], map: "inventory_item_fk")
+  @@index([user], map: "inventory_user_index")
+}
+
+model item {
+  id                                 Int           @id @default(autoincrement())
+  title                              String        @db.VarChar(255)
+  description                        String?       @db.VarChar(255)
+  price                              Int           @default(0)
+  on_marketplace                     Boolean
+  owner                              Int
+  inventory_inventory_itemToitem     inventory[]   @relation("inventory_itemToitem")
+  user                               user          @relation(fields: [owner], references: [id], onUpdate: Restrict, map: "item_owner_fk")
+  transaction_transaction_itemToitem transaction[] @relation("transaction_itemToitem")
+
+  @@index([owner], map: "item_owner_index")
+}
+
+model transaction {
+  id                              Int       @id @unique(map: "transaction_id_index") @default(autoincrement())
+  item                            Int?
+  sender                          Int
+  receiver                        Int
+  amount                          Int
+  created_at                      DateTime? @default(now()) @db.Timestamp(0)
+  description                     String?   @db.VarChar(255)
+  item_transaction_itemToitem     item?     @relation("transaction_itemToitem", fields: [item], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "transaction_item_fk")
+  user_transaction_receiverTouser user      @relation("transaction_receiverTouser", fields: [receiver], references: [id], onUpdate: Restrict, map: "transaction_receiver_fk")
+  user_transaction_senderTouser   user      @relation("transaction_senderTouser", fields: [sender], references: [id], onUpdate: Restrict, map: "transaction_sender_fk")
+
+  @@index([item], map: "transaction_item_fk")
+  @@index([receiver], map: "transaction_receiver_id_index")
+  @@index([sender], map: "transaction_sender_id_index")
+}
+
+model user {
+  id                                     Int           @id @default(autoincrement())
+  login                                  String        @unique(map: "user_login") @db.VarChar(255)
+  name                                   String        @db.VarChar(255)
+  password                               String        @default("abc") @db.VarChar(255)
+  is_org                                 Boolean       @default(false)
+  is_admin                               Boolean       @default(false)
+  balance_balance_userTouser             balance?      @relation("balance_userTouser")
+  inventory_inventory_userTouser         inventory[]   @relation("inventory_userTouser")
+  item                                   item[]
+  transaction_transaction_receiverTouser transaction[] @relation("transaction_receiverTouser")
+  transaction_transaction_senderTouser   transaction[] @relation("transaction_senderTouser")
+}
