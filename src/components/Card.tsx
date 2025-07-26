@@ -33,7 +33,7 @@ export default function Card({ href, title, description, type }: CardProps) {
 	return (
 		<Link
 			href={href}
-			className={`block p-6 max-w-sm rounded-sm transition-colors duration-200 ${className}`}
+			className={`block p-6 rounded-sm transition-colors duration-200 w-full ${className}`}
 		>
 			<h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
 				{title}

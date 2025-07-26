@@ -4,6 +4,7 @@ import "./globals.css";
 import Provider from "./Provider";
 import RoleProvider from "./RoleProvider";
 import Header from "@/components/Header";
+import ConditionalBackButton from "@/components/ConditionalBackButton"; // Import the new component
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -28,12 +29,16 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`bg-gray-900 ${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<Provider>
 					<RoleProvider>
 						<Header />
-						{children}
+						<div className="container mx-auto p-8 pt-6">
+							<ConditionalBackButton />{" "}
+							{/* Use the conditional button */}
+							{children}
+						</div>
 					</RoleProvider>
 				</Provider>
 			</body>
