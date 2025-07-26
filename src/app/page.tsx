@@ -1,41 +1,32 @@
 "use client";
 
+import Card from "@/components/Card";
 import { useUserRole } from "@/hooks/useUserRole";
-import Link from "next/link";
 
 export default function Home() {
 	const { is_org, is_admin } = useUserRole();
 
 	return (
-		<div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
-			<Link
-				href="/login"
-				className="px-6 py-3 text-lg font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-			>
-				Login
-			</Link>
-			<Link
-				href="/signup"
-				className="px-6 py-3 text-lg font-medium text-indigo-500 bg-gray-700 border border-gray-600 rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-			>
-				Sign up
-			</Link>
-			{is_org && (
-				<Link
-					href="/org"
-					className="px-6 py-3 mt-4 text-lg font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-				>
-					Organization Dashboard
-				</Link>
-			)}
-			{is_admin && (
-				<Link
-					href="/admin"
-					className="px-6 py-3 mt-4 text-lg font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-				>
-					Admin Dashboard
-				</Link>
-			)}
-		</div >
+		<div className="min-h-screen bg-gray-900">
+			<div className="container mx-auto p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+				<Card
+					title="Inventory"
+					description="Manage your inventory of robots and parts."
+					href="/inventory"
+				/>
+				<Card
+					title="Manage Items"
+					description="Add, edit, or remove items from your inventory."
+					href="/manage-items"
+					type="org"
+				/>
+				<Card
+					title="Manage Users"
+					description="Administer user accounts and permissions."
+					href="/manage-users"
+					type="admin"
+				/>
+			</div>
+		</div>
 	);
 }
