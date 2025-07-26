@@ -105,10 +105,10 @@ cp .env.example .env.local
 
 Now, open the `.env.local` file with a text editor (e.g., `vim .env.local`) and fill in the required values:
 
--   `DATABASE_URL`: This is the connection string for the MariaDB database you just created. The format is:
-    `mysql://robocoin_user:your_strong_password@localhost:3306/robocoin`
+- `DATABASE_URL`: This is the connection string for the MariaDB database you just created. The format is:
+  `mysql://robocoin_user:your_strong_password@localhost:3306/robocoin`
 
--   `NEXTAUTH_SECRET`: This is a secret key used to secure user sessions. You can generate a strong secret with the following command:
+- `NEXTAUTH_SECRET`: This is a secret key used to secure user sessions. You can generate a strong secret with the following command:
     ```bash
     openssl rand -base64 32
     ```
@@ -127,6 +127,7 @@ chmod +x deploy.sh
 ```
 
 The script will:
+
 1.  Install all dependencies using `npm ci`.
 2.  Run database migrations with `npx prisma migrate deploy`.
 3.  Build the application for production with `npm run build`.
