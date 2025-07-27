@@ -5,9 +5,10 @@ import BackButton from "./BackButton";
 
 export default function ConditionalBackButton() {
 	const pathname = usePathname();
+	const hiddenPaths = ["/", "/login", "/signup", "/unauthorized"];
 
 	// Only show the back button if the user is not on the homepage
-	if (pathname === "/") {
+	if (hiddenPaths.includes(pathname)) {
 		return null;
 	}
 

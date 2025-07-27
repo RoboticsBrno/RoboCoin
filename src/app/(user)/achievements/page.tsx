@@ -6,11 +6,10 @@ import Card from "@/components/Card";
 // Define the type for a single achievement based on the API response
 interface Achievement {
 	id: number;
-	item: {
-		id: number;
-		title: string;
-		description: string | null;
-	};
+	title: string;
+	description: string | null;
+	price: number;
+	quantity: number;
 }
 
 export default function AchievementsPage() {
@@ -25,7 +24,14 @@ export default function AchievementsPage() {
 					throw new Error("Failed to fetch achievements");
 				}
 				const data = await response.json();
-				setAchievements(data);
+				const parsedData: Achievement[] = data.map((item: any) => ({
+					id: item.item_inventory_itemToitem.id,
+					title: item.item_inventory_itemToitem.title,
+					description: item.item_inventory_itemToitem.description || null,
+					price: item.item_inventory_itemToitem.price,
+					quantity: item.quantity || 1,
+				}));
+				setAchievements(parsedData);
 			} catch (error) {
 				console.error(error);
 			} finally {
@@ -48,15 +54,17 @@ export default function AchievementsPage() {
 			) : achievements.length > 0 ? (
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 					{achievements.map((achievement) => (
-						<Card
-							key={achievement.id}
-							href="#" // Achievements don't link anywhere for now
-							title={achievement.item.title}
-							description={
-								achievement.item.description ||
-								"No description available."
-							}
-						/>
+						<div className="block p-6 rounded-sm transition-colors duration-200 w-full bg-gray-800 text-white border border-gray-700" key={achievement.id}>
+							<h2 className="text-xl font-semibold text-white mb-2">
+								{achievement.title} {achievement.quantity > 1 && `(${achievement.quantity}x)`} 
+							</h2>
+							<p className="text-gray-400 mb-4">
+								{achievement.description || "No description available"}
+							</p>
+							<p className="text-green-400 font-bold">
+								Price: ${achievement.price.toFixed(2)}
+							</p>
+						</div>
 					))}
 				</div>
 			) : (

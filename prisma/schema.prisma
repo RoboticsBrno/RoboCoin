@@ -29,7 +29,7 @@ model inventory {
   id                        Int  @id @default(autoincrement())
   user                      Int
   item                      Int
-  quantity                  Int?
+  quantity                  Int
   item_inventory_itemToitem item @relation("inventory_itemToitem", fields: [item], references: [id], onUpdate: Restrict, map: "inventory_item_fk")
   user_inventory_userTouser user @relation("inventory_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "inventory_user_fk")
 
@@ -39,7 +39,7 @@ model inventory {
 
 model item {
   id                                 Int           @id @default(autoincrement())
-  title                              String        @db.VarChar(255)
+  title                              String        @unique(map: "title_pk") @db.VarChar(255)
   description                        String?       @db.VarChar(255)
   price                              Int           @default(0)
   on_marketplace                     Boolean

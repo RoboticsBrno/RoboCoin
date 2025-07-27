@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-const REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
+const REFRESH_INTERVAL = 1 * 60 * 1000; // 1 hour in milliseconds
 
 export function useBalance() {
 	const { data: session, update } = useSession();

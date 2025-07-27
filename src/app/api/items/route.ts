@@ -19,19 +19,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 
-	// 1. Authenticate the user
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	// 2. Authorize the user (must be org or admin)
 	if (!session.user.is_org && !session.user.is_admin) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
 	const { title, description, price, on_marketplace } = await req.json();
 
-	// 3. Validate the input data
 	if (!title) {
 		return NextResponse.json(
 			{ error: "Title is required" },
@@ -39,15 +36,24 @@ export async function POST(req: NextRequest) {
 		);
 	}
 
+	const existingItem = await prisma.item.findFirst({
+		where: { title },
+	});
+	if (existingItem) {
+		return NextResponse.json(
+			{ error: "Item with this title already exists" },
+			{ status: 409 }
+		);
+	}
+
 	try {
-		// 4. Create the new item (achievement)
 		const newItem = await prisma.item.create({
 			data: {
 				title,
 				description,
 				price: price || 0,
 				on_marketplace: on_marketplace || false,
-				owner: parseInt(session.user.id), // The creator is the owner
+				owner: parseInt(session.user.id),
 			},
 		});
 

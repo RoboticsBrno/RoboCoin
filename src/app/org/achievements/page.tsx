@@ -15,9 +15,14 @@ export default function ManageAchievementsPage() {
 					description="Define a new achievement that can be awarded to users, including its title and description."
 				/>
 				<Card
-					href="/org/achievements/assign"
-					title="Assign Achievement to User"
-					description="Award an existing achievement to a specific user by creating an entry in their inventory."
+					href="/org/achievements/to-user"
+					title="Give Achievements to User"
+					description="Award achievements to a specific user."
+				/>
+				<Card
+					href="/org/achievements/to-achievement"
+					title="Assign Users to Achievement"
+					description="Assign users to a specific achievement."
 				/>
 			</div>
 		</div>

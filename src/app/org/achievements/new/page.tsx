@@ -2,30 +2,35 @@
 
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import FormContainer from "@/components/form/FormContainer";
 import FormTitle from "@/components/form/FormTitle";
 import FormSubtitle from "@/components/form/FormSubtitle";
 import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
+import FormCheckbox from "@/components/form/FormCheckbox";
+import Alert from "@/components/Alert";
+import { useState } from "react";
 
 // Zod schema for the form validation
 const createAchievementSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
 	description: z.string().optional(),
-	price: z.coerce
-		.number()
-		.int()
-		.min(0, { message: "Price must be a positive number" })
-		.optional(),
+	price: z.coerce.number().int().min(0, { message: "Price must be a positive number" }).optional(),
 });
 
 type CreateAchievementSchema = z.infer<typeof createAchievementSchema>;
 
 export default function CreateAchievementPage() {
 	const [message, setMessage] = useState<string | null>(null);
+	const [messageType, setMessageType] = useState<'success' | 'danger'>('success');
 
-	const handleSubmit = async (data: CreateAchievementSchema) => {
+	const methods = useForm<CreateAchievementSchema>({ resolver: zodResolver(createAchievementSchema) });
+	const { handleSubmit, formState: { isSubmitting } } = methods;
+
+	const onFormSubmit = async (data: CreateAchievementSchema) => {
 		try {
 			const response = await fetch("/api/items", {
 				method: "POST",
@@ -36,60 +41,64 @@ export default function CreateAchievementPage() {
 			});
 
 			if (response.ok) {
-				// Redirect to the achievements management page on success
-				setMessage("Achievement created successfully!");
+				const newAchievement = await response.json();
+				setMessage(`Achievement "${newAchievement.title}" created successfully!`);
+				setMessageType('success');
+				methods.reset(); // Reset the form after successful submission
 			} else {
 				const errorData = await response.json();
-				console.error("Failed to create achievement:", errorData.error);
-				// Here you could set an error state to display to the user
+				setMessage(errorData.error || "Failed to create achievement");
+				setMessageType('danger');
 			}
 		} catch (error) {
-			console.error("An unexpected error occurred:", error);
+			setMessage("An unexpected error occurred while creating the achievement.");
+			setMessageType('danger');
 		}
 	};
 
 	return (
+		<div>
+			{message && (
+				<Alert variant={messageType} message={message} />
+			)}
+			<FormProvider {...methods}>
+				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
+					<FormTitle>Create New Achievement</FormTitle>
+					<FormSubtitle>Fill in the details for the new achievement.</FormSubtitle>
 
-		<FormContainer<CreateAchievementSchema>
-			onSubmit={handleSubmit}
-			schema={createAchievementSchema}
-		>
-			<FormTitle>Create New Achievement</FormTitle>
-			<FormSubtitle>
-				Fill in the details for the new achievement.
-			</FormSubtitle>
+					<FormGroup>
+						<FormInput
+							label="Title"
+							id="title"
+							name="title"
+							type="text"
+							placeholder="e.g., 'First Place in Hackathon'"
+						/>
+					</FormGroup>
 
-			<FormGroup>
-				<FormInput
-					label="Title"
-					id="title"
-					name="title"
-					type="text"
-					placeholder="e.g., 'First Place in Hackathon'"
-				/>
-			</FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Description"
+							id="description"
+							name="description"
+							type="text"
+							placeholder="A short description of the achievement."
+						/>
+					</FormGroup>
 
-			<FormGroup>
-				<FormInput
-					label="Description"
-					id="description"
-					name="description"
-					type="text"
-					placeholder="A short description of the achievement."
-				/>
-			</FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Price (optional)"
+							id="price"
+							name="price"
+							type="number"
+							placeholder="0"
+						/>
+					</FormGroup>
 
-			<FormGroup>
-				<FormInput
-					label="Price (optional)"
-					id="price"
-					name="price"
-					type="number"
-					placeholder="0"
-				/>
-			</FormGroup>
-
-			<FormSubmit>Create Achievement</FormSubmit>
-		</FormContainer>
+					<FormSubmit isLoading={isSubmitting}>Create Achievement</FormSubmit>
+				</FormContainer>
+			</FormProvider>
+		</div>
 	);
 }

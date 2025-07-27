@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
 		// 3. Create the inventory record to assign the achievement
 		const newInventoryItem = await prisma.inventory.create({
 			data: {
-				userId: parseInt(userId, 10),
-				itemId: parseInt(itemId, 10),
+				user: parseInt(userId, 10),
+				item: parseInt(itemId, 10),
 				quantity: quantity ? parseInt(quantity, 10) : 1,
 			},
 		});
