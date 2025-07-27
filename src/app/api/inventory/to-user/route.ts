@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { recalculateAndApplyBalance } from "@/lib/balance"; // Import the new service
 
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -20,40 +21,29 @@ export async function POST(req: NextRequest) {
 
 	try {
 		await prisma.$transaction(async (tx) => {
-			// 1. Get the user's current inventory
 			const currentInventory = await tx.inventory.findMany({
 				where: { user: parsedUserId },
 				select: { item: true },
 			});
 			const currentItemIds = new Set(currentInventory.map(inv => inv.item));
-			console.log("Current Item IDs:", currentItemIds);
-			// 2. Determine which items to add and which to remove
-			const itemsToAdd = [...desiredItemIds].filter(id => !currentItemIds.has(id)) || [];
-			const itemsToRemove = [...currentItemIds].filter(id => !desiredItemIds.has(id)) || [];
 
-			console.log("Items to Add:", itemsToAdd);
-			console.log("Items to Remove:", itemsToRemove);
+			const itemsToAdd = [...desiredItemIds].filter(id => !currentItemIds.has(id));
+			const itemsToRemove = [...currentItemIds].filter(id => !desiredItemIds.has(id));
 
-			// 5. Remove the unchecked items
 			if (itemsToRemove.length > 0) {
 				await tx.inventory.deleteMany({
-					where: {
-						user: parsedUserId,
-						item: { in: itemsToRemove },
-					},
+					where: { user: parsedUserId, item: { in: itemsToRemove } },
 				});
 			}
 
-			// 6. Add the newly checked items
 			if (itemsToAdd.length > 0) {
 				await tx.inventory.createMany({
-					data: itemsToAdd.map(itemId => ({
-						user: parsedUserId,
-						item: itemId,
-						quantity: 1,
-					})),
+					data: itemsToAdd.map(itemId => ({ user: parsedUserId, item: itemId, quantity: 1 })),
 				});
 			}
+
+			// After making changes, call the centralized function to sync the balance
+			await recalculateAndApplyBalance(tx, parsedUserId);
 		});
 
 		return NextResponse.json({ success: true }, { status: 200 });

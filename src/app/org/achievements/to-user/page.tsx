@@ -13,6 +13,7 @@ import FormSubmit from "@/components/form/FormSubmit";
 import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import Alert from '@/components/Alert';
+import { useBalance } from '@/hooks/useBalance';
 
 // Define types for the data we'll fetch
 interface User {
@@ -43,6 +44,7 @@ export default function ManageUserAchievementsPage() {
 	const [isInventoryLoading, setIsInventoryLoading] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [messageType, setMessageType] = useState<'success' | 'danger'>('success');
+	const { refreshBalance } = useBalance();
 
 	const methods = useForm<SyncSchema>({
 		resolver: zodResolver(syncSchema),
@@ -113,8 +115,9 @@ export default function ManageUserAchievementsPage() {
 			} else {
 				setMessage("Achievements updated successfully!");
 				setMessageType('success');
-				setValue('userId', ''); 
-				setSelectedUserId(''); 
+				setValue('userId', '');
+				setSelectedUserId('');
+				await refreshBalance(); // Refresh the balance after updating achievements
 			}
 		} catch (error) {
 			console.error("An unexpected error occurred:", error);

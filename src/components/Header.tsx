@@ -1,13 +1,12 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useUserRole } from "@/hooks/useUserRole";
 import Button from "./Button";
+import { useBalance } from "@/hooks/useBalance";
 
 export default function Header() {
-	const { data: session } = useSession();
-	const { is_org, is_admin } = useUserRole();
+	const { name, balance } = useBalance();
 
 	return (
 		<header className="bg-gray-800 shadow-md">
@@ -16,13 +15,11 @@ export default function Header() {
 					RoboCoin
 				</Link>
 				<div className="flex items-center space-x-4">
-					{session ? (
+					{name ? (
 						<>
-							<span className="text-gray-300">
-								{session.user?.name}
-							</span>
+							<span className="text-gray-300">{name}</span>
 							<span className="text-gray-300 font-bold">
-								Balance: {session.user?.balance}
+								Balance: {balance || 0}
 							</span>
 							<Button
 								onClick={() => signOut()}

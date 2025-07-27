@@ -24,39 +24,30 @@ export const authOptions = {
 					throw new Error("User not found");
 				}
 
-				const isValid = bcrypt.compareSync(
-					credentials.password,
-					user.password
-				);
+				const isValid = bcrypt.compareSync(credentials.password, user.password);
 
 				if (!isValid) {
 					throw new Error("Invalid password");
 				}
 
 				const balance = await prisma.balance.findUnique({
-					where: { user: user.id },
+					where: { userId: user.id },
 				});
 
-				return {
-					id: user.id.toString(),
-					name: user.name,
-					login: user.login,
-					is_org: user.is_org,
-					is_admin: user.is_admin,
-					balance: balance?.amount || 0,
-				};
+				return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin, balance: balance?.amount || 0 };
 			},
 		}),
 	],
 	session: {
-		jwt: true,
+		strategy: "jwt", // Ensure JWT strategy is used
 		maxAge: 2 * 24 * 60 * 60, // 2 days
 	},
 	jwt: {
 		secret: process.env.NEXTAUTH_SECRET,
 	},
 	callbacks: {
-		async jwt({ token, user }) {
+		async jwt({ token, user, trigger, session }) {
+			// Initial sign-in
 			if (user) {
 				token.id = user.id;
 				token.login = user.login;
@@ -64,6 +55,12 @@ export const authOptions = {
 				token.is_admin = user.is_admin;
 				token.balance = user.balance;
 			}
+
+			// Handle session updates, specifically for balance
+			if (trigger === "update" && session?.balance) {
+				token.balance = session.balance;
+			}
+
 			return token;
 		},
 		async session({ session, token }) {
