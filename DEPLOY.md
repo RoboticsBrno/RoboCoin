@@ -91,7 +91,7 @@ Clone the application code from its Git repository.
 
 ```bash
 git clone git@github.com:RoboticsBrno/RoboCoin.git
-cd robocoinv2
+cd RoboCoin 
 ```
 
 ### 2.2. Configure Environment Variables
@@ -100,7 +100,7 @@ The application requires environment variables for the database connection and a
 
 ```bash
 # Copy the example environment file
-cp .env.example .env.local
+cp .example-env .env.local
 ```
 
 Now, open the `.env.local` file with a text editor (e.g., `vim .env.local`) and fill in the required values:

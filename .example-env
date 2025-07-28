@@ -1,0 +1,9 @@
+# This file is an example. Copy it to .env.local and fill in your production values.
+# Do NOT commit your .env.local file to version control.
+
+# You can generate a secret by running: openssl rand -base64 32
+NEXTAUTH_SECRET=
+
+# This should be the connection string for your production database.
+# Example for PostgreSQL: DATABASE_URL="myslq://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+DATABASE_URL=
