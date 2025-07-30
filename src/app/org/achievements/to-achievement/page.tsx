@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +12,7 @@ import FormSubmit from "@/components/form/FormSubmit";
 import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import Alert from '@/components/Alert';
+import { useBalance } from '@/hooks/useBalance';
 
 // Define types for the data we'll fetch
 interface User {
@@ -47,6 +47,7 @@ export default function ManageAchievementUsersPage() {
 		defaultValues: { itemId: '', userIds: [] },
 	});
 	const { handleSubmit, setValue, watch, formState: { isSubmitting } } = methods;
+	const { refreshBalance } = useBalance();
 
 	const currentUserIds = watch('userIds');
 
@@ -109,6 +110,7 @@ export default function ManageAchievementUsersPage() {
 				setMessageType('success');
 				setValue('itemId', ''); // Reset item selection
 				setSelectedItemId('');
+				await refreshBalance(); // Refresh balance after update
 			}
 		} catch (error) {
 			setMessage("An unexpected error occurred while updating owners.");

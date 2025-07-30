@@ -13,6 +13,7 @@ export async function GET(
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
+	params = await params;
 	const itemId = parseInt(params.itemId, 10);
 
 	if (isNaN(itemId)) {

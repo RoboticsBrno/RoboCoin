@@ -2,56 +2,47 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { recalculateAndApplyBalance } from "@/lib/balance"; // Import the new service
+import { syncItemHolders } from "@/lib/inventory";
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+	const session = await getServerSession(authOptions);
 
-  if (!session || (!session.user.is_org && !session.user.is_admin)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+	if (!session?.user?.is_org && !session?.user?.is_admin) {
+		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+	}
 
-  const { itemId, userIds } = await req.json();
-  const parsedItemId = parseInt(itemId, 10);
-  const desiredUserIds = new Set(userIds.map((id: string | number) => parseInt(id.toString(), 10)));
+	const { itemId, userIds } = await req.json();
 
-  if (!parsedItemId) {
-    return NextResponse.json({ error: 'Item ID is required' }, { status: 400 });
-  }
+	if (itemId === undefined || itemId === null || !Array.isArray(userIds)) {
+		return NextResponse.json(
+			{ error: "itemId and userIds (array) are required" },
+			{ status: 400 }
+		);
+	}
 
-  try {
-    await prisma.$transaction(async (tx) => {
-      const currentInventory = await tx.inventory.findMany({
-        where: { item: parsedItemId },
-        select: { user: true },
-      });
-      const currentUserIds = new Set(currentInventory.map(inv => inv.user));
+	const parsedItemId = parseInt(String(itemId), 10);
+	if (isNaN(parsedItemId)) {
+		return NextResponse.json({ error: "Invalid itemId" }, { status: 400 });
+	}
 
-      const usersToAdd = [...desiredUserIds].filter(id => !currentUserIds.has(id));
-      const usersToRemove = [...currentUserIds].filter(id => !desiredUserIds.has(id));
+	const desiredUserIds = new Set(
+		userIds.map(id => parseInt(String(id), 10)).filter(id => !isNaN(id))
+	);
 
-      if (usersToRemove.length > 0) {
-        await tx.inventory.deleteMany({
-          where: { item: parsedItemId, user: { in: usersToRemove } },
-        });
-      }
+	try {
+		await prisma.$transaction(async tx => {
+			await syncItemHolders(tx, parsedItemId, desiredUserIds);
+		});
 
-      if (usersToAdd.length > 0) {
-        await tx.inventory.createMany({
-          data: usersToAdd.map(userId => ({ user: userId, item: parsedItemId, quantity: 1 })),
-        });
-      }
-
-      // Recalculate balances for all affected users
-      const allAffectedUserIds = new Set([...usersToAdd, ...usersToRemove]);
-      for (const userId of allAffectedUserIds) {
-        await recalculateAndApplyBalance(tx, userId);
-      }
-    });
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error("Failed to synchronize item owners:", error);
-    return NextResponse.json({ error: "Failed to synchronize item owners" }, { status: 500 });
-  }
+		return NextResponse.json({ success: true });
+	} catch (error) {
+		console.error("Failed to synchronize item owners:", error);
+		if (error instanceof Error && error.message.includes("not found")) {
+			return NextResponse.json({ error: error.message }, { status: 404 });
+		}
+		return NextResponse.json(
+			{ error: "Failed to synchronize item owners" },
+			{ status: 500 }
+		);
+	}
 }

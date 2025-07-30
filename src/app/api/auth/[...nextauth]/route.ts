@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
 	providers: [
 		CredentialsProvider({
 			name: "Credentials",
@@ -31,7 +31,7 @@ export const authOptions = {
 				}
 
 				const balance = await prisma.balance.findUnique({
-					where: { userId: user.id },
+					where: { user: user.id },
 				});
 
 				return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin, balance: balance?.amount || 0 };
@@ -46,7 +46,7 @@ export const authOptions = {
 		secret: process.env.NEXTAUTH_SECRET,
 	},
 	callbacks: {
-		async jwt({ token, user, trigger, session }) {
+		async jwt({ token, user, trigger, session }: { token: any; user?: any; trigger?: string; session?: any }) {
 			// Initial sign-in
 			if (user) {
 				token.id = user.id;
@@ -63,7 +63,7 @@ export const authOptions = {
 
 			return token;
 		},
-		async session({ session, token }) {
+		async session({ session, token }: { session: any; token: any }) {
 			if (token) {
 				session.user.id = token.id;
 				session.user.login = token.login;

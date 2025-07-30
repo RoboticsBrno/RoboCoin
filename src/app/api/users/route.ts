@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 
-	if (!session || (!session.user.is_org && !session.user.is_admin)) {
+	if (!session) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 

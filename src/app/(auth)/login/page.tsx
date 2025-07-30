@@ -45,7 +45,14 @@ export default function LoginPage() {
 					setError("An unknown error occurred. Please try again later.");
 				}
 			} else {
-				router.push("/");
+				try {
+					router.push("/");
+					console.log("Login successful, redirecting to home page.");
+					window.location.href = "/";
+				} catch (redirectError) {
+					console.error("Error during redirect:", redirectError);
+					setError("Failed to redirect. Please try again later.");
+				}
 			}
 		} catch (error) {
 			setError("An unexpected error occurred. Please try again later.");
