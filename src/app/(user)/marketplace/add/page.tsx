@@ -27,7 +27,9 @@ type CreateItemSchema = z.infer<typeof createItemSchema>;
 
 export default function AddItemPage() {
 	const [message, setMessage] = useState<string | null>(null);
-	const [messageType, setMessageType] = useState<"success" | "danger">("success");
+	const [messageType, setMessageType] = useState<"success" | "danger">(
+		"success"
+	);
 
 	const methods = useForm<CreateItemSchema>({
 		resolver: zodResolver(createItemSchema),
@@ -66,9 +68,7 @@ export default function AddItemPage() {
 	};
 	return (
 		<div>
-			{message && (
-				<Alert variant={messageType} message={message} />
-			)}
+			{message && <Alert variant={messageType} message={message} />}
 
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
@@ -105,9 +105,7 @@ export default function AddItemPage() {
 						/>
 					</FormGroup>
 
-					<FormSubmit isLoading={isSubmitting}>
-						Add Item
-					</FormSubmit>
+					<FormSubmit isLoading={isSubmitting}>Add Item</FormSubmit>
 				</FormContainer>
 			</FormProvider>
 		</div>

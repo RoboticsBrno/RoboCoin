@@ -11,12 +11,22 @@ import { useEffect, useState } from "react";
 export default function MarketplacePage() {
 	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState<string | null>(null);
-	const [messageType, setMessageType] = useState<"success" | "danger">("success");
+	const [messageType, setMessageType] = useState<"success" | "danger">(
+		"success"
+	);
 	const [offers, setOffers] = useState([]);
 
 	const actions = [
-		{ title: 'Offer item', description: 'Offer your item to be bought by other users.', link: '/marketplace/add' },
-		{ title: 'View your offers', description: 'See the items you have offered for sale.', link: '/marketplace/offers' },
+		{
+			title: "Offer item",
+			description: "Offer your item to be bought by other users.",
+			link: "/marketplace/add",
+		},
+		{
+			title: "View your offers",
+			description: "See the items you have offered for sale.",
+			link: "/marketplace/offers",
+		},
 	];
 
 	useEffect(() => {
@@ -33,7 +43,9 @@ export default function MarketplacePage() {
 				}
 				setLoading(false);
 			} catch (error) {
-				setMessage("An unexpected error occurred while fetching items.");
+				setMessage(
+					"An unexpected error occurred while fetching items."
+				);
 				setMessageType("danger");
 				setLoading(false);
 			}
@@ -54,33 +66,37 @@ export default function MarketplacePage() {
 					/>
 				))}
 			</div>
-			<h2 className="text-2xl font-bold text-white mt-8 mb-4">Marketplace Items</h2>
+			<h2 className="text-2xl font-bold text-white mt-8 mb-4">
+				Marketplace Items
+			</h2>
 			{loading ? (
 				<Loader />
-			) : (
-				offers.length > 0 ? (
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-						{offers.map((offer) => (
-							<Item key={offer.id}
-								title={offer.title}
-								description={offer.description}
-								price={offer.price}
-								href={`/marketplace/item/${offer.id}`}
-								type="offered"
-								user={offer.user.name}
-							/>
-						))}
-					</div>
-				) : (
-					message ? (
-						<Alert variant={messageType} message={message} closeButton={false} />
-					) : (
-						<Alert variant="info"
-							message="No items available in the marketplace at the moment."
-							closeButton={false}
+			) : offers.length > 0 ? (
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+					{offers.map((offer) => (
+						<Item
+							key={offer.id}
+							title={offer.title}
+							description={offer.description}
+							price={offer.price}
+							href={`/marketplace/item/${offer.id}`}
+							type="offered"
+							user={offer.user.name}
 						/>
-					)
-				)
+					))}
+				</div>
+			) : message ? (
+				<Alert
+					variant={messageType}
+					message={message}
+					closeButton={false}
+				/>
+			) : (
+				<Alert
+					variant="info"
+					message="No items available in the marketplace at the moment."
+					closeButton={false}
+				/>
 			)}
 		</>
 	);

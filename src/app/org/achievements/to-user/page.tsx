@@ -131,9 +131,7 @@ export default function ManageUserAchievementsPage() {
 	};
 
 	if (isLoading) {
-		return (
-			<Loader />
-		);
+		return <Loader />;
 	}
 
 	return (

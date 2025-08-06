@@ -24,11 +24,17 @@ export async function POST(req: NextRequest) {
 		});
 
 		if (!item) {
-			return NextResponse.json({ error: "Item not found" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Item not found" },
+				{ status: 404 }
+			);
 		}
 
 		if (!item.on_marketplace) {
-			return NextResponse.json({ error: "Item is not for sale" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Item is not for sale" },
+				{ status: 400 }
+			);
 		}
 
 		const buyerBalance = await prisma.balance.findUnique({
@@ -36,12 +42,17 @@ export async function POST(req: NextRequest) {
 		});
 
 		if (!buyerBalance || buyerBalance.amount < item.price) {
-			return NextResponse.json({ error: "Insufficient funds" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Insufficient funds" },
+				{ status: 400 }
+			);
 		}
 
 		await prisma.$transaction(async (tx) => {
 			console.log("Starting transaction for item purchase");
-			console.log(`Buyer ID: ${buyerId}, Seller ID: ${item.owner}, Item ID: ${item.id}, Item Price: ${item.price}`);
+			console.log(
+				`Buyer ID: ${buyerId}, Seller ID: ${item.owner}, Item ID: ${item.id}, Item Price: ${item.price}`
+			);
 			await tx.balance.update({
 				where: { user: buyerId },
 				data: { amount: { decrement: item.price } },
@@ -71,6 +82,9 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ success: true });
 	} catch (error) {
 		console.error("Transaction failed:", error);
-		return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Transaction failed" },
+			{ status: 500 }
+		);
 	}
 }

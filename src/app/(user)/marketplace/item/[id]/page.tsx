@@ -93,23 +93,51 @@ export default function Page({ params }: { params: { id: string } }) {
 				<div className="w-full md:w-1/2">
 					{item && (
 						<>
-							<div className="text-lg"><span className="font-bold">Description:</span> {item.description}</div>
-							<div className="text-lg"><span className="font-bold">Price:</span> ${item.price.toFixed(2)}</div>
-							<div className="text-lg"><span className="font-bold">Owner:</span> {item.user.name}</div>
+							<div className="text-lg">
+								<span className="font-bold">Description:</span>{" "}
+								{item.description}
+							</div>
+							<div className="text-lg">
+								<span className="font-bold">Price:</span> $
+								{item.price.toFixed(2)}
+							</div>
+							<div className="text-lg">
+								<span className="font-bold">Owner:</span>{" "}
+								{item.user.name}
+							</div>
 						</>
 					)}
-					{session && item && session.user.id !== item.owner.toString() && item.on_marketplace && (
-						<div className="mt-4">
-							<Button onClick={handleBuy} disabled={!canAfford || isBuying}>
-								{isBuying ? 'Processing...' : "Buy Now"}
-							</Button>
-							{!canAfford && (
-								<p className="text-red-500 text-sm mt-2">You don't have enough balance to buy this item.</p>
-							)}
-							{buyError && <Alert variant="danger" message={buyError} />}
-							{buySuccess && <Alert variant="success" message={buySuccess} />}
-						</div>
-					)}
+					{session &&
+						item &&
+						session.user.id !== item.owner.toString() &&
+						item.on_marketplace && (
+							<div className="mt-4">
+								<Button
+									onClick={handleBuy}
+									disabled={!canAfford || isBuying}
+								>
+									{isBuying ? "Processing..." : "Buy Now"}
+								</Button>
+								{!canAfford && (
+									<p className="text-red-500 text-sm mt-2">
+										You don't have enough balance to buy
+										this item.
+									</p>
+								)}
+								{buyError && (
+									<Alert
+										variant="danger"
+										message={buyError}
+									/>
+								)}
+								{buySuccess && (
+									<Alert
+										variant="success"
+										message={buySuccess}
+									/>
+								)}
+							</div>
+						)}
 				</div>
 			</div>
 		</>

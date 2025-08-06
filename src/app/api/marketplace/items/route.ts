@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 			on_marketplace: true,
 			user: {
 				deleted: false,
-			}
+			},
 		},
 		include: {
 			user: true,

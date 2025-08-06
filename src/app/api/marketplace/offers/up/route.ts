@@ -16,10 +16,9 @@ export async function GET(req: NextRequest) {
 			owner: parseInt(session.user.id),
 			transaction_transaction_itemToitem: {
 				none: {},
-			}
+			},
 		},
 	});
 
 	return NextResponse.json(items);
 }
-

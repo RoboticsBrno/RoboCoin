@@ -45,8 +45,12 @@ export default function OffersPage() {
 					setErrorSold("Failed to fetch sold offers.");
 				}
 			} catch (error) {
-				setErrorUp("An unexpected error occurred while fetching items up for sale.");
-				setErrorSold("An unexpected error occurred while fetching sold offers.");
+				setErrorUp(
+					"An unexpected error occurred while fetching items up for sale."
+				);
+				setErrorSold(
+					"An unexpected error occurred while fetching sold offers."
+				);
 			} finally {
 				setLoading(false);
 			}
@@ -63,7 +67,9 @@ export default function OffersPage() {
 				<>
 					{offersUp.length > 0 ? (
 						<>
-							<h1 className="text-2xl font-bold mb-4">Offers still up</h1>
+							<h1 className="text-2xl font-bold mb-4">
+								Offers still up
+							</h1>
 							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 								{offersUp.map((offer) => (
 									<Item
@@ -75,19 +81,24 @@ export default function OffersPage() {
 								))}
 							</div>
 						</>
+					) : errorUp ? (
+						<Alert
+							variant="danger"
+							message={errorUp}
+							closeButton={false}
+						/>
 					) : (
-						errorUp ? (
-							<Alert variant="danger" message={errorUp} closeButton={false} />
-						) : (
-							<Alert variant="info"
-								message="No offers are currently up for sale."
-								closeButton={false}
-							/>
-						)
+						<Alert
+							variant="info"
+							message="No offers are currently up for sale."
+							closeButton={false}
+						/>
 					)}
 					{offersSold.length > 0 ? (
 						<>
-							<h1 className="text-2xl font-bold mt-8 mb-4">Sold Offers</h1>
+							<h1 className="text-2xl font-bold mt-8 mb-4">
+								Sold Offers
+							</h1>
 							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 								{offersSold.map((offer) => (
 									<Item
@@ -101,15 +112,18 @@ export default function OffersPage() {
 								))}
 							</div>
 						</>
+					) : errorSold ? (
+						<Alert
+							variant="danger"
+							message={errorSold}
+							closeButton={false}
+						/>
 					) : (
-						errorSold ? (
-							<Alert variant="danger" message={errorSold} closeButton={false} />
-						) : (
-							<Alert variant="info"
-								message="No offers have been sold yet."
-								closeButton={false}
-							/>
-						)
+						<Alert
+							variant="info"
+							message="No offers have been sold yet."
+							closeButton={false}
+						/>
 					)}
 				</>
 			)}

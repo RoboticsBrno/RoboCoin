@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 	const items = await prisma.item.findMany({
 		where: {
 			from_marketplace: false,
-		}
+		},
 	});
 	return NextResponse.json(items);
 }

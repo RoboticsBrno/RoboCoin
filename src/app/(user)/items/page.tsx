@@ -10,7 +10,9 @@ import { useEffect, useState } from "react";
 export default function YourItemsPage() {
 	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState<string | null>(null);
-	const [messageType, setMessageType] = useState<"success" | "danger">("success");
+	const [messageType, setMessageType] = useState<"success" | "danger">(
+		"success"
+	);
 	const [items, setItems] = useState<any[]>([]);
 
 	const { data: session, status } = useSession();
@@ -35,7 +37,9 @@ export default function YourItemsPage() {
 				setItems(data);
 			} catch (error) {
 				console.error("Error fetching items:", error);
-				setMessage("An unexpected error occurred while fetching items.");
+				setMessage(
+					"An unexpected error occurred while fetching items."
+				);
 				setMessageType("danger");
 			} finally {
 				setLoading(false);
@@ -48,9 +52,7 @@ export default function YourItemsPage() {
 	return (
 		<>
 			<PageTitle>Your Items</PageTitle>
-			{message && (
-				<Alert variant={messageType} message={message} />
-			)}
+			{message && <Alert variant={messageType} message={message} />}
 			{loading ? (
 				<Loader />
 			) : (
@@ -62,7 +64,6 @@ export default function YourItemsPage() {
 							description={item.description}
 							price={item.price}
 						/>
-
 					))}
 				</div>
 			)}

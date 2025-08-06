@@ -39,7 +39,7 @@ export default function DeleteUserPage() {
 
 	useEffect(() => {
 		const fetchUsers = async () => {
-		setLoading(true);
+			setLoading(true);
 			try {
 				const response = await fetch("/api/users");
 				if (response.ok) {
@@ -49,13 +49,13 @@ export default function DeleteUserPage() {
 					setMessage("Failed to fetch users");
 					setMessageType("danger");
 				}
-			setLoading(false);
+				setLoading(false);
 			} catch (error) {
 				setMessage(
 					"An unexpected error occurred while fetching users."
 				);
 				setMessageType("danger");
-			setLoading(false);
+				setLoading(false);
 			}
 		};
 		fetchUsers();
@@ -111,10 +111,11 @@ export default function DeleteUserPage() {
 									label: `${user.name} (${user.login})`,
 								}))}
 								value={selectedUserId}
-								onChange={(e) => setSelectedUserId(e.target.value)}
+								onChange={(e) =>
+									setSelectedUserId(e.target.value)
+								}
 							/>
 						</FormGroup>
-
 					)}
 					<FormSubmit
 						isLoading={isSubmitting}
