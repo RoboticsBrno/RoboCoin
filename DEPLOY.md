@@ -91,7 +91,7 @@ Clone the application code from its Git repository.
 
 ```bash
 git clone git@github.com:RoboticsBrno/RoboCoin.git
-cd RoboCoin 
+cd RoboCoin
 ```
 
 ### 2.2. Configure Environment Variables

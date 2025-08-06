@@ -28,11 +28,13 @@ export async function GET(
 			},
 		});
 
-		const ownerIds = inventory.map(inv => inv.user);
+		const ownerIds = inventory.map((inv) => inv.user);
 		return NextResponse.json(ownerIds);
-
 	} catch (error) {
 		console.error("Failed to fetch item owners:", error);
-		return NextResponse.json({ error: "Failed to fetch item owners" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to fetch item owners" },
+			{ status: 500 }
+		);
 	}
 }

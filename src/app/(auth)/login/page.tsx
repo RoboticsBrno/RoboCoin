@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import FormContainer from "@/components/form/FormContainer";
 import FormTitle from "@/components/form/FormTitle";
 import FormSubtitle from "@/components/form/FormSubtitle";
@@ -24,8 +24,13 @@ type LoginSchema = z.infer<typeof loginSchema>;
 export default function LoginPage() {
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
-	const methods = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
-	const { handleSubmit, formState: { isSubmitting } } = methods;
+	const methods = useForm<LoginSchema>({
+		resolver: zodResolver(loginSchema),
+	});
+	const {
+		handleSubmit,
+		formState: { isSubmitting },
+	} = methods;
 
 	const onFormSubmit = async (data: LoginSchema) => {
 		setError(null);
@@ -38,11 +43,15 @@ export default function LoginPage() {
 
 			if (result?.error) {
 				if (result.error === "User not found") {
-					setError("User not found. Please check your login and try again.");
+					setError(
+						"User not found. Please check your login and try again."
+					);
 				} else if (result.error === "Invalid password") {
 					setError("Invalid password. Please try again.");
 				} else {
-					setError("An unknown error occurred. Please try again later.");
+					setError(
+						"An unknown error occurred. Please try again later."
+					);
 				}
 			} else {
 				try {
@@ -63,7 +72,9 @@ export default function LoginPage() {
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
 				<FormTitle>Login</FormTitle>
-				<FormSubtitle>Welcome back! Please enter your details.</FormSubtitle>
+				<FormSubtitle>
+					Welcome back! Please enter your details.
+				</FormSubtitle>
 				{error && (
 					<p className="text-sm text-center text-red-500">{error}</p>
 				)}

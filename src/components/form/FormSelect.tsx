@@ -1,20 +1,30 @@
-import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import React from "react";
+import { useFormContext } from "react-hook-form";
 
 interface Option {
 	value: string | number;
 	label: string;
 }
 
-interface FormSelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+interface FormSelectProps
+	extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "onChange"> {
 	label: string;
 	name: string;
 	options: Option[];
 	onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-export default function FormSelect({ label, name, options, onChange, ...props }: FormSelectProps) {
-	const { register, formState: { errors } } = useFormContext();
+export default function FormSelect({
+	label,
+	name,
+	options,
+	onChange,
+	...props
+}: FormSelectProps) {
+	const {
+		register,
+		formState: { errors },
+	} = useFormContext();
 	const error = errors[name]?.message as string | undefined;
 
 	// Get the onChange from react-hook-form
@@ -31,7 +41,10 @@ export default function FormSelect({ label, name, options, onChange, ...props }:
 
 	return (
 		<>
-			<label htmlFor={props.id || name} className="block text-sm font-medium text-gray-300">
+			<label
+				htmlFor={props.id || name}
+				className="block text-sm font-medium text-gray-300"
+			>
 				{label}
 			</label>
 			<select

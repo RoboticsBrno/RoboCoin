@@ -20,7 +20,6 @@ export function useBalance() {
 			const data = await response.json();
 
 			await update({ balance: data.balance });
-
 		} catch (error) {
 			console.error("Failed to refresh balance:", error);
 		} finally {

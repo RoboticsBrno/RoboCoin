@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { z } from "zod";
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import FormContainer from "@/components/form/FormContainer";
 import FormTitle from "@/components/form/FormTitle";
 import FormSubtitle from "@/components/form/FormSubtitle";
@@ -11,8 +11,8 @@ import FormGroup from "@/components/form/FormGroup";
 import FormSubmit from "@/components/form/FormSubmit";
 import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
-import Alert from '@/components/Alert';
-import { useBalance } from '@/hooks/useBalance';
+import Alert from "@/components/Alert";
+import { useBalance } from "@/hooks/useBalance";
 
 // Define types for the data we'll fetch
 interface User {
@@ -36,28 +36,35 @@ type SyncSchema = z.infer<typeof syncSchema>;
 export default function ManageAchievementUsersPage() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [items, setItems] = useState<Item[]>([]);
-	const [selectedItemId, setSelectedItemId] = useState<string>('');
+	const [selectedItemId, setSelectedItemId] = useState<string>("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [isOwnersLoading, setIsOwnersLoading] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);
-	const [messageType, setMessageType] = useState<'success' | 'danger'>('success');
+	const [messageType, setMessageType] = useState<"success" | "danger">(
+		"success"
+	);
 
 	const methods = useForm<SyncSchema>({
 		resolver: zodResolver(syncSchema),
-		defaultValues: { itemId: '', userIds: [] },
+		defaultValues: { itemId: "", userIds: [] },
 	});
-	const { handleSubmit, setValue, watch, formState: { isSubmitting } } = methods;
+	const {
+		handleSubmit,
+		setValue,
+		watch,
+		formState: { isSubmitting },
+	} = methods;
 	const { refreshBalance } = useBalance();
 
-	const currentUserIds = watch('userIds');
+	const currentUserIds = watch("userIds");
 
 	// Fetch users and items on initial load
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const [usersRes, itemsRes] = await Promise.all([
-					fetch('/api/users'),
-					fetch('/api/items'),
+					fetch("/api/users"),
+					fetch("/api/items"),
 				]);
 				setUsers(await usersRes.json());
 				setItems(await itemsRes.json());
@@ -73,16 +80,18 @@ export default function ManageAchievementUsersPage() {
 	// Fetch the selected item's owners and update the form state
 	useEffect(() => {
 		if (!selectedItemId) {
-			setValue('userIds', []);
+			setValue("userIds", []);
 			return;
 		}
 
 		const fetchItemOwners = async () => {
 			setIsOwnersLoading(true);
 			try {
-				const response = await fetch(`/api/inventory/item/${selectedItemId}`);
+				const response = await fetch(
+					`/api/inventory/item/${selectedItemId}`
+				);
 				const ownerIds: number[] = await response.json();
-				setValue('userIds', ownerIds);
+				setValue("userIds", ownerIds);
 			} catch (error) {
 				console.error("Failed to fetch item owners:", error);
 			} finally {
@@ -103,61 +112,92 @@ export default function ManageAchievementUsersPage() {
 
 			if (!response.ok) {
 				const errorData = await response.json();
-				setMessage(errorData.error || "Failed to sync achievement owners");
-				setMessageType('danger');
+				setMessage(
+					errorData.error || "Failed to sync achievement owners"
+				);
+				setMessageType("danger");
 			} else {
 				setMessage("Achievement owners updated successfully!");
-				setMessageType('success');
-				setValue('itemId', ''); // Reset item selection
-				setSelectedItemId('');
+				setMessageType("success");
+				setValue("itemId", ""); // Reset item selection
+				setSelectedItemId("");
 				await refreshBalance(); // Refresh balance after update
 			}
 		} catch (error) {
 			setMessage("An unexpected error occurred while updating owners.");
-			setMessageType('danger');
+			setMessageType("danger");
 		}
 	};
 
 	if (isLoading) {
-		return <p className="text-center text-gray-400">Loading form data...</p>;
+		return (
+			<p className="text-center text-gray-400">Loading form data...</p>
+		);
 	}
 
 	return (
 		<div>
 			{message && (
-				<Alert variant={messageType} message={message} onClose={() => setMessage(null)} />
+				<Alert
+					variant={messageType}
+					message={message}
+					onClose={() => setMessage(null)}
+				/>
 			)}
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
 					<FormTitle>Manage Achievement Owners</FormTitle>
-					<FormSubtitle>Select an achievement to manage which users own it.</FormSubtitle>
+					<FormSubtitle>
+						Select an achievement to manage which users own it.
+					</FormSubtitle>
 
 					<FormGroup>
 						<FormSelect
 							label="Achievement"
 							name="itemId"
-							options={items.map(item => ({ value: item.id, label: item.title }))}
+							options={items.map((item) => ({
+								value: item.id,
+								label: item.title,
+							}))}
 							onChange={(e) => setSelectedItemId(e.target.value)}
 						/>
 					</FormGroup>
 
 					<FormGroup>
-						<label className="block text-sm font-medium text-gray-300">Users {isOwnersLoading ? "(loading)" : ""}</label>
+						<label className="block text-sm font-medium text-gray-300">
+							Users {isOwnersLoading ? "(loading)" : ""}
+						</label>
 						{!selectedItemId ? (
-							<p className="text-gray-500 text-sm mt-1">Please select an achievement to see its owners.</p>
+							<p className="text-gray-500 text-sm mt-1">
+								Please select an achievement to see its owners.
+							</p>
 						) : (
-							<UserOptions items={users} currentUserIds={currentUserIds} setValue={setValue} />
+							<UserOptions
+								items={users}
+								currentUserIds={currentUserIds}
+								setValue={setValue}
+							/>
 						)}
 					</FormGroup>
 
-					<FormSubmit isLoading={isSubmitting}>Update Owners</FormSubmit>
+					<FormSubmit isLoading={isSubmitting}>
+						Update Owners
+					</FormSubmit>
 				</FormContainer>
 			</FormProvider>
 		</div>
 	);
 }
 
-function UserOptions({ items, currentUserIds, setValue }: { items: User[], currentUserIds: number[] | undefined, setValue: UseFormSetValue<{ itemId: string; userIds: number[]; }> }) {
+function UserOptions({
+	items,
+	currentUserIds,
+	setValue,
+}: {
+	items: User[];
+	currentUserIds: number[] | undefined;
+	setValue: UseFormSetValue<{ itemId: string; userIds: number[] }>;
+}) {
 	return (
 		<div className="mt-2 grid grid-cols-2 gap-4">
 			{items.map((item) => (
@@ -172,9 +212,12 @@ function UserOptions({ items, currentUserIds, setValue }: { items: User[], curre
 						const checked = e.target.checked;
 						const currentIds = currentUserIds || [];
 						if (checked) {
-							setValue('userIds', [...currentIds, item.id]);
+							setValue("userIds", [...currentIds, item.id]);
 						} else {
-							setValue('userIds', currentIds.filter(id => id !== item.id));
+							setValue(
+								"userIds",
+								currentIds.filter((id) => id !== item.id)
+							);
 						}
 					}}
 				/>

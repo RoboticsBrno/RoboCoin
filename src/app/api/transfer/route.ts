@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
 	const toId = parseInt(String(to), 10);
 
 	if (isNaN(toId)) {
-		return NextResponse.json({ error: "Invalid recipient" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Invalid recipient" },
+			{ status: 400 }
+		);
 	}
 
 	if (fromId === toId) {
@@ -40,7 +43,7 @@ export async function POST(req: NextRequest) {
 	}
 
 	try {
-		await prisma.$transaction(async tx => {
+		await prisma.$transaction(async (tx) => {
 			await transferBalance(tx, fromId, toId, parsedAmount, description);
 		});
 

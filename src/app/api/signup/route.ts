@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
-	const { login, name, password } = await req.json();
+	const { login, name, password, isOrg, isAdmin } = await req.json();
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -11,9 +13,22 @@ export async function POST(req: Request) {
 		where: { login },
 	});
 	if (existingUser) {
-		return new NextResponse("User already exists, use different login", {
-			status: 409,
-		});
+		return NextResponse.json(
+			{
+				error: "User already exists, use different login",
+			},
+			{
+				status: 409,
+			}
+		);
+	}
+
+	let is_org = false;
+	let is_admin = false;
+	const session = await getServerSession(authOptions);
+	if (session?.user.is_admin) {
+		is_org = isOrg || false;
+		is_admin = isAdmin || false;
 	}
 
 	try {
@@ -22,12 +37,15 @@ export async function POST(req: Request) {
 				login,
 				name,
 				password: hashedPassword,
-				is_org: false,
-				is_admin: false,
+				is_org,
+				is_admin,
 			},
 		});
 		return NextResponse.json(user);
 	} catch (error) {
-		return new NextResponse("Error creating user", { status: 500 });
+		return NextResponse.json(
+			{ error: "Error creating user" },
+			{ status: 500 }
+		);
 	}
 }

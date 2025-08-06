@@ -38,7 +38,10 @@ export default function TransferPage() {
 				.int()
 				.positive("Amount must be a positive integer")
 				.max(balance ?? 0, "Amount cannot exceed your balance"),
-			description: z.string().max(255, "Description cannot exceed 255 characters").optional(),
+			description: z
+				.string()
+				.max(255, "Description cannot exceed 255 characters")
+				.optional(),
 		});
 	}, [balance]);
 
@@ -58,7 +61,11 @@ export default function TransferPage() {
 				if (response.ok) {
 					const data = await response.json();
 					if (session?.user?.id) {
-						setUsers(data.filter((user: User) => user.id != session.user?.id));
+						setUsers(
+							data.filter(
+								(user: User) => user.id != session.user?.id
+							)
+						);
 					} else {
 						setUsers(data);
 					}
@@ -78,7 +85,11 @@ export default function TransferPage() {
 		const response = await fetch("/api/transfer", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ to: data.recipient, amount: data.amount, description: data.description }),
+			body: JSON.stringify({
+				to: data.recipient,
+				amount: data.amount,
+				description: data.description,
+			}),
 		});
 
 		const result = await response.json();
@@ -93,11 +104,10 @@ export default function TransferPage() {
 		}
 	};
 
-	const userOptions = users.map(user => ({
+	const userOptions = users.map((user) => ({
 		value: user.id.toString(),
 		label: user.name,
 	}));
-
 
 	return (
 		<>

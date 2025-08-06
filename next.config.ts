@@ -15,5 +15,5 @@ module.exports = {
 		// your project has TypeScript errors.
 		ignoreBuildErrors: true,
 	},
-}
+};
 export default nextConfig;

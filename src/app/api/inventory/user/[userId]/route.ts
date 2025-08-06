@@ -25,15 +25,16 @@ export async function GET(
 			select: {
 				item: true, // We only need the IDs of the items they have
 			},
-			
 		});
 
 		// Return a simple array of item IDs for easy lookup on the client
-		const ownedItemIds = inventory.map(inv => inv.item);
+		const ownedItemIds = inventory.map((inv) => inv.item);
 		return NextResponse.json(ownedItemIds);
-
 	} catch (error) {
 		console.error("Failed to fetch user inventory:", error);
-		return NextResponse.json({ error: "Failed to fetch user inventory" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to fetch user inventory" },
+			{ status: 500 }
+		);
 	}
 }

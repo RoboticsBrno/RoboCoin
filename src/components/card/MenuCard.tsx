@@ -9,7 +9,12 @@ interface CardProps {
 	type?: "org" | "admin";
 }
 
-export default function Card({ href, title, description, type }: CardProps) {
+export default function MenuCard({
+	href,
+	title,
+	description,
+	type,
+}: CardProps) {
 	const { is_org, is_admin } = useUserRole();
 
 	if (type === "org" && !is_org) return null;

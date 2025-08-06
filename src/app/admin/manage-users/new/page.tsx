@@ -11,28 +11,28 @@ import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 import Alert from "@/components/Alert";
 import { useState } from "react";
+import FormCheckbox from "@/components/form/FormCheckbox";
 
-// Zod schema for the form validation
-const createAchievementSchema = z.object({
-	title: z.string().min(1, { message: "Title is required" }),
-	description: z.string().optional(),
-	price: z.coerce
-		.number()
-		.int()
-		.min(0, { message: "Price must be a positive number" })
-		.optional(),
+const createUserSchema = z.object({
+	login: z.string().min(1, { message: "Login is required" }),
+	name: z.string().min(1, { message: "Name is required" }),
+	password: z
+		.string()
+		.min(6, { message: "Password must be at least 6 characters" }),
+	isOrg: z.boolean().default(false),
+	isAdmin: z.boolean().default(false),
 });
 
-type CreateAchievementSchema = z.infer<typeof createAchievementSchema>;
+type CreateAchievementSchema = z.infer<typeof createUserSchema>;
 
-export default function CreateAchievementPage() {
+export default function CreateUserPage() {
 	const [message, setMessage] = useState<string | null>(null);
 	const [messageType, setMessageType] = useState<"success" | "danger">(
 		"success"
 	);
 
 	const methods = useForm<CreateAchievementSchema>({
-		resolver: zodResolver(createAchievementSchema),
+		resolver: zodResolver(createUserSchema),
 	});
 	const {
 		handleSubmit,
@@ -41,7 +41,7 @@ export default function CreateAchievementPage() {
 
 	const onFormSubmit = async (data: CreateAchievementSchema) => {
 		try {
-			const response = await fetch("/api/items", {
+			const response = await fetch("/api/signup", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -50,21 +50,17 @@ export default function CreateAchievementPage() {
 			});
 
 			if (response.ok) {
-				const newAchievement = await response.json();
-				setMessage(
-					`Achievement "${newAchievement.title}" created successfully!`
-				);
+				const newUser = await response.json();
+				setMessage(`User "${newUser.name}" created successfully!`);
 				setMessageType("success");
 				methods.reset(); // Reset the form after successful submission
 			} else {
 				const errorData = await response.json();
-				setMessage(errorData.error || "Failed to create achievement");
+				setMessage(errorData.error || "Failed to create user");
 				setMessageType("danger");
 			}
-		} catch (error) {
-			setMessage(
-				"An unexpected error occurred while creating the achievement."
-			);
+		} catch (error: any) {
+			setMessage("An unexpected error occurred while creating user.");
 			setMessageType("danger");
 		}
 	};
@@ -74,43 +70,62 @@ export default function CreateAchievementPage() {
 			{message && <Alert variant={messageType} message={message} />}
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-					<FormTitle>Create New Achievement</FormTitle>
+					<FormTitle>Create New User</FormTitle>
 					<FormSubtitle>
-						Fill in the details for the new achievement.
+						Fill in the details for the new user.
 					</FormSubtitle>
 
 					<FormGroup>
 						<FormInput
-							label="Title"
-							id="title"
-							name="title"
+							label="Login"
+							id="login"
+							name="login"
 							type="text"
-							placeholder="e.g., 'First Place in Hackathon'"
+							placeholder="e.g., 'jirkavacha'"
 						/>
 					</FormGroup>
 
 					<FormGroup>
 						<FormInput
-							label="Description"
-							id="description"
-							name="description"
+							label="Name"
+							id="name"
+							name="name"
 							type="text"
-							placeholder="A short description of the achievement."
+							placeholder="e.g., 'Jirka Vacha'"
 						/>
 					</FormGroup>
 
 					<FormGroup>
 						<FormInput
-							label="Price (optional)"
-							id="price"
-							name="price"
-							type="number"
-							placeholder="0"
+							label="Password"
+							id="password"
+							name="password"
+							type="password"
+							autoComplete="new-password"
+							placeholder="Enter a secure password"
+						/>
+					</FormGroup>
+
+					<FormGroup>
+						<FormCheckbox
+							label="Is Org"
+							id="isOrg"
+							name="isOrg"
+							type="checkbox"
+						/>
+					</FormGroup>
+
+					<FormGroup>
+						<FormCheckbox
+							label="Is Admin"
+							id="isAdmin"
+							name="isAdmin"
+							type="checkbox"
 						/>
 					</FormGroup>
 
 					<FormSubmit isLoading={isSubmitting}>
-						Create Achievement
+						Create User
 					</FormSubmit>
 				</FormContainer>
 			</FormProvider>

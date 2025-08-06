@@ -1,6 +1,6 @@
 "use client";
 
-import Card from "@/components/Card";
+import MenuCard from "@/components/card/MenuCard";
 import { useUserRole } from "@/hooks/useUserRole";
 
 interface CardProps {
@@ -29,6 +29,11 @@ export default function Home() {
 			description: "Transfer money to other people.",
 			href: "/transfer",
 		},
+		{
+			title: "Transactions",
+			description: "View your transaction history.",
+			href: "/transactions",
+		},
 	];
 	const orgCards: CardProps[] = [
 		{
@@ -41,7 +46,7 @@ export default function Home() {
 		{
 			title: "Manage Users",
 			description: "Administer user accounts and permissions.",
-			href: "/manage-users",
+			href: "/admin/manage-users",
 		},
 	];
 
@@ -49,7 +54,7 @@ export default function Home() {
 		<>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-gray-800 p-4 rounded-lg justify-items-center">
 				{userCards.map((card) => (
-					<Card
+					<MenuCard
 						key={card.title}
 						title={card.title}
 						description={card.description}
@@ -60,7 +65,7 @@ export default function Home() {
 			{is_org && (
 				<div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-blue-900 p-4 rounded-lg justify-items-center">
 					{orgCards.map((card) => (
-						<Card
+						<MenuCard
 							key={card.title}
 							title={card.title}
 							description={card.description}
@@ -73,7 +78,7 @@ export default function Home() {
 			{is_admin && (
 				<div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-red-900 p-4 rounded-lg justify-items-center">
 					{adminCards.map((card) => (
-						<Card
+						<MenuCard
 							key={card.title}
 							title={card.title}
 							description={card.description}

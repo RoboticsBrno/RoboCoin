@@ -11,36 +11,38 @@ export async function syncUserInventory(
 		where: { user: userId },
 		select: {
 			item: true,
-			item_inventory_itemToitem: { select: { price: true } }
-		}
+			item_inventory_itemToitem: { select: { price: true } },
+		},
 	});
 
 	const currentItems = new Map(
-		currentInventory.map(inv => [
+		currentInventory.map((inv) => [
 			inv.item,
-			inv.item_inventory_itemToitem.price
+			inv.item_inventory_itemToitem.price,
 		])
 	);
 	const currentItemIds = new Set(currentItems.keys());
 
-	const idsToAdd = [...desiredItemIds].filter(id => !currentItemIds.has(id));
+	const idsToAdd = [...desiredItemIds].filter(
+		(id) => !currentItemIds.has(id)
+	);
 	const idsToRemove = [...currentItemIds].filter(
-		id => !desiredItemIds.has(id)
+		(id) => !desiredItemIds.has(id)
 	);
 
 	// Update inventory
 	if (idsToRemove.length > 0) {
 		await tx.inventory.deleteMany({
-			where: { user: userId, item: { in: idsToRemove } }
+			where: { user: userId, item: { in: idsToRemove } },
 		});
 	}
 	if (idsToAdd.length > 0) {
 		await tx.inventory.createMany({
-			data: idsToAdd.map(itemId => ({
+			data: idsToAdd.map((itemId) => ({
 				user: userId,
 				item: itemId,
-				quantity: 1
-			}))
+				quantity: 1,
+			})),
 		});
 	}
 
@@ -54,7 +56,7 @@ export async function syncUserInventory(
 	if (idsToAdd.length > 0) {
 		const addedItems = await tx.item.findMany({
 			where: { id: { in: idsToAdd } },
-			select: { price: true }
+			select: { price: true },
 		});
 		priceOfItemsToAdd = addedItems.reduce(
 			(sum, item) => sum + item.price,
@@ -68,7 +70,7 @@ export async function syncUserInventory(
 	if (netChange !== 0) {
 		await tx.balance.update({
 			where: { user: userId },
-			data: { amount: { increment: netChange } }
+			data: { amount: { increment: netChange } },
 		});
 	}
 }
@@ -80,7 +82,7 @@ export async function syncItemHolders(
 ) {
 	const item = await tx.item.findUnique({
 		where: { id: itemId },
-		select: { price: true }
+		select: { price: true },
 	});
 
 	if (!item) {
@@ -90,30 +92,30 @@ export async function syncItemHolders(
 
 	const currentInventory = await tx.inventory.findMany({
 		where: { item: itemId },
-		select: { user: true }
+		select: { user: true },
 	});
-	const currentUserIds = new Set(currentInventory.map(inv => inv.user));
+	const currentUserIds = new Set(currentInventory.map((inv) => inv.user));
 
 	const usersToAdd = [...desiredUserIds].filter(
-		id => !currentUserIds.has(id)
+		(id) => !currentUserIds.has(id)
 	);
 	const usersToRemove = [...currentUserIds].filter(
-		id => !desiredUserIds.has(id)
+		(id) => !desiredUserIds.has(id)
 	);
 
 	// Update inventory
 	if (usersToRemove.length > 0) {
 		await tx.inventory.deleteMany({
-			where: { item: itemId, user: { in: usersToRemove } }
+			where: { item: itemId, user: { in: usersToRemove } },
 		});
 	}
 	if (usersToAdd.length > 0) {
 		await tx.inventory.createMany({
-			data: usersToAdd.map(userId => ({
+			data: usersToAdd.map((userId) => ({
 				user: userId,
 				item: itemId,
-				quantity: 1
-			}))
+				quantity: 1,
+			})),
 		});
 	}
 
@@ -122,13 +124,13 @@ export async function syncItemHolders(
 		if (usersToRemove.length > 0) {
 			await tx.balance.updateMany({
 				where: { user: { in: usersToRemove } },
-				data: { amount: { decrement: itemPrice } }
+				data: { amount: { decrement: itemPrice } },
 			});
 		}
 		if (usersToAdd.length > 0) {
 			await tx.balance.updateMany({
 				where: { user: { in: usersToAdd } },
-				data: { amount: { increment: itemPrice } }
+				data: { amount: { increment: itemPrice } },
 			});
 		}
 	}

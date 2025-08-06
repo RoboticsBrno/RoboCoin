@@ -1,0 +1,65 @@
+"use client";
+
+import { useMemo } from "react";
+import Card from "@/components/card/Card";
+
+interface Transaction {
+	id: number;
+	sender: { id: number; name: string | null };
+	receiver: { id: number; name: string | null };
+	amount: number;
+	created_at: string;
+	description?: string | null;
+	user_transaction_senderTouser?: { id: number; name: string | null };
+	user_transaction_receiverTouser?: { id: number; name: string | null };
+}
+
+interface TransactionsTableProps {
+	transactions: Transaction[];
+	userId: number;
+}
+
+export default function TransactionsTable({
+	transactions,
+	userId,
+}: TransactionsTableProps) {
+	console.log("Transactions:", transactions);
+	const processedTransactions = useMemo(() => {
+		console.log("Processing transactions for user ID:", userId);
+		return transactions.map((tx) => ({
+			...tx,
+			isOutgoing: tx.sender.id === userId,
+			peer:
+				tx.sender.id === userId
+					? tx.user_transaction_receiverTouser
+					: tx.user_transaction_receiverTouser,
+		}));
+	}, [transactions, userId]);
+	console.log("Processed transactions:", processedTransactions);
+
+	return (
+		<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+			{processedTransactions.map((tx) => (
+				<Card key={tx.id}>
+					<h2 className="text-xl font-semibold text-white mb-2">
+						{tx.peer?.name || "Unknown User"}
+					</h2>
+					{tx.description && (
+						<p className="text-gray-400 mb-4">
+							{tx.description || "No description available"}
+						</p>
+					)}
+					{tx.isOutgoing ? (
+						<p className="text-red-400 font-bold">
+							- ${tx.amount.toFixed(2)}
+						</p>
+					) : (
+						<p className="text-green-400 font-bold">
+							+ ${tx.amount.toFixed(2)}
+						</p>
+					)}
+				</Card>
+			))}
+		</div>
+	);
+}

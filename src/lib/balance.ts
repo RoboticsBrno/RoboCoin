@@ -10,7 +10,7 @@ export async function transferBalance(
 	description: string = "Balance transfer"
 ) {
 	const fromBalance = await tx.balance.findUnique({
-		where: { user: fromId }
+		where: { user: fromId },
 	});
 
 	if (!fromBalance || fromBalance.amount < amount) {
@@ -19,12 +19,12 @@ export async function transferBalance(
 
 	await tx.balance.update({
 		where: { user: fromId },
-		data: { amount: { decrement: amount } }
+		data: { amount: { decrement: amount } },
 	});
 
 	await tx.balance.update({
 		where: { user: toId },
-		data: { amount: { increment: amount } }
+		data: { amount: { increment: amount } },
 	});
 
 	await tx.transaction.create({
@@ -34,6 +34,6 @@ export async function transferBalance(
 			amount,
 			created_at: new Date(),
 			description,
-		}
+		},
 	});
 }

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import FormContainer from "@/components/form/FormContainer";
 import FormTitle from "@/components/form/FormTitle";
 import FormSubtitle from "@/components/form/FormSubtitle";
@@ -16,15 +16,22 @@ import FormSubmit from "@/components/form/FormSubmit";
 const signupSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
 	name: z.string().min(1, { message: "Name is required" }),
-	password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+	password: z
+		.string()
+		.min(6, { message: "Password must be at least 6 characters" }),
 });
 
 type SignupSchema = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
 	const router = useRouter();
-	const methods = useForm<SignupSchema>({ resolver: zodResolver(signupSchema) });
-	const { handleSubmit, formState: { isSubmitting } } = methods;
+	const methods = useForm<SignupSchema>({
+		resolver: zodResolver(signupSchema),
+	});
+	const {
+		handleSubmit,
+		formState: { isSubmitting },
+	} = methods;
 
 	const onFormSubmit = async (data: SignupSchema) => {
 		const response = await fetch("/api/signup", {
@@ -57,7 +64,9 @@ export default function SignupPage() {
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
 				<FormTitle>Create an account</FormTitle>
-				<FormSubtitle>Join us! Please fill in your details to get started.</FormSubtitle>
+				<FormSubtitle>
+					Join us! Please fill in your details to get started.
+				</FormSubtitle>
 				<FormGroup>
 					<FormInput
 						label="Login"
@@ -67,12 +76,7 @@ export default function SignupPage() {
 					/>
 				</FormGroup>
 				<FormGroup>
-					<FormInput
-						label="Name"
-						id="name"
-						name="name"
-						type="text"
-					/>
+					<FormInput label="Name" id="name" name="name" type="text" />
 				</FormGroup>
 				<FormGroup>
 					<FormInput

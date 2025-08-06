@@ -1,14 +1,23 @@
-import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import React from "react";
+import { useFormContext } from "react-hook-form";
 
-interface FormCheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface FormCheckboxProps
+	extends React.InputHTMLAttributes<HTMLInputElement> {
 	label: string;
 	name: string;
 	showError?: boolean;
 }
 
-export default function FormCheckbox({ label, name, showError = true, ...props }: FormCheckboxProps) {
-	const { register, formState: { errors } } = useFormContext();
+export default function FormCheckbox({
+	label,
+	name,
+	showError = true,
+	...props
+}: FormCheckboxProps) {
+	const {
+		register,
+		formState: { errors },
+	} = useFormContext();
 	const error = errors[name]?.message as string | undefined;
 
 	return (
@@ -23,7 +32,10 @@ export default function FormCheckbox({ label, name, showError = true, ...props }
 				/>
 			</div>
 			<div className="ml-3 text-sm">
-				<label htmlFor={props.id || name} className="font-medium text-gray-300">
+				<label
+					htmlFor={props.id || name}
+					className="font-medium text-gray-300"
+				>
 					{label}
 				</label>
 				{error && showError && <p className="text-red-500">{error}</p>}

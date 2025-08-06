@@ -1,6 +1,6 @@
-import React from 'react';
-import { useFormContext } from 'react-hook-form';
-import FormCheckbox from './FormCheckbox';
+import React from "react";
+import { useFormContext } from "react-hook-form";
+import FormCheckbox from "./FormCheckbox";
 
 interface Option {
 	value: string | number;
@@ -13,13 +13,21 @@ interface FormCheckboxGroupProps {
 	options: Option[];
 }
 
-export default function FormCheckboxGroup({ label, name, options }: FormCheckboxGroupProps) {
-	const { formState: { errors } } = useFormContext();
+export default function FormCheckboxGroup({
+	label,
+	name,
+	options,
+}: FormCheckboxGroupProps) {
+	const {
+		formState: { errors },
+	} = useFormContext();
 	const error = errors[name]?.message as string | undefined;
 
 	return (
 		<fieldset>
-			<legend className="block text-sm font-medium text-gray-300 mb-2">{label}</legend>
+			<legend className="block text-sm font-medium text-gray-300 mb-2">
+				{label}
+			</legend>
 			<div className="grid grid-cols-2 gap-4">
 				{options.map((option) => (
 					<FormCheckbox

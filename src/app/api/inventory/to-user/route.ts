@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
 	}
 
 	const desiredItemIds = new Set(
-		itemIds.map(id => parseInt(String(id), 10)).filter(id => !isNaN(id))
+		itemIds.map((id) => parseInt(String(id), 10)).filter((id) => !isNaN(id))
 	);
 
 	try {
-		await prisma.$transaction(async tx => {
+		await prisma.$transaction(async (tx) => {
 			await syncUserInventory(tx, parsedUserId, desiredItemIds);
 		});
 

@@ -24,7 +24,10 @@ export const authOptions: AuthOptions = {
 					throw new Error("User not found");
 				}
 
-				const isValid = bcrypt.compareSync(credentials.password, user.password);
+				const isValid = bcrypt.compareSync(
+					credentials.password,
+					user.password
+				);
 
 				if (!isValid) {
 					throw new Error("Invalid password");
@@ -34,7 +37,14 @@ export const authOptions: AuthOptions = {
 					where: { user: user.id },
 				});
 
-				return { id: user.id.toString(), name: user.name, login: user.login, is_org: user.is_org, is_admin: user.is_admin, balance: balance?.amount || 0 };
+				return {
+					id: user.id.toString(),
+					name: user.name,
+					login: user.login,
+					is_org: user.is_org,
+					is_admin: user.is_admin,
+					balance: balance?.amount || 0,
+				};
 			},
 		}),
 	],
@@ -46,10 +56,21 @@ export const authOptions: AuthOptions = {
 		secret: process.env.NEXTAUTH_SECRET,
 	},
 	callbacks: {
-		async jwt({ token, user, trigger, session }: { token: any; user?: any; trigger?: string; session?: any }) {
+		async jwt({
+			token,
+			user,
+			trigger,
+			session,
+		}: {
+			token: any;
+			user?: any;
+			trigger?: string;
+			session?: any;
+		}) {
 			// Initial sign-in
 			if (user) {
 				token.id = user.id;
+				token.name = user.name;
 				token.login = user.login;
 				token.is_org = user.is_org;
 				token.is_admin = user.is_admin;
@@ -66,6 +87,7 @@ export const authOptions: AuthOptions = {
 		async session({ session, token }: { session: any; token: any }) {
 			if (token) {
 				session.user.id = token.id;
+				session.user.name = token.name;
 				session.user.login = token.login;
 				session.user.is_org = token.is_org;
 				session.user.is_admin = token.is_admin;
