@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import TransactionsTable from "@/components/TransactionsTable";
 import Alert from "@/components/Alert";
 import PageTitle from "@/components/PageTitle";
+import Loader from "@/components/Loader";
 
 interface Transaction {
 	id: number;
@@ -46,7 +47,7 @@ export default function TransactionsPage() {
 		return (
 			<>
 				<PageTitle>Transactions</PageTitle>
-				<p>Loading transactions...</p>;
+				<Loader />
 			</>
 		);
 	}

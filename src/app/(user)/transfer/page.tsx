@@ -15,6 +15,7 @@ import FormSubmit from "@/components/form/FormSubmit";
 import Alert from "@/components/Alert";
 import FormTitle from "@/components/form/FormTitle";
 import { useBalance } from "@/hooks/useBalance";
+import Loader from "@/components/Loader";
 
 interface User {
 	id: number;
@@ -96,7 +97,7 @@ export default function TransferPage() {
 
 		if (response.ok) {
 			setSuccess("Transfer successful!");
-			methods.reset({ recipient: "", amount: 0 });
+			methods.reset();
 			refreshBalance();
 			router.refresh();
 		} else {
@@ -117,7 +118,7 @@ export default function TransferPage() {
 				<FormContainer onSubmit={handleSubmit(onSubmit)}>
 					<FormTitle>Transfer Balance</FormTitle>
 					{loading ? (
-						<p>Loading...</p>
+						<Loader />
 					) : (
 						<>
 							<FormGroup>

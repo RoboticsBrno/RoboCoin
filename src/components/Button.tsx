@@ -18,6 +18,7 @@ const sizes = {
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	variant?: keyof typeof variants;
 	size?: keyof typeof sizes;
+	disabled?: boolean;
 }
 
 export default function Button({
@@ -25,10 +26,23 @@ export default function Button({
 	size = "md",
 	className,
 	children,
+	disabled = false,
 	...props
 }: ButtonProps) {
 	const variantClasses = variants[variant];
 	const sizeClasses = sizes[size];
+
+	if (disabled) {
+		return (
+			<button
+				className={`rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantClasses} ${sizeClasses} opacity-50 cursor-not-allowed ${className}`}
+				disabled
+				{...props}
+			>
+				{children}
+			</button>
+		);
+	}
 
 	return (
 		<button

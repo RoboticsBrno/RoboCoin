@@ -41,7 +41,15 @@ export async function POST(req: Request) {
 				is_admin,
 			},
 		});
-		return NextResponse.json(user);
+
+		const balance = await prisma.balance.create({
+			data: {
+				user: user.id,
+				amount: 0,
+			},
+		});
+
+		return NextResponse.json({ user, balance }, { status: 201 });
 	} catch (error) {
 		return NextResponse.json(
 			{ error: "Error creating user" },

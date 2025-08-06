@@ -34,6 +34,11 @@ export default function Home() {
 			description: "View your transaction history.",
 			href: "/transactions",
 		},
+		{
+			title: "Your Items",
+			description: "View and manage your items.",
+			href: "/items",
+		},
 	];
 	const orgCards: CardProps[] = [
 		{

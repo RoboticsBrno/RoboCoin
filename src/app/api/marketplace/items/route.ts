@@ -1,9 +1,8 @@
-import { getServerSession } from "next-auth/next";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
 
-// GET all items
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 
@@ -13,13 +12,19 @@ export async function GET(req: NextRequest) {
 
 	const items = await prisma.item.findMany({
 		where: {
-			from_marketplace: false,
-		}
+			on_marketplace: true,
+			user: {
+				deleted: false,
+			}
+		},
+		include: {
+			user: true,
+		},
 	});
+
 	return NextResponse.json(items);
 }
 
-// POST a new item
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 
@@ -27,11 +32,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	if (!session.user.is_org && !session.user.is_admin) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
-
-	const { title, description, price, on_marketplace } = await req.json();
+	const { title, description, price } = await req.json();
 
 	if (!title) {
 		return NextResponse.json(
@@ -56,7 +57,8 @@ export async function POST(req: NextRequest) {
 				title,
 				description,
 				price: price || 0,
-				on_marketplace: on_marketplace || false,
+				on_marketplace: true,
+				from_marketplace: true,
 				owner: parseInt(session.user.id),
 			},
 		});

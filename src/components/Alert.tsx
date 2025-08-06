@@ -17,6 +17,7 @@ interface AlertProps {
 	message: string;
 	icon?: React.ReactNode; // The new icon prop
 	isOpen?: boolean;
+	closeButton?: boolean;
 	onClose?: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function Alert({
 	message,
 	icon,
 	isOpen: defaultOpen = true,
+	closeButton = true,
 	onClose,
 }: AlertProps) {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -54,32 +56,33 @@ export default function Alert({
 				<div className="flex-grow">
 					<p className="text-md font-medium">{message}</p>
 				</div>
-
-				<div className="ml-auto pl-3">
-					<div className="-mx-1.5 -my-1.5">
-						<button
-							type="button"
-							onClick={handleClose}
-							className={`inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantClasses}`}
-						>
-							<span className="sr-only">Dismiss</span>
-							<svg
-								className="h-5 w-5"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
+				{closeButton ? (
+					<div className="ml-auto pl-3">
+						<div className="-mx-1.5 -my-1.5">
+							<button
+								type="button"
+								onClick={handleClose}
+								className={`inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantClasses}`}
 							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M6 18L18 6M6 6l12 12"
-								/>
-							</svg>
-						</button>
+								<span className="sr-only">Dismiss</span>
+								<svg
+									className="h-5 w-5"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M6 18L18 6M6 6l12 12"
+									/>
+								</svg>
+							</button>
+						</div>
 					</div>
-				</div>
+				) : null}
 			</div>
 		</div>
 	);

@@ -13,6 +13,7 @@ import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import Alert from "@/components/Alert";
 import { useBalance } from "@/hooks/useBalance";
+import Loader from "@/components/Loader";
 
 // Define types for the data we'll fetch
 interface User {
@@ -131,7 +132,7 @@ export default function ManageAchievementUsersPage() {
 
 	if (isLoading) {
 		return (
-			<p className="text-center text-gray-400">Loading form data...</p>
+			<Loader />
 		);
 	}
 

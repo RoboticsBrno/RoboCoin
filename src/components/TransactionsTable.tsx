@@ -5,8 +5,8 @@ import Card from "@/components/card/Card";
 
 interface Transaction {
 	id: number;
-	sender: { id: number; name: string | null };
-	receiver: { id: number; name: string | null };
+	sender: number;
+	receiver: number;
 	amount: number;
 	created_at: string;
 	description?: string | null;
@@ -28,9 +28,9 @@ export default function TransactionsTable({
 		console.log("Processing transactions for user ID:", userId);
 		return transactions.map((tx) => ({
 			...tx,
-			isOutgoing: tx.sender.id === userId,
+			isOutgoing: tx.sender == userId,
 			peer:
-				tx.sender.id === userId
+				tx.sender == userId
 					? tx.user_transaction_receiverTouser
 					: tx.user_transaction_receiverTouser,
 		}));

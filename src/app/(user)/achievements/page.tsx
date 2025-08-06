@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Card from "@/components/card/Card";
 import PageTitle from "@/components/PageTitle";
+import Loader from "@/components/Loader";
 
 // Define the type for a single achievement based on the API response
 interface Achievement {
@@ -48,9 +49,7 @@ export default function AchievementsPage() {
 		<div className="container mx-auto px-4 py-8">
 			<PageTitle>Your Achievements</PageTitle>
 			{isLoading ? (
-				<p className="text-center text-gray-400">
-					Loading achievements...
-				</p>
+				<Loader />
 			) : achievements.length > 0 ? (
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 					{achievements.map((achievement) => (

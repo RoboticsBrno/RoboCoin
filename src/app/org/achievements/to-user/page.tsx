@@ -13,8 +13,8 @@ import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import Alert from "@/components/Alert";
 import { useBalance } from "@/hooks/useBalance";
+import Loader from "@/components/Loader";
 
-// Define types for the data we'll fetch
 interface User {
 	id: number;
 	name: string;
@@ -27,7 +27,6 @@ interface Item {
 	price: number;
 }
 
-// Zod schema for the form validation
 const syncSchema = z.object({
 	userId: z.string().min(1, { message: "Please select a user" }),
 	itemIds: z.array(z.coerce.number()),
@@ -58,10 +57,8 @@ export default function ManageUserAchievementsPage() {
 		formState: { isSubmitting },
 	} = methods;
 
-	// Watch the itemIds field to get its current value for rendering
 	const currentItemIds = watch("itemIds");
 
-	// Fetch users and items on initial load
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -80,7 +77,6 @@ export default function ManageUserAchievementsPage() {
 		fetchData();
 	}, []);
 
-	// Fetch the selected user's inventory and update the form state
 	useEffect(() => {
 		if (!selectedUserId) {
 			setValue("itemIds", []);
@@ -123,7 +119,7 @@ export default function ManageUserAchievementsPage() {
 				setMessageType("success");
 				setValue("userId", "");
 				setSelectedUserId("");
-				await refreshBalance(); // Refresh the balance after updating achievements
+				await refreshBalance();
 			}
 		} catch (error) {
 			console.error("An unexpected error occurred:", error);
@@ -136,7 +132,7 @@ export default function ManageUserAchievementsPage() {
 
 	if (isLoading) {
 		return (
-			<p className="text-center text-gray-400">Loading form data...</p>
+			<Loader />
 		);
 	}
 

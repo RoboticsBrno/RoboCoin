@@ -12,6 +12,9 @@ export async function GET(req: NextRequest) {
 	}
 
 	const users = await prisma.user.findMany({
+		where: {
+			deleted: false, // Only fetch non-deleted users
+		},
 		select: {
 			id: true,
 			name: true,
@@ -90,8 +93,9 @@ export async function DELETE(req: NextRequest) {
 	}
 
 	try {
-		await prisma.user.delete({
+		await prisma.user.update({
 			where: { id: parseInt(id, 10) },
+			data: { deleted: true }, // Soft delete by marking as deleted
 		});
 
 		return NextResponse.json({ message: "User deleted successfully" });

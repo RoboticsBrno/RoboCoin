@@ -12,6 +12,7 @@ import Alert from "@/components/Alert";
 import { useState, useEffect } from "react";
 import { User } from "@/types";
 import FormSelect from "@/components/form/FormSelect";
+import Loader from "@/components/Loader";
 
 const deleteUserSchema = z.object({
 	userId: z.string().min(1, { message: "User is required" }),
@@ -20,6 +21,7 @@ const deleteUserSchema = z.object({
 type DeleteUserSchema = z.infer<typeof deleteUserSchema>;
 
 export default function DeleteUserPage() {
+	const [loading, setLoading] = useState<boolean>(true);
 	const [message, setMessage] = useState<string | null>(null);
 	const [messageType, setMessageType] = useState<"success" | "danger">(
 		"success"
@@ -37,6 +39,7 @@ export default function DeleteUserPage() {
 
 	useEffect(() => {
 		const fetchUsers = async () => {
+		setLoading(true);
 			try {
 				const response = await fetch("/api/users");
 				if (response.ok) {
@@ -46,11 +49,13 @@ export default function DeleteUserPage() {
 					setMessage("Failed to fetch users");
 					setMessageType("danger");
 				}
+			setLoading(false);
 			} catch (error) {
 				setMessage(
 					"An unexpected error occurred while fetching users."
 				);
 				setMessageType("danger");
+			setLoading(false);
 			}
 		};
 		fetchUsers();
@@ -94,20 +99,23 @@ export default function DeleteUserPage() {
 					<FormSubtitle>
 						Select a user to delete them from the system.
 					</FormSubtitle>
+					{loading ? (
+						<Loader />
+					) : (
+						<FormGroup>
+							<FormSelect
+								label="User"
+								name="userId"
+								options={users.map((user) => ({
+									value: user.id,
+									label: `${user.name} (${user.login})`,
+								}))}
+								value={selectedUserId}
+								onChange={(e) => setSelectedUserId(e.target.value)}
+							/>
+						</FormGroup>
 
-					<FormGroup>
-						<FormSelect
-							label="User"
-							name="userId"
-							options={users.map((user) => ({
-								value: user.id,
-								label: `${user.name} (${user.login})`,
-							}))}
-							value={selectedUserId}
-							onChange={(e) => setSelectedUserId(e.target.value)}
-						/>
-					</FormGroup>
-
+					)}
 					<FormSubmit
 						isLoading={isSubmitting}
 						className="bg-red-600 hover:bg-red-700"

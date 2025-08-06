@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import { User } from "@/types";
 import FormSelect from "@/components/form/FormSelect";
+import Loader from "@/components/Loader";
 
 const editUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -141,9 +142,7 @@ export default function EditUserPage() {
 						Select a user to edit their details.
 					</FormSubtitle>
 					{loading ? (
-						<p className="text-center text-gray-400">
-							Loading users...
-						</p>
+						<Loader />
 					) : (
 						<FormGroup>
 							<FormSelect

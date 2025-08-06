@@ -8,14 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model drizzle_migrations {
-  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
-  hash       String  @db.Text
-  created_at BigInt?
-
-  @@map("__drizzle_migrations")
-}
-
 model balance {
   id                      Int  @id @default(autoincrement())
   user                    Int  @unique(map: "balance_user_camp_unique")
@@ -43,6 +35,7 @@ model item {
   description                        String?       @db.VarChar(255)
   price                              Int           @default(0)
   on_marketplace                     Boolean
+  from_marketplace                   Boolean       @default(false)
   owner                              Int
   inventory_inventory_itemToitem     inventory[]   @relation("inventory_itemToitem")
   user                               user          @relation(fields: [owner], references: [id], onUpdate: Restrict, map: "item_owner_fk")
@@ -75,9 +68,18 @@ model user {
   password                               String        @default("abc") @db.VarChar(255)
   is_org                                 Boolean       @default(false)
   is_admin                               Boolean       @default(false)
+  deleted                                Boolean       @default(false)
   balance_balance_userTouser             balance?      @relation("balance_userTouser")
   inventory_inventory_userTouser         inventory[]   @relation("inventory_userTouser")
   item                                   item[]
   transaction_transaction_receiverTouser transaction[] @relation("transaction_receiverTouser")
   transaction_transaction_senderTouser   transaction[] @relation("transaction_senderTouser")
+}
+
+model drizzle_migrations {
+  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  hash       String  @db.Text
+  created_at BigInt?
+
+  @@map("__drizzle_migrations")
 }
