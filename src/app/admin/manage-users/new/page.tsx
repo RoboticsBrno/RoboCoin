@@ -19,8 +19,8 @@ const createUserSchema = z.object({
 	password: z
 		.string()
 		.min(6, { message: "Password must be at least 6 characters" }),
-	isOrg: z.boolean().default(false),
-	isAdmin: z.boolean().default(false),
+	isOrg: z.boolean(),
+	isAdmin: z.boolean(),
 });
 
 type CreateAchievementSchema = z.infer<typeof createUserSchema>;
@@ -33,6 +33,13 @@ export default function CreateUserPage() {
 
 	const methods = useForm<CreateAchievementSchema>({
 		resolver: zodResolver(createUserSchema),
+		defaultValues: {
+			login: "",
+			name: "",
+			password: "",
+			isOrg: false,
+			isAdmin: false,
+		},
 	});
 	const {
 		handleSubmit,
@@ -59,7 +66,7 @@ export default function CreateUserPage() {
 				setMessage(errorData.error || "Failed to create user");
 				setMessageType("danger");
 			}
-		} catch (error: any) {
+		} catch (error) {
 			setMessage("An unexpected error occurred while creating user.");
 			setMessageType("danger");
 		}

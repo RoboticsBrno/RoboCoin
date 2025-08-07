@@ -6,17 +6,10 @@ import TransactionsTable from "@/components/TransactionsTable";
 import Alert from "@/components/Alert";
 import PageTitle from "@/components/PageTitle";
 import Loader from "@/components/Loader";
-
-interface Transaction {
-	id: number;
-	from_user: { id: number; name: string | null };
-	to_user: { id: number; name: string | null };
-	amount: number;
-	created_at: string;
-}
+import { TransactionWithUsers } from "@/lib/transactions";
 
 export default function TransactionsPage() {
-	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [transactions, setTransactions] = useState<TransactionWithUsers[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const { data: session } = useSession();
@@ -28,7 +21,7 @@ export default function TransactionsPage() {
 			try {
 				const response = await fetch("/api/transactions");
 				if (response.ok) {
-					const data = await response.json();
+					const data: TransactionWithUsers[] = await response.json();
 					setTransactions(data);
 				} else {
 					setError("Failed to fetch transactions.");

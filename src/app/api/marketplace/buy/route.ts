@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Invalid item ID" }, { status: 400 });
 	}
 
-	const buyerId = parseInt(session.user.id);
+	const buyerId = session.user.id;
 
 	try {
 		const item = await prisma.item.findUnique({

@@ -1,7 +1,8 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { InventoryItem } from "@/lib/api";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -9,8 +10,8 @@ export async function GET(req: NextRequest) {
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
-	const achievements = await prisma.inventory.findMany({
-		where: { user: parseInt(session.user.id) },
+	const achievements: InventoryItem[] = await prisma.inventory.findMany({
+		where: { user: session.user.id },
 		include: {
 			item_inventory_itemToitem: true,
 		},

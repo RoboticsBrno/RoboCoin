@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
 
 // GET all items
 export async function GET(req: NextRequest) {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 				description,
 				price: price || 0,
 				on_marketplace: on_marketplace || false,
-				owner: parseInt(session.user.id),
+				owner: session.user.id,
 			},
 		});
 

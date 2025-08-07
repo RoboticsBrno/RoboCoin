@@ -6,6 +6,7 @@ import Loader from "@/components/Loader";
 import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { item } from "../../../../generated/prisma";
 
 export default function YourItemsPage() {
 	const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ export default function YourItemsPage() {
 					setMessageType("danger");
 					throw new Error("Failed to fetch items");
 				}
-				const data = await response.json();
+				const data: item[] = await response.json();
 				console.log("Fetched items:", data);
 				setItems(data);
 			} catch (error) {

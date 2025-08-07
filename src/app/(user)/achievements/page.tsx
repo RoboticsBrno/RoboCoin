@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Card from "@/components/card/Card";
 import PageTitle from "@/components/PageTitle";
 import Loader from "@/components/Loader";
+import { InventoryItem } from "@/lib/api";
 
-// Define the type for a single achievement based on the API response
 interface Achievement {
 	id: number;
 	title: string;
@@ -25,8 +25,8 @@ export default function AchievementsPage() {
 				if (!response.ok) {
 					throw new Error("Failed to fetch achievements");
 				}
-				const data = await response.json();
-				const parsedData: Achievement[] = data.map((item: any) => ({
+				const data: InventoryItem[] = await response.json();
+				const parsedData: Achievement[] = data.map((item: InventoryItem) => ({
 					id: item.item_inventory_itemToitem.id,
 					title: item.item_inventory_itemToitem.title,
 					description:

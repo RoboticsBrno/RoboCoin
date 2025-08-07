@@ -16,11 +16,14 @@ import { useState } from "react";
 const createAchievementSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
 	description: z.string().optional(),
-	price: z.coerce
-		.number()
-		.int()
-		.min(0, { message: "Price must be a positive number" })
-		.optional(),
+	price: z
+		.string()
+		.optional()
+		.refine((val) => {
+			if (!val || val === "") return true;
+			const num = Number(val);
+			return !isNaN(num) && num >= 0 && Number.isInteger(num);
+		}, { message: "Price must be a positive number" }),
 });
 
 type CreateAchievementSchema = z.infer<typeof createAchievementSchema>;
@@ -33,6 +36,11 @@ export default function CreateAchievementPage() {
 
 	const methods = useForm<CreateAchievementSchema>({
 		resolver: zodResolver(createAchievementSchema),
+		defaultValues: {
+			title: "",
+			description: "",
+			price: "",
+		},
 	});
 	const {
 		handleSubmit,
@@ -41,12 +49,17 @@ export default function CreateAchievementPage() {
 
 	const onFormSubmit = async (data: CreateAchievementSchema) => {
 		try {
+			const submitData = {
+				title: data.title,
+				description: data.description,
+				...(data.price && data.price !== "" && { price: Number(data.price) }),
+			};
 			const response = await fetch("/api/items", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(data),
+				body: JSON.stringify(submitData),
 			});
 
 			if (response.ok) {

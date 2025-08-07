@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { z } from "zod";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormContainer from "@/components/form/FormContainer";
 import FormTitle from "@/components/form/FormTitle";
@@ -29,7 +29,9 @@ interface Item {
 
 const syncSchema = z.object({
 	userId: z.string().min(1, { message: "Please select a user" }),
-	itemIds: z.array(z.coerce.number()),
+	itemIds: z.array(z.string()).refine((arr) => {
+		return arr.every(id => !isNaN(Number(id)) && Number(id) > 0);
+	}, { message: "All item IDs must be valid numbers" }),
 });
 
 type SyncSchema = z.infer<typeof syncSchema>;
@@ -90,7 +92,7 @@ export default function ManageUserAchievementsPage() {
 					`/api/inventory/user/${selectedUserId}`
 				);
 				const ownedItemIds: number[] = await response.json();
-				setValue("itemIds", ownedItemIds);
+				setValue("itemIds", ownedItemIds.map(id => id.toString())); // Convert to strings for the form
 			} catch (error) {
 				console.error("Failed to fetch user inventory:", error);
 			} finally {
@@ -103,10 +105,15 @@ export default function ManageUserAchievementsPage() {
 
 	const onFormSubmit = async (data: SyncSchema) => {
 		try {
+			const submitData = {
+				userId: data.userId,
+				itemIds: data.itemIds.map(id => Number(id)), // Convert to numbers for API
+			};
+
 			const response = await fetch("/api/inventory/to-user", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(data),
+				body: JSON.stringify(submitData),
 			});
 
 			if (!response.ok) {
@@ -189,8 +196,8 @@ function ItemOptions({
 	setValue,
 }: {
 	items: Item[];
-	currentItemIds: number[] | undefined;
-	setValue: UseFormSetValue<{ userId: string; itemIds: number[] }>;
+	currentItemIds: string[] | undefined;
+	setValue: UseFormSetValue<{ userId: string; itemIds: string[] }>;
 }) {
 	return (
 		<div className="mt-2 grid grid-cols-2 gap-4">
@@ -201,16 +208,18 @@ function ItemOptions({
 					label={`${item.title} (${item.price})`}
 					name="itemIds"
 					value={item.id}
-					checked={currentItemIds?.includes(item.id)}
+					checked={currentItemIds?.includes(item.id.toString())} // Convert to string for comparison
 					onChange={(e) => {
 						const checked = e.target.checked;
 						const currentIds = currentItemIds || [];
+						const itemIdString = item.id.toString(); // Convert to string
+
 						if (checked) {
-							setValue("itemIds", [...currentIds, item.id]);
+							setValue("itemIds", [...currentIds, itemIdString]);
 						} else {
 							setValue(
 								"itemIds",
-								currentIds.filter((id) => id !== item.id)
+								currentIds.filter((id) => id !== itemIdString)
 							);
 						}
 					}}

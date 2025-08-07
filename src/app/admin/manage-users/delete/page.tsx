@@ -10,9 +10,9 @@ import FormGroup from "@/components/form/FormGroup";
 import FormSubmit from "@/components/form/FormSubmit";
 import Alert from "@/components/Alert";
 import { useState, useEffect } from "react";
-import { User } from "@/types";
 import FormSelect from "@/components/form/FormSelect";
 import Loader from "@/components/Loader";
+import { UserSelect } from "@/lib/api";
 
 const deleteUserSchema = z.object({
 	userId: z.string().min(1, { message: "User is required" }),
@@ -26,7 +26,7 @@ export default function DeleteUserPage() {
 	const [messageType, setMessageType] = useState<"success" | "danger">(
 		"success"
 	);
-	const [users, setUsers] = useState<User[]>([]);
+	const [users, setUsers] = useState<UserSelect[]>([]);
 	const [selectedUserId, setSelectedUserId] = useState("");
 
 	const methods = useForm<DeleteUserSchema>({
@@ -84,7 +84,7 @@ export default function DeleteUserPage() {
 				setMessage(errorData.error || "Failed to delete user");
 				setMessageType("danger");
 			}
-		} catch (error: any) {
+		} catch (error) {
 			setMessage("An unexpected error occurred while deleting user.");
 			setMessageType("danger");
 		}

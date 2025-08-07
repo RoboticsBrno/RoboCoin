@@ -12,9 +12,9 @@ import FormSubmit from "@/components/form/FormSubmit";
 import Alert from "@/components/Alert";
 import { useState, useEffect } from "react";
 import FormCheckbox from "@/components/form/FormCheckbox";
-import { User } from "@/types";
 import FormSelect from "@/components/form/FormSelect";
 import Loader from "@/components/Loader";
+import { UserSelect } from "@/lib/api";
 
 const editUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -24,8 +24,8 @@ const editUserSchema = z.object({
 		.min(6, { message: "Password must be at least 6 characters" })
 		.optional()
 		.or(z.literal("")),
-	isOrg: z.boolean().default(false),
-	isAdmin: z.boolean().default(false),
+	isOrg: z.boolean(),
+	isAdmin: z.boolean(),
 });
 
 type EditUserSchema = z.infer<typeof editUserSchema>;
@@ -35,13 +35,20 @@ export default function EditUserPage() {
 	const [messageType, setMessageType] = useState<"success" | "danger">(
 		"success"
 	);
-	const [users, setUsers] = useState<User[]>([]);
+	const [users, setUsers] = useState<UserSelect[]>([]);
 	const [selectedUserId, setSelectedUserId] = useState("");
-	const [selectedUser, setSelectedUser] = useState<User | null>(null);
+	const [selectedUser, setSelectedUser] = useState<UserSelect | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	const methods = useForm<EditUserSchema>({
 		resolver: zodResolver(editUserSchema),
+		defaultValues: {
+			login: "",
+			name: "",
+			password: "",
+			isOrg: false,
+			isAdmin: false,
+		},
 	});
 	const {
 		handleSubmit,
@@ -126,7 +133,7 @@ export default function EditUserPage() {
 				setMessage(errorData.error || "Failed to update user");
 				setMessageType("danger");
 			}
-		} catch (error: any) {
+		} catch (error) {
 			setMessage("An unexpected error occurred while updating user.");
 			setMessageType("danger");
 		}

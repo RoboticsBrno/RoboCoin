@@ -31,14 +31,21 @@ export default function TransferPage() {
 	const { data: session } = useSession();
 	const { refreshBalance, balance } = useBalance();
 
+
 	const transferSchema = useMemo(() => {
 		return z.object({
 			recipient: z.string().min(1, "Recipient is required"),
-			amount: z.coerce
-				.number()
-				.int()
-				.positive("Amount must be a positive integer")
-				.max(balance ?? 0, "Amount cannot exceed your balance"),
+			amount: z
+				.string()
+				.min(1, "Amount is required")
+				.refine((val) => {
+					const num = Number(val);
+					return !isNaN(num) && num > 0 && Number.isInteger(num);
+				}, "Amount must be a positive integer")
+				.refine((val) => {
+					const num = Number(val);
+					return num <= (balance ?? 0);
+				}, "Amount cannot exceed your balance"),
 			description: z
 				.string()
 				.max(255, "Description cannot exceed 255 characters")
@@ -88,7 +95,7 @@ export default function TransferPage() {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				to: data.recipient,
-				amount: data.amount,
+				amount: Number(data.amount),
 				description: data.description,
 			}),
 		});

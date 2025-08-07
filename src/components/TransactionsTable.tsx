@@ -2,20 +2,15 @@
 
 import { useMemo } from "react";
 import Card from "@/components/card/Card";
+import { TransactionWithUsers } from "@/lib/transactions";
 
-interface Transaction {
-	id: number;
-	sender: number;
+interface ProcessedTransaction extends TransactionWithUsers {
 	receiver: number;
 	amount: number;
-	created_at: string;
-	description?: string | null;
-	user_transaction_senderTouser?: { id: number; name: string | null };
-	user_transaction_receiverTouser?: { id: number; name: string | null };
 }
 
 interface TransactionsTableProps {
-	transactions: Transaction[];
+	transactions: TransactionWithUsers[];
 	userId: number;
 }
 

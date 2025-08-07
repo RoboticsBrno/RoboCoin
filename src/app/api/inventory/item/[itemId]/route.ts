@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { itemId: string } }
+	{ params }: { params: Promise<{ itemId: string }> }
 ) {
 	const session = await getServerSession(authOptions);
 
@@ -13,8 +13,8 @@ export async function GET(
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	params = await params;
-	const itemId = parseInt(params.itemId, 10);
+	const resolvedParams = await params;
+	const itemId = parseInt(resolvedParams.itemId, 10);
 
 	if (isNaN(itemId)) {
 		return NextResponse.json({ error: "Invalid Item ID" }, { status: 400 });

@@ -1,8 +1,6 @@
 "use client";
 
 import Alert from "@/components/Alert";
-import Card from "@/components/card/Card";
-import MenuCard from "@/components/card/MenuCard";
 import Item from "@/components/Item";
 import Loader from "@/components/Loader";
 import PageTitle from "@/components/PageTitle";
@@ -13,6 +11,9 @@ interface Offer {
 	title: string;
 	description: string;
 	price: number;
+	user?: {
+		name: string;
+	};
 }
 
 export default function OffersPage() {

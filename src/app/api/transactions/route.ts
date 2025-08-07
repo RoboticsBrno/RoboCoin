@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { getTransactions } from "@/lib/transactions";
+import { getTransactions, TransactionWithUsers } from "@/lib/transactions";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -12,7 +11,7 @@ export async function GET(req: NextRequest) {
 	}
 
 	try {
-		const transactions = await getTransactions(parseInt(session.user.id));
+		const transactions: TransactionWithUsers[] = await getTransactions(session.user.id);
 		console.log("Fetched transactions:", transactions);
 		return NextResponse.json(transactions);
 	} catch (error) {

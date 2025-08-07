@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 				price: price || 0,
 				on_marketplace: true,
 				from_marketplace: true,
-				owner: parseInt(session.user.id),
+				owner: session.user.id,
 			},
 		});
 

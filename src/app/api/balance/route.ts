@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 	}
 
 	const balance = await prisma.balance.findUnique({
-		where: { user: parseInt(session.user.id) },
+		where: { user: session.user.id },
 		select: { amount: true },
 	});
 

@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { transferBalance } from "@/lib/balance";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
 	}
 
-	const fromId = parseInt(session.user.id);
+	const fromId = session.user.id;
 	const toId = parseInt(String(to), 10);
 
 	if (isNaN(toId)) {

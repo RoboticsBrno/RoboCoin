@@ -1,7 +1,8 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
+import { Prisma } from "../../../../generated/prisma";
 
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -35,16 +36,21 @@ export async function POST(req: NextRequest) {
 	} catch (error) {
 		console.error("Failed to assign item:", error);
 		// Handle potential errors, e.g., user or item not found
-		if (error.code === "P2003") {
-			// Foreign key constraint failed
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			if (error.code === "P2003") {
+				// Foreign key constraint failed
+				return NextResponse.json(
+					{ error: "Invalid User ID or Item ID" },
+					{ status: 400 }
+				);
+			}
+		} else if (error instanceof Error) {
+			return NextResponse.json({ error: error.message }, { status: 400 });
+		} else {
 			return NextResponse.json(
-				{ error: "Invalid User ID or Item ID" },
-				{ status: 400 }
+				{ error: "Failed to assign item" },
+				{ status: 500 }
 			);
 		}
-		return NextResponse.json(
-			{ error: "Failed to assign item" },
-			{ status: 500 }
-		);
 	}
 }

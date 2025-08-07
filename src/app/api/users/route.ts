@@ -1,8 +1,9 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { authOptions } from "@/lib/auth";
+import { UserSelect } from "@/lib/api";
 
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const users = await prisma.user.findMany({
+	const users: UserSelect[] = await prisma.user.findMany({
 		where: {
 			deleted: false, // Only fetch non-deleted users
 		},
