@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 	}
 
 	const balance = await prisma.balance.findUnique({
-		where: { user: session.user.id },
+		where: { user: parseInt(session.user.id) },
 		select: { amount: true },
 	});
 

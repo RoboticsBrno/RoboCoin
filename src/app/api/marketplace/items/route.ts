@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 				price: price || 0,
 				on_marketplace: true,
 				from_marketplace: true,
-				owner: session.user.id,
+				owner: parseInt(session.user.id),
 			},
 		});
 

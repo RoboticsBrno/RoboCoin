@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 			on_marketplace: false,
 			transaction_transaction_itemToitem: {
 				some: {
-					receiver: session.user.id,
+					receiver: parseInt(session.user.id),
 				},
 			},
 		},

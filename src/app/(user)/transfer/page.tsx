@@ -71,7 +71,7 @@ export default function TransferPage() {
 					if (session?.user?.id) {
 						setUsers(
 							data.filter(
-								(user: User) => user.id != session.user?.id
+								(user: User) => user.id != parseInt(session.user?.id)
 							)
 						);
 					} else {

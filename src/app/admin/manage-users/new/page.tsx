@@ -58,7 +58,8 @@ export default function CreateUserPage() {
 
 			if (response.ok) {
 				const newUser = await response.json();
-				setMessage(`User "${newUser.name}" created successfully!`);
+				console.log(newUser);
+				setMessage(`User "${newUser.user.name}" created successfully!`);
 				setMessageType("success");
 				methods.reset(); // Reset the form after successful submission
 			} else {

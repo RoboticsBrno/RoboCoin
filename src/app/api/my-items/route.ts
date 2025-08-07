@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const userId = session.user.id;
+	const userId = parseInt(session.user.id);
 
 	try {
 		const items: item[] = await prisma.item.findMany({

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Invalid item ID" }, { status: 400 });
 	}
 
-	const buyerId = session.user.id;
+	const buyerId = parseInt(session.user.id);
 
 	try {
 		const item = await prisma.item.findUnique({

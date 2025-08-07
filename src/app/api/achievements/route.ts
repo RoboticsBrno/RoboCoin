@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 	const achievements: InventoryItem[] = await prisma.inventory.findMany({
-		where: { user: session.user.id },
+		where: { user: parseInt(session.user.id) },
 		include: {
 			item_inventory_itemToitem: true,
 		},

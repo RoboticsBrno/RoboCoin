@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
 	}
 
-	const fromId = session.user.id;
+	const fromId = parseInt(session.user.id);
 	const toId = parseInt(String(to), 10);
 
 	if (isNaN(toId)) {

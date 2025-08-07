@@ -60,7 +60,7 @@ export default function TransactionsPage() {
 			{session?.user?.id && (
 				<TransactionsTable
 					transactions={transactions}
-					userId={session.user.id}
+					userId={parseInt(session.user.id)}
 				/>
 			)}
 		</>

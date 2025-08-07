@@ -124,7 +124,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 					{
 						session &&
 						item &&
-						session.user.id !== item.owner &&
+						parseInt(session.user.id) !== item.owner &&
 						item.on_marketplace && (
 							<div className="mt-4" >
 								<Button

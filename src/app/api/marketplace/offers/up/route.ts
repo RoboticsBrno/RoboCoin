@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 	const items = await prisma.item.findMany({
 		where: {
 			on_marketplace: true,
-			owner: session.user.id,
+			owner: parseInt(session.user.id),
 			transaction_transaction_itemToitem: {
 				none: {},
 			},
