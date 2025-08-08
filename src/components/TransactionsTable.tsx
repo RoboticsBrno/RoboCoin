@@ -27,7 +27,7 @@ export default function TransactionsTable({
 			peer:
 				tx.sender == userId
 					? tx.user_transaction_receiverTouser
-					: tx.user_transaction_receiverTouser,
+					: tx.user_transaction_senderTouser,
 		}));
 	}, [transactions, userId]);
 	console.log("Processed transactions:", processedTransactions);
