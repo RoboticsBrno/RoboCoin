@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
 	const users: UserSelect[] = await prisma.user.findMany({
 		where: {
-			deleted: false, // Only fetch non-deleted users
+			deleted: false,
 		},
 		select: {
 			id: true,
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 			login: true,
 			is_admin: true,
 			is_org: true,
-		}, // Only select public info
+		},
 	});
 
 	return NextResponse.json(users);

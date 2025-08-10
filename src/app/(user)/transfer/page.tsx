@@ -31,7 +31,6 @@ export default function TransferPage() {
 	const { data: session } = useSession();
 	const { refreshBalance, balance } = useBalance();
 
-
 	const transferSchema = useMemo(() => {
 		return z.object({
 			recipient: z.string().min(1, "Recipient is required"),
@@ -71,7 +70,8 @@ export default function TransferPage() {
 					if (session?.user?.id) {
 						setUsers(
 							data.filter(
-								(user: User) => user.id != parseInt(session.user?.id)
+								(user: User) =>
+									user.id != parseInt(session.user?.id)
 							)
 						);
 					} else {

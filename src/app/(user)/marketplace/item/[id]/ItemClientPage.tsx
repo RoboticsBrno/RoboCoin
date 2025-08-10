@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 import React, { useState, useEffect } from "react";
 import Alert from "@/components/Alert";
 import Button from "@/components/Button";
@@ -22,7 +22,6 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	const [isBuying, setIsBuying] = useState(false);
 	const [buyError, setBuyError] = useState<string | null>(null);
 	const [buySuccess, setBuySuccess] = useState<string | null>(null);
-
 
 	const router = useRouter();
 	const { balance, refreshBalance } = useBalance();
@@ -103,61 +102,56 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	return (
 		<>
 			{item && <PageTitle>{item.title} </PageTitle>}
-			<div className="flex justify-center items-center" >
-				<div className="w-full md:w-1/2" >
+			<div className="flex justify-center items-center">
+				<div className="w-full md:w-1/2">
 					{item && (
 						<>
-							<div className="text-lg" >
-								<span className="font-bold" > Description: </span>{" "}
+							<div className="text-lg">
+								<span className="font-bold">
+									{" "}
+									Description:{" "}
+								</span>{" "}
 								{item.description}
 							</div>
-							< div className="text-lg" >
-								<span className="font-bold" > Price: </span> $
+							<div className="text-lg">
+								<span className="font-bold"> Price: </span> $
 								{item.price.toFixed(2)}
 							</div>
-							< div className="text-lg" >
-								<span className="font-bold" > Owner: </span>{" "}
+							<div className="text-lg">
+								<span className="font-bold"> Owner: </span>{" "}
 								{item.user.name}
 							</div>
 						</>
 					)}
-					{
-						session &&
+					{session &&
 						item &&
 						parseInt(session.user.id) !== item.owner &&
 						item.on_marketplace && (
-							<div className="mt-4" >
+							<div className="mt-4">
 								<Button
 									onClick={handleBuy}
-									disabled={!canAfford || isBuying
-									}
+									disabled={!canAfford || isBuying}
 								>
 									{isBuying ? "Processing..." : "Buy Now"}
 								</Button>
-								{
-									!canAfford && (
-										<p className="text-red-500 text-sm mt-2" >
-											You don & apos;t have enough balance to buy
-											this item.
-										</p>
-									)
-								}
-								{
-									buyError && (
-										<Alert
-											variant="danger"
-											message={buyError}
-										/>
-									)
-								}
-								{
-									buySuccess && (
-										<Alert
-											variant="success"
-											message={buySuccess}
-										/>
-									)
-								}
+								{!canAfford && (
+									<p className="text-red-500 text-sm mt-2">
+										You don & apos;t have enough balance to
+										buy this item.
+									</p>
+								)}
+								{buyError && (
+									<Alert
+										variant="danger"
+										message={buyError}
+									/>
+								)}
+								{buySuccess && (
+									<Alert
+										variant="success"
+										message={buySuccess}
+									/>
+								)}
 							</div>
 						)}
 				</div>

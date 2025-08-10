@@ -29,9 +29,12 @@ interface Item {
 // Zod schema for the form validation
 const syncSchema = z.object({
 	itemId: z.string().min(1, { message: "Please select an achievement" }),
-	userIds: z.array(z.string()).refine((arr) => {
-		return arr.every(id => !isNaN(Number(id)) && Number(id) > 0);
-	}, { message: "All user IDs must be valid numbers" }),
+	userIds: z.array(z.string()).refine(
+		(arr) => {
+			return arr.every((id) => !isNaN(Number(id)) && Number(id) > 0);
+		},
+		{ message: "All user IDs must be valid numbers" }
+	),
 });
 
 type SyncSchema = z.infer<typeof syncSchema>;
@@ -94,7 +97,10 @@ export default function ManageAchievementUsersPage() {
 					`/api/inventory/item/${selectedItemId}`
 				);
 				const ownerIds: number[] = await response.json();
-				setValue("userIds", ownerIds.map(id => id.toString())); // Convert to strings for the form
+				setValue(
+					"userIds",
+					ownerIds.map((id) => id.toString())
+				); // Convert to strings for the form
 			} catch (error) {
 				console.error("Failed to fetch item owners:", error);
 			} finally {
@@ -109,7 +115,7 @@ export default function ManageAchievementUsersPage() {
 		try {
 			const submitData = {
 				itemId: data.itemId,
-				userIds: data.userIds.map(id => Number(id)), // Convert to numbers here
+				userIds: data.userIds.map((id) => Number(id)), // Convert to numbers here
 			};
 			const response = await fetch("/api/inventory/to-achievement", {
 				method: "POST",

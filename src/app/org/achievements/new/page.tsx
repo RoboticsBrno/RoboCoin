@@ -19,11 +19,14 @@ const createAchievementSchema = z.object({
 	price: z
 		.string()
 		.optional()
-		.refine((val) => {
-			if (!val || val === "") return true;
-			const num = Number(val);
-			return !isNaN(num) && num >= 0 && Number.isInteger(num);
-		}, { message: "Price must be a positive number" }),
+		.refine(
+			(val) => {
+				if (!val || val === "") return true;
+				const num = Number(val);
+				return !isNaN(num) && num >= 0 && Number.isInteger(num);
+			},
+			{ message: "Price must be a positive number" }
+		),
 });
 
 type CreateAchievementSchema = z.infer<typeof createAchievementSchema>;
@@ -52,7 +55,8 @@ export default function CreateAchievementPage() {
 			const submitData = {
 				title: data.title,
 				description: data.description,
-				...(data.price && data.price !== "" && { price: Number(data.price) }),
+				...(data.price &&
+					data.price !== "" && { price: Number(data.price) }),
 			};
 			const response = await fetch("/api/items", {
 				method: "POST",

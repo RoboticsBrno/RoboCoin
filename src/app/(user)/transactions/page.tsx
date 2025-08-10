@@ -9,7 +9,9 @@ import Loader from "@/components/Loader";
 import { TransactionWithUsers } from "@/lib/transactions";
 
 export default function TransactionsPage() {
-	const [transactions, setTransactions] = useState<TransactionWithUsers[]>([]);
+	const [transactions, setTransactions] = useState<TransactionWithUsers[]>(
+		[]
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const { data: session } = useSession();

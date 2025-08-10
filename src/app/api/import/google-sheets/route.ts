@@ -14,10 +14,15 @@ export async function POST(req: NextRequest) {
 	const body = await req.json();
 	const { sheetKey, sheetName } = body;
 
-	const csv = await fetch(`https://docs.google.com/spreadsheets/d/${sheetKey}/export?format=csv&gid=${sheetName}`);
+	const csv = await fetch(
+		`https://docs.google.com/spreadsheets/d/${sheetKey}/export?format=csv&gid=${sheetName}`
+	);
 
 	if (!csv.ok) {
-		return NextResponse.json({ error: "Failed to fetch CSV" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to fetch CSV" },
+			{ status: 500 }
+		);
 	}
 
 	const csvText = await csv.text();
@@ -28,7 +33,10 @@ export async function POST(req: NextRequest) {
 
 	if (parsedData.errors.length > 0) {
 		console.error("CSV parsing errors:", parsedData.errors);
-		return NextResponse.json({ error: "Error parsing CSV data" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Error parsing CSV data" },
+			{ status: 400 }
+		);
 	}
 
 	const data = parsedData.data;
@@ -38,14 +46,17 @@ export async function POST(req: NextRequest) {
 
 	await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay for demonstration
 
-	let response: { items: ImportItem[], userItems: UserItems } = { items: [], userItems: {} };
+	const response: { items: ImportItem[]; userItems: UserItems } = {
+		items: [],
+		userItems: {},
+	};
 
 	if (body.importItems) {
-		response['items'] = items;
+		response["items"] = items;
 	}
 
 	if (body.importUserItems) {
-		response['userItems'] = userItems;
+		response["userItems"] = userItems;
 	}
 
 	console.log("Response data:", response);
@@ -53,8 +64,8 @@ export async function POST(req: NextRequest) {
 	return NextResponse.json(response, { status: 200 });
 }
 
-const firstItemCol = 'Lekce 1';
-const usernameCol = 'Uživatelské jméno';
+const firstItemCol = "Lekce 1";
+const usernameCol = "Uživatelské jméno";
 
 function getItems(data: any[]) {
 	const item = data[0];
@@ -87,10 +98,9 @@ function getUserItems(data: any[]) {
 		}
 
 		for (const item of items) {
-			if (row[item] === 'TRUE') {
+			if (row[item] === "TRUE") {
 				usersWithItems[username][item] = true;
-			}
-			else if (row[item] === 'FALSE') {
+			} else if (row[item] === "FALSE") {
 				usersWithItems[username][item] = false;
 			}
 		}

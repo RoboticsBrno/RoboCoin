@@ -29,9 +29,12 @@ interface Item {
 
 const syncSchema = z.object({
 	userId: z.string().min(1, { message: "Please select a user" }),
-	itemIds: z.array(z.string()).refine((arr) => {
-		return arr.every(id => !isNaN(Number(id)) && Number(id) > 0);
-	}, { message: "All item IDs must be valid numbers" }),
+	itemIds: z.array(z.string()).refine(
+		(arr) => {
+			return arr.every((id) => !isNaN(Number(id)) && Number(id) > 0);
+		},
+		{ message: "All item IDs must be valid numbers" }
+	),
 });
 
 type SyncSchema = z.infer<typeof syncSchema>;
@@ -92,7 +95,10 @@ export default function ManageUserAchievementsPage() {
 					`/api/inventory/user/${selectedUserId}`
 				);
 				const ownedItemIds: number[] = await response.json();
-				setValue("itemIds", ownedItemIds.map(id => id.toString())); // Convert to strings for the form
+				setValue(
+					"itemIds",
+					ownedItemIds.map((id) => id.toString())
+				); // Convert to strings for the form
 			} catch (error) {
 				console.error("Failed to fetch user inventory:", error);
 			} finally {
@@ -107,7 +113,7 @@ export default function ManageUserAchievementsPage() {
 		try {
 			const submitData = {
 				userId: data.userId,
-				itemIds: data.itemIds.map(id => Number(id)), // Convert to numbers for API
+				itemIds: data.itemIds.map((id) => Number(id)), // Convert to numbers for API
 			};
 
 			const response = await fetch("/api/inventory/to-user", {

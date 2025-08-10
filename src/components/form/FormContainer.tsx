@@ -12,7 +12,9 @@ export default function FormContainer({
 	className = "",
 }: FormContainerProps) {
 	return (
-		<div className={`flex items-center justify-center bg-gray-900 ${className}`}>
+		<div
+			className={`flex items-center justify-center bg-gray-900 ${className}`}
+		>
 			<div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-md">
 				<form className="space-y-6" onSubmit={onSubmit}>
 					{children}

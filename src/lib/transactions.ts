@@ -8,7 +8,9 @@ export type TransactionWithUsers = Prisma.transactionGetPayload<{
 	};
 }>;
 
-export async function getTransactions(userId: number): Promise<TransactionWithUsers[]> {
+export async function getTransactions(
+	userId: number
+): Promise<TransactionWithUsers[]> {
 	const transactions = await prisma.transaction.findMany({
 		where: {
 			OR: [{ sender: userId }, { receiver: userId }],

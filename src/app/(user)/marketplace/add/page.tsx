@@ -13,7 +13,6 @@ import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubtitle from "@/components/form/FormSubtitle";
 
-
 const createItemSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
 	description: z.string().optional(),
@@ -21,7 +20,7 @@ const createItemSchema = z.object({
 		.string()
 		.min(1, { message: "Price is required" })
 		.refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-			message: "Price must be a positive number"
+			message: "Price must be a positive number",
 		}),
 });
 
@@ -46,7 +45,7 @@ export default function AddItemPage() {
 		try {
 			const submitData = {
 				...data,
-				price: Number(data.price)
+				price: Number(data.price),
 			};
 			const response = await fetch("/api/marketplace/items", {
 				method: "POST",

@@ -26,14 +26,16 @@ export default function AchievementsPage() {
 					throw new Error("Failed to fetch achievements");
 				}
 				const data: InventoryItem[] = await response.json();
-				const parsedData: Achievement[] = data.map((item: InventoryItem) => ({
-					id: item.item_inventory_itemToitem.id,
-					title: item.item_inventory_itemToitem.title,
-					description:
-						item.item_inventory_itemToitem.description || null,
-					price: item.item_inventory_itemToitem.price,
-					quantity: item.quantity || 1,
-				}));
+				const parsedData: Achievement[] = data.map(
+					(item: InventoryItem) => ({
+						id: item.item_inventory_itemToitem.id,
+						title: item.item_inventory_itemToitem.title,
+						description:
+							item.item_inventory_itemToitem.description || null,
+						price: item.item_inventory_itemToitem.price,
+						quantity: item.quantity || 1,
+					})
+				);
 				setAchievements(parsedData);
 			} catch (error) {
 				console.error(error);
