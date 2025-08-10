@@ -17,3 +17,6 @@ export type UserSelect = Prisma.userGetPayload<{
 		is_org: true;
 	};
 }>;
+
+export type UserItems = Record<string, Record<string, boolean>>;
+export type ImportItem = string;

@@ -53,6 +53,11 @@ export default function Home() {
 			description: "Administer user accounts and permissions.",
 			href: "/admin/manage-users",
 		},
+		{
+			title: "Add table import",
+			description: "Import data from Google Sheets.",
+			href: "/admin/import",
+		},
 	];
 
 	return (
