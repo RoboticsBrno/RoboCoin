@@ -60,8 +60,6 @@ export default function ManageAchievementUsersPage() {
 		watch,
 		formState: { isSubmitting },
 	} = methods;
-	const { refreshBalance } = useBalance();
-
 	const currentUserIds = watch("userIds");
 
 	// Fetch users and items on initial load
@@ -134,7 +132,6 @@ export default function ManageAchievementUsersPage() {
 				setMessageType("success");
 				setValue("itemId", ""); // Reset item selection
 				setSelectedItemId("");
-				await refreshBalance(); // Refresh balance after update
 			}
 		} catch (error) {
 			setMessage("An unexpected error occurred while updating owners.");

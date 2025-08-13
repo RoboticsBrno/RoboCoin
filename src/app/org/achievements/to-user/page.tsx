@@ -49,8 +49,6 @@ export default function ManageUserAchievementsPage() {
 	const [messageType, setMessageType] = useState<"success" | "danger">(
 		"success"
 	);
-	const { refreshBalance } = useBalance();
-
 	const methods = useForm<SyncSchema>({
 		resolver: zodResolver(syncSchema),
 		defaultValues: { userId: "", itemIds: [] },
@@ -132,7 +130,6 @@ export default function ManageUserAchievementsPage() {
 				setMessageType("success");
 				setValue("userId", "");
 				setSelectedUserId("");
-				await refreshBalance();
 			}
 		} catch (error) {
 			console.error("An unexpected error occurred:", error);

@@ -24,7 +24,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	const [buySuccess, setBuySuccess] = useState<string | null>(null);
 
 	const router = useRouter();
-	const { balance, refreshBalance } = useBalance();
+	const { balance } = useBalance();
 
 	useEffect(() => {
 		const fetchItem = async () => {
@@ -72,7 +72,6 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 			setBuyError(errorData.error);
 		} else {
 			setBuySuccess("Item purchased successfully!");
-			await refreshBalance();
 			router.push("/marketplace");
 		}
 

@@ -4,6 +4,41 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { Prisma } from "../../../../generated/prisma";
 
+export async function GET(req: NextRequest) {
+	const session = await getServerSession(authOptions);
+
+	if (!session?.user) {
+		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+	}
+
+	try {
+		const inventory = await prisma.inventory.findMany({
+			include: {
+				user_inventory_userTouser: {
+					select: { login: true },
+				},
+				item_inventory_itemToitem: {
+					select: { title: true },
+				},
+			},
+		});
+
+		const response = inventory.map((inv) => ({
+			userLogin: inv.user_inventory_userTouser.login,
+			itemTitle: inv.item_inventory_itemToitem.title,
+			quantity: inv.quantity,
+		}));
+
+		return NextResponse.json(response, { status: 200 });
+	} catch (error) {
+		console.error("Failed to fetch inventory:", error);
+		return NextResponse.json(
+			{ error: "Failed to fetch inventory" },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 

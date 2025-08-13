@@ -44,8 +44,6 @@ export async function POST(req: NextRequest) {
 	const items: ImportItem[] = getItems(data);
 	const userItems: UserItems = getUserItems(data);
 
-	await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay for demonstration
-
 	const response: { items: ImportItem[]; userItems: UserItems } = {
 		items: [],
 		userItems: {},

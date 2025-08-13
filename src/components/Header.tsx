@@ -1,12 +1,15 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import Button from "./Button";
 import { useBalance } from "@/hooks/useBalance";
 
 export default function Header() {
-	const { name, balance } = useBalance();
+	const { data: session } = useSession();
+	const { balance, isLoading } = useBalance();
+
+	const name = session?.user?.name;
 
 	return (
 		<header className="bg-gray-800 shadow-md">
@@ -19,7 +22,7 @@ export default function Header() {
 						<>
 							<span className="text-gray-300">{name}</span>
 							<span className="text-gray-300 font-bold">
-								Balance: {balance || 0}
+								Balance: {isLoading ? "..." : balance || 0}
 							</span>
 							<Button
 								onClick={() => signOut()}

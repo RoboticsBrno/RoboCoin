@@ -12,6 +12,7 @@ interface UserItemsListProps {
 	setUserItems: React.Dispatch<React.SetStateAction<UserItems>>;
 	existingItems: Set<string>;
 	existingUsers: Set<string>;
+	userNames: Record<string, string | null>;
 }
 
 export default function UserItemsList({
@@ -19,11 +20,13 @@ export default function UserItemsList({
 	setUserItems,
 	existingItems,
 	existingUsers,
+	userNames,
 }: UserItemsListProps) {
 	const [message, setMessage] = useState<string | null>(null);
 	const [messageType, setMessageType] = useState<"success" | "danger">(
 		"success"
 	);
+	const [hovered, setHovered] = useState({ row: -1, col: -1 });
 	const users = Object.keys(userItems);
 
 	if (users.length === 0) {
@@ -94,6 +97,30 @@ export default function UserItemsList({
 		});
 	};
 
+	const handleSelectAllRow = (userToSelect: string) => {
+		setUserItems((prevUserItems) => {
+			const newUserItems = JSON.parse(JSON.stringify(prevUserItems));
+			for (const item of existingItems) {
+				if (newUserItems[userToSelect].hasOwnProperty(item)) {
+					newUserItems[userToSelect][item] = true;
+				}
+			}
+			return newUserItems;
+		});
+	};
+
+	const handleDeselectAllRow = (userToDeselect: string) => {
+		setUserItems((prevUserItems) => {
+			const newUserItems = JSON.parse(JSON.stringify(prevUserItems));
+			for (const item of existingItems) {
+				if (newUserItems[userToDeselect].hasOwnProperty(item)) {
+					newUserItems[userToDeselect][item] = false;
+				}
+			}
+			return newUserItems;
+		});
+	};
+
 	const handleCheckboxChange = (
 		user: string,
 		item: string,
@@ -125,7 +152,6 @@ export default function UserItemsList({
 				return;
 			}
 
-			const result = await response.json();
 			setMessage("User items updated successfully!");
 			setMessageType("success");
 		} catch (error) {
@@ -150,21 +176,24 @@ export default function UserItemsList({
 				</div>
 			</div>
 			<form onSubmit={handleSubmit}>
-				<div className="overflow-x-auto">
-					<table className="min-w-full divide-y divide-gray-700">
-						<thead className="bg-gray-800">
-							<tr>
+				<div className="overflow-x-auto overflow-y-auto max-h-screen max-w-full w-screen">
+					<table
+						className="min-w-full divide-y divide-gray-700"
+						onMouseLeave={() => setHovered({ row: -1, col: -1 })}
+					>
+						<thead className="bg-gray-800 sticky top-0 z-10">
+							<tr className="divide-x divide-gray-700">
 								<th
 									scope="col"
-									className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6"
+									className={`sticky z-11 left-0 bg-gray-800 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6 ${hovered.row !== -1 ? "bg-gray-800" : ""}`}
 								>
 									User
 								</th>
-								{itemHeaders.map((item) => (
+								{itemHeaders.map((item, colIndex) => (
 									<th
 										key={item}
 										scope="col"
-										className={`px-3 py-3.5 text-left text-sm font-semibold ${!existingItems.has(item) ? "text-red-500" : "text-white"}`}
+										className={`px-3 py-3.5 text-left text-sm font-semibold ${!existingItems.has(item) ? "text-red-500" : "text-white"} ${hovered.col === colIndex ? "bg-gray-700" : ""}`}
 									>
 										<div className="flex flex-col items-center justify-between">
 											<span>{item}</span>
@@ -200,32 +229,97 @@ export default function UserItemsList({
 							</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-800 bg-gray-900">
-							{users.map((user) => (
-								<tr key={user}>
+							{users.map((user, rowIndex) => (
+								<tr
+									key={user}
+									className="divide-x divide-gray-800"
+								>
 									<td
-										className={`whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 ${!existingUsers.has(user) ? "text-red-500" : "text-white"} `}
+										className={`sticky left-0 z-10 whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 ${!existingUsers.has(user) ? "text-red-500" : "text-white"} ${hovered.row === rowIndex ? "bg-gray-800" : "bg-gray-900"}`}
 									>
-										{user}
+										<div className="flex items-center justify-between">
+											<span>
+												{userNames[user]
+													? `${userNames[user]} (${user})`
+													: user}
+											</span>
+											{existingUsers.has(user) && (
+												<div className="flex gap-1">
+													<button
+														type="button"
+														onClick={() =>
+															handleSelectAllRow(
+																user
+															)
+														}
+														className="text-xs p-1 rounded-full hover:bg-gray-700"
+													>
+														✓
+													</button>
+													<button
+														type="button"
+														onClick={() =>
+															handleDeselectAllRow(
+																user
+															)
+														}
+														className="text-xs p-1 rounded-full hover:bg-gray-700"
+													>
+														✗
+													</button>
+												</div>
+											)}
+										</div>
 									</td>
-									{itemHeaders.map((item) => (
+									{itemHeaders.map((item, colIndex) => (
 										<td
 											key={item}
-											className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center"
+											className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center ${
+												!existingItems.has(item) ||
+												!existingUsers.has(user)
+													? "cursor-not-allowed bg-gray-800"
+													: `cursor-pointer ${
+															userItems[user][
+																item
+															]
+																? "bg-green-800"
+																: "bg-red-800"
+														}`
+											} ${
+												(hovered.row === rowIndex &&
+													colIndex <= hovered.col) ||
+												(hovered.col === colIndex &&
+													rowIndex <= hovered.row)
+													? "brightness-125"
+													: ""
+											}`}
+											onMouseEnter={() =>
+												setHovered({
+													row: rowIndex,
+													col: colIndex,
+												})
+											}
+											onClick={() => {
+												if (
+													!existingItems.has(item) ||
+													!existingUsers.has(user)
+												)
+													return;
+												handleCheckboxChange(
+													user,
+													item,
+													!userItems[user][item]
+												);
+											}}
 										>
 											<input
 												type="checkbox"
+												readOnly
 												checked={
 													userItems[user][item] ===
 													true
 												}
-												onChange={(e) =>
-													handleCheckboxChange(
-														user,
-														item,
-														e.target.checked
-													)
-												}
-												className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+												className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 pointer-events-none"
 												disabled={
 													!existingItems.has(item) ||
 													!existingUsers.has(user)

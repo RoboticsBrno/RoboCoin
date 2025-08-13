@@ -46,6 +46,11 @@ export default function Home() {
 			description: "Add, edit, or delete achievements.",
 			href: "/org/achievements",
 		},
+		{
+			title: "Achievement Table",
+			description: "View achievement table.",
+			href: "/org/achievement-table",
+		},
 	];
 	const adminCards: CardProps[] = [
 		{

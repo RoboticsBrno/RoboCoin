@@ -1,35 +1,23 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
+import useSWR from "swr";
 
-const REFRESH_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useBalance() {
 	const { data: session, update } = useSession();
-	const [isLoading, setIsLoading] = useState(false);
 
-	const refreshBalance = useCallback(async () => {
-		if (isLoading) return;
-		setIsLoading(true);
-		try {
-			const response = await fetch("/api/balance");
-			if (!response.ok) {
-				throw new Error("Failed to fetch balance");
-			}
-			const data = await response.json();
+	const { data, isLoading } = useSWR("/api/balance", fetcher, {
+		refreshInterval: 5 * 60 * 1000,
+	});
 
-			await update({ balance: data.balance });
-		} catch (error) {
-			console.error("Failed to refresh balance:", error);
-		} finally {
-			setIsLoading(false);
-		}
-	}, [isLoading, update]);
 	useEffect(() => {
-		const interval = setInterval(refreshBalance, REFRESH_INTERVAL);
-		return () => clearInterval(interval);
-	}, [refreshBalance]);
+		if (data && data.balance !== session?.user?.balance) {
+			update({ balance: data.balance });
+		}
+	}, [data, session?.user?.balance, update]);
 
-	return { ...session?.user, refreshBalance, isLoading };
+	return { balance: session?.user?.balance, isLoading };
 }

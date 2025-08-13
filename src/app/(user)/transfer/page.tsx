@@ -29,7 +29,7 @@ export default function TransferPage() {
 	const [users, setUsers] = useState<User[]>([]);
 	const router = useRouter();
 	const { data: session } = useSession();
-	const { refreshBalance, balance } = useBalance();
+	const { balance } = useBalance();
 
 	const transferSchema = useMemo(() => {
 		return z.object({
@@ -105,7 +105,6 @@ export default function TransferPage() {
 		if (response.ok) {
 			setSuccess("Transfer successful!");
 			methods.reset();
-			refreshBalance();
 			router.refresh();
 		} else {
 			setError(result.error || "An unexpected error occurred.");

@@ -4,7 +4,7 @@ import PageTitle from "@/components/PageTitle";
 import { useState } from "react";
 import Alert from "@/components/Alert";
 import Loader from "@/components/Loader";
-import { UserItems } from "@/lib/api";
+import { UserItems, UserSelect } from "@/lib/api";
 import ImportForm from "./components/ImportForm";
 import type { ImportSchema } from "./components/ImportForm";
 import ImportedItemsList from "./components/ImportedItemsList";
@@ -23,6 +23,9 @@ export default function ImportPage() {
 	const [items, setItems] = useState<ItemFormData[]>([]);
 	const [existingItems, setExistingItems] = useState<Set<string>>(new Set());
 	const [existingUsers, setExistingUsers] = useState<Set<string>>(new Set());
+	const [userNames, setUserNames] = useState<Record<string, string | null>>(
+		{}
+	);
 
 	const onFormSubmit = async (data: ImportSchema) => {
 		try {
@@ -73,14 +76,18 @@ export default function ImportPage() {
 				);
 
 				const usersResponse = await fetch("/api/users");
-				const existingUsersData: { login: string }[] =
+				const existingUsersData: UserSelect[] =
 					await usersResponse.json();
 				const existingUsers = new Set(
-					existingUsersData.map(
-						(user: { login: string }) => user.login
-					)
+					existingUsersData.map((user) => user.login)
 				);
 				setExistingUsers(existingUsers);
+
+				const loginToNameMap: Record<string, string | null> = {};
+				for (const user of existingUsersData) {
+					loginToNameMap[user.login] = user.name;
+				}
+				setUserNames(loginToNameMap);
 
 				setItems(itemsFromSheet);
 				setUserItems(result.userItems || {});
@@ -120,6 +127,7 @@ export default function ImportPage() {
 								setUserItems={setUserItems}
 								existingItems={existingItems}
 								existingUsers={existingUsers}
+								userNames={userNames}
 							/>
 						)}
 						{items.length > 0 && (

@@ -15,10 +15,13 @@ export async function POST(req: NextRequest) {
 
 	try {
 		const allDbItems = await prisma.item.findMany({
-			select: { id: true, title: true },
+			select: { id: true, title: true, price: true },
 		});
 		const itemMap = new Map(
-			allDbItems.map((item) => [item.title, item.id])
+			allDbItems.map((item) => [
+				item.title,
+				{ id: item.id, price: item.price },
+			])
 		);
 
 		const userLogins = Object.keys(userItems);
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
 		const currentInventory = await prisma.inventory.findMany({
 			where: {
 				user: { in: userIds },
-				item: { in: itemIds },
+				item: { in: itemIds.map((item) => item.id) },
 			},
 		});
 
@@ -55,6 +58,7 @@ export async function POST(req: NextRequest) {
 		);
 
 		const operations: any[] = [];
+		const balanceChanges = new Map<number, number>();
 
 		for (const userLogin of userLogins) {
 			const userId = userMap.get(userLogin);
@@ -62,8 +66,10 @@ export async function POST(req: NextRequest) {
 
 			const itemsForUser = userItems[userLogin];
 			for (const itemTitle of Object.keys(itemsForUser)) {
-				const itemId = itemMap.get(itemTitle);
-				if (!itemId) continue;
+				const itemData = itemMap.get(itemTitle);
+				if (!itemData) continue;
+
+				const { id: itemId, price } = itemData;
 
 				const shouldHaveItem = itemsForUser[itemTitle];
 				const inventoryEntry = inventoryMap.get(`${userId}-${itemId}`);
@@ -77,6 +83,8 @@ export async function POST(req: NextRequest) {
 								data: { quantity: 1 },
 							})
 						);
+						const currentChange = balanceChanges.get(userId) || 0;
+						balanceChanges.set(userId, currentChange + price);
 					} else {
 						operations.push(
 							prisma.inventory.create({
@@ -87,6 +95,8 @@ export async function POST(req: NextRequest) {
 								},
 							})
 						);
+						const currentChange = balanceChanges.get(userId) || 0;
+						balanceChanges.set(userId, currentChange + price);
 					}
 				} else if (!shouldHaveItem && hasItem) {
 					if (inventoryEntry) {
@@ -95,8 +105,48 @@ export async function POST(req: NextRequest) {
 								where: { id: inventoryEntry.id },
 							})
 						);
+						const currentChange = balanceChanges.get(userId) || 0;
+						balanceChanges.set(userId, currentChange - price);
 					}
 				}
+			}
+		}
+
+		for (const [userId, change] of balanceChanges.entries()) {
+			if (change !== 0) {
+				operations.push(
+					prisma.balance.upsert({
+						where: { user: userId },
+						update: {
+							amount: {
+								increment: change,
+							},
+						},
+						create: {
+							user: userId,
+							amount: change,
+						},
+					})
+				);
+			}
+		}
+
+		for (const [userId, change] of balanceChanges.entries()) {
+			if (change !== 0) {
+				operations.push(
+					prisma.balance.upsert({
+						where: { user: userId },
+						update: {
+							amount: {
+								increment: change,
+							},
+						},
+						create: {
+							user: userId,
+							amount: change,
+						},
+					})
+				);
 			}
 		}
 
