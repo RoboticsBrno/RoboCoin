@@ -3,10 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(
-	req: NextRequest,
-	{ params }: { params: Promise<{ userId: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
 	const session = await getServerSession(authOptions);
 
 	if (!session || (!session.user.is_org && !session.user.is_admin)) {

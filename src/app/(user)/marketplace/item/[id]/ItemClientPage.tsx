@@ -135,7 +135,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 								</Button>
 								{!canAfford && (
 									<p className="text-red-500 text-sm mt-2">
-										You don & apos;t have enough balance to
+										You don&apos;t have enough balance to
 										buy this item.
 									</p>
 								)}

@@ -1,4 +1,5 @@
 import Card from "@/components/card/Card";
+import Button from "@/components/Button";
 
 export default function Item({
 	title,
@@ -7,6 +8,8 @@ export default function Item({
 	href,
 	type,
 	user,
+	onRemove,
+	onAdd,
 }: {
 	title: string;
 	description: string;
@@ -14,6 +17,8 @@ export default function Item({
 	href?: string;
 	type?: "bought" | "offered" | "up";
 	user?: string;
+	onRemove?: () => void;
+	onAdd?: () => void;
 }) {
 	return (
 		<Card href={href}>
@@ -34,6 +39,16 @@ export default function Item({
 				<h5 className="text-sm text-gray-400 mt-2">
 					Available for purchase
 				</h5>
+			)}
+			{onRemove && (
+				<Button onClick={onRemove} className="mt-4 w-full">
+					Remove from marketplace
+				</Button>
+			)}
+			{onAdd && (
+				<Button onClick={onAdd} className="mt-4 w-full">
+					Add to marketplace
+				</Button>
 			)}
 		</Card>
 	);

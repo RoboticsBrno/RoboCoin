@@ -23,6 +23,9 @@ export async function GET(req: NextRequest) {
 			is_admin: true,
 			is_org: true,
 		},
+		orderBy: {
+			name: "asc",
+		},
 	});
 
 	return NextResponse.json(users);
@@ -52,7 +55,7 @@ export async function PUT(req: NextRequest) {
 	};
 
 	if (password) {
-		data.password = await bcrypt.hash(password, 10);
+		data.password = password;
 	}
 
 	try {

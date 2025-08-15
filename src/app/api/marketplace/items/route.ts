@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -38,16 +38,6 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json(
 			{ error: "Title is required" },
 			{ status: 400 }
-		);
-	}
-
-	const existingItem = await prisma.item.findFirst({
-		where: { title },
-	});
-	if (existingItem) {
-		return NextResponse.json(
-			{ error: "Item with this title already exists" },
-			{ status: 409 }
 		);
 	}
 

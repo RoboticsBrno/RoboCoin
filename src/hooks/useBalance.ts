@@ -9,7 +9,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export function useBalance() {
 	const { data: session, update } = useSession();
 
-	const { data, isLoading } = useSWR("/api/balance", fetcher, {
+	const { data, isLoading, mutate } = useSWR("/api/balance", fetcher, {
 		refreshInterval: 5 * 60 * 1000,
 	});
 
@@ -19,5 +19,5 @@ export function useBalance() {
 		}
 	}, [data, session?.user?.balance, update]);
 
-	return { balance: session?.user?.balance, isLoading };
+	return { balance: session?.user?.balance, isLoading, mutate };
 }

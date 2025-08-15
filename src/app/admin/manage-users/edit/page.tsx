@@ -15,6 +15,7 @@ import FormCheckbox from "@/components/form/FormCheckbox";
 import FormSelect from "@/components/form/FormSelect";
 import Loader from "@/components/Loader";
 import { UserSelect } from "@/lib/api";
+import bcrypt from "bcryptjs";
 
 const editUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -110,12 +111,24 @@ export default function EditUserPage() {
 		if (!selectedUser) return;
 
 		try {
+			const dataWithHashedPassword = { ...data };
+
+			if (data.password) {
+				const hashedPassword = await bcrypt.hash(data.password, 10);
+				dataWithHashedPassword.password = hashedPassword;
+			} else {
+				delete dataWithHashedPassword.password;
+			}
+
 			const response = await fetch(`/api/users`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ id: selectedUser.id, ...data }),
+				body: JSON.stringify({
+					id: selectedUser.id,
+					...dataWithHashedPassword,
+				}),
 			});
 
 			if (response.ok) {

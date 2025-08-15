@@ -12,6 +12,7 @@ import FormSubmit from "@/components/form/FormSubmit";
 import Alert from "@/components/Alert";
 import { useState } from "react";
 import FormCheckbox from "@/components/form/FormCheckbox";
+import bcrypt from "bcryptjs";
 
 const createUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -48,6 +49,9 @@ export default function CreateUserPage() {
 
 	const onFormSubmit = async (data: CreateAchievementSchema) => {
 		try {
+			const hashedPassword = await bcrypt.hash(data.password, 10);
+			data.password = hashedPassword;
+
 			const response = await fetch("/api/signup", {
 				method: "POST",
 				headers: {

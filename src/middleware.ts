@@ -1,10 +1,8 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-// Admin-only routes
 const adminPaths = ["/admin"];
 
-// Organization-only routes (admins also have access)
 const orgPaths = ["/org"];
 
 export async function middleware(req: NextRequest) {
