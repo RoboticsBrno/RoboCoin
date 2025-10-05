@@ -118,6 +118,7 @@ function UserItemsList({
 	existingUsers,
 	userNames,
 }: UserItemsListProps) {
+	const { showError, showSuccess } = useToast();
 	const [hovered, setHovered] = useState({ row: -1, col: -1 });
 	const users = Object.keys(userItems);
 
@@ -224,8 +225,6 @@ function UserItemsList({
 			return newUserItems;
 		});
 	};
-
-	const { showError, showSuccess } = useToast();
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();

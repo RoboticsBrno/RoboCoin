@@ -47,6 +47,10 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
+	if (!session.camp_id) {
+		return NextResponse.json({ error: "Camp not found" }, { status: 400 });
+	}
+
 	const { userId, itemId, quantity } = await req.json();
 
 	// 2. Validate the input data
@@ -64,6 +68,7 @@ export async function POST(req: NextRequest) {
 				user: parseInt(userId, 10),
 				item: parseInt(itemId, 10),
 				quantity: quantity ? parseInt(quantity, 10) : 1,
+				camp: session.camp_id,
 			},
 		});
 

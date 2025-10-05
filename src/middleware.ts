@@ -29,7 +29,7 @@ export async function middleware(req: NextRequest) {
 			const isManagerPath = pathSegments.some(segment => managerPaths.includes(segment));
 			const isManager = session.is_manager;
 
-			if (!session.user_camps.includes(campUrl) && (isManagerPath && !isManager)) {
+			if (session.user_camps && !(session.user_camps as string[]).includes(campUrl) && (isManagerPath && !isManager)) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/unauthorized";
 				return NextResponse.redirect(url);

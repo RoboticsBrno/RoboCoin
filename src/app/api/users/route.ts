@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 	const searchParams = req.nextUrl.searchParams;
 	const campUrl = searchParams.get('camp_url');
 
-	let users: UserSelect[] = [];
+	let users: any[] = [];
 
 	if (campUrl) {
 		const camp = await prisma.camp.findUnique({

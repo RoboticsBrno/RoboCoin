@@ -38,33 +38,63 @@ export async function POST(req: NextRequest) {
 
 	const camp = await prisma.camp.findUnique({
 		where: { name_url: camp_url },
-		include: { managers: true },
 	});
 
 	if (!camp) {
 		return NextResponse.json({ error: "Camp not found" }, { status: 404 });
 	}
 
-	const currentManagerIds = camp.managers.map(m => m.id);
-	const newManagerIds = userIds.map((id: string) => parseInt(id, 10));
-
-	const ownId = parseInt(session.user.id, 10);
-	if (!newManagerIds.includes(ownId)) {
-		newManagerIds.push(ownId);
-	}
-
-	const managersToAdd = newManagerIds.filter(id => !currentManagerIds.includes(id));
-	const managersToRemove = currentManagerIds.filter(id => !newManagerIds.includes(id));
-
-	await prisma.camp.update({
-		where: { id: camp.id },
-		data: {
-			managers: {
-				connect: managersToAdd.map(id => ({ id })),
-				disconnect: managersToRemove.map(id => ({ id }))
-			}
+	const currentAdmins = await prisma.user_camp.findMany({
+		where: {
+			camp: camp.id,
+			is_admin: true,
 		}
 	});
+
+	const currentAdminIds = currentAdmins.map(uc => uc.user);
+	const newAdminIds = userIds.map((id: string) => parseInt(id, 10));
+
+	const ownId = parseInt(session.user.id, 10);
+	if (!newAdminIds.includes(ownId)) {
+		newAdminIds.push(ownId);
+	}
+
+	const adminsToAdd = newAdminIds.filter((id: number) => !currentAdminIds.includes(id));
+	const adminsToRemove = currentAdminIds.filter((id: number) => !newAdminIds.includes(id));
+
+	for (const userId of adminsToAdd) {
+		await prisma.user_camp.upsert({
+			where: {
+				user_camp: {
+					user: userId,
+					camp: camp.id
+				}
+			},
+			create: {
+				user: userId,
+				camp: camp.id,
+				is_admin: true,
+				is_org: false,
+			},
+			update: {
+				is_admin: true,
+			}
+		});
+	}
+
+	for (const userId of adminsToRemove) {
+		await prisma.user_camp.update({
+			where: {
+				user_camp: {
+					user: userId,
+					camp: camp.id
+				}
+			},
+			data: {
+				is_admin: false,
+			}
+		});
+	}
 
 	return NextResponse.json({ success: true });
 }
