@@ -9,12 +9,16 @@ datasource db {
 }
 
 model balance {
-  id                      Int  @id @default(autoincrement())
-  user                    Int  @unique(map: "balance_user_camp_unique")
-  amount                  Int  @default(0)
-  user_balance_userTouser user @relation("balance_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "balance_user_fk")
+  id                      Int   @id @default(autoincrement())
+  user                    Int
+  amount                  Int   @default(0)
+  camp                    Int?
+  camp_balance_campTocamp camp? @relation("balance_campTocamp", fields: [camp], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "balance_camp_id_fk")
+  user_balance_userTouser user  @relation("balance_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "balance_user_fk")
 
+  @@unique([user, camp], map: "idx_balance_lookup")
   @@index([user], map: "balance_user_id_index")
+  @@index([camp], map: "balance_camp_index")
 }
 
 model inventory {
@@ -22,11 +26,15 @@ model inventory {
   user                      Int
   item                      Int
   quantity                  Int
+  camp                      Int
+  camp_inventory_campTocamp camp @relation("inventory_campTocamp", fields: [camp], references: [id], onUpdate: Restrict, map: "inventory_camp_id_fk")
   item_inventory_itemToitem item @relation("inventory_itemToitem", fields: [item], references: [id], onUpdate: Restrict, map: "inventory_item_fk")
   user_inventory_userTouser user @relation("inventory_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "inventory_user_fk")
 
-  @@index([item], map: "inventory_item_fk")
   @@index([user], map: "inventory_user_index")
+  @@index([user, camp], map: "idx_inventory_lookup")
+  @@index([camp], map: "inventory_camp_index")
+  @@index([item], map: "inventory_item_id_fk")
 }
 
 model item {
@@ -37,28 +45,39 @@ model item {
   on_marketplace                     Boolean
   from_marketplace                   Boolean       @default(false)
   owner                              Int
+  camp                               Int
+  created_at                         DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at                         DateTime?     @default(now()) @db.Timestamp(0)
+  deleted                            Boolean?      @default(false)
   inventory_inventory_itemToitem     inventory[]   @relation("inventory_itemToitem")
+  camp_item_campTocamp               camp          @relation("item_campTocamp", fields: [camp], references: [id], onUpdate: Restrict, map: "item_camp_id_fk")
   user                               user          @relation(fields: [owner], references: [id], onUpdate: Restrict, map: "item_owner_fk")
   transaction_transaction_itemToitem transaction[] @relation("transaction_itemToitem")
 
   @@index([owner], map: "item_owner_index")
+  @@index([camp, on_marketplace], map: "idx_item_marketplace")
+  @@index([camp], map: "item_camp_index")
 }
 
 model transaction {
-  id                              Int       @id @unique(map: "transaction_id_index") @default(autoincrement())
+  id                              Int                           @id @unique(map: "transaction_id_index") @default(autoincrement())
   item                            Int?
   sender                          Int
   receiver                        Int
   amount                          Int
-  created_at                      DateTime? @default(now()) @db.Timestamp(0)
-  description                     String?   @db.VarChar(255)
-  item_transaction_itemToitem     item?     @relation("transaction_itemToitem", fields: [item], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "transaction_item_fk")
-  user_transaction_receiverTouser user      @relation("transaction_receiverTouser", fields: [receiver], references: [id], onUpdate: Restrict, map: "transaction_receiver_fk")
-  user_transaction_senderTouser   user      @relation("transaction_senderTouser", fields: [sender], references: [id], onUpdate: Restrict, map: "transaction_sender_fk")
+  created_at                      DateTime?                     @default(now()) @db.Timestamp(0)
+  description                     String?                       @db.VarChar(255)
+  camp                            Int
+  transaction_type                transaction_transaction_type? @default(transfer)
+  camp_transaction_campTocamp     camp                          @relation("transaction_campTocamp", fields: [camp], references: [id], onUpdate: Restrict, map: "transaction_camp_id_fk")
+  item_transaction_itemToitem     item?                         @relation("transaction_itemToitem", fields: [item], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "transaction_item_id_fk")
+  user_transaction_senderTouser   user                          @relation("transaction_senderTouser", fields: [sender], references: [id], onUpdate: Restrict, map: "transaction_sender_fk")
+  user_transaction_receiverTouser user                          @relation("transaction_receiverTouser", fields: [receiver], references: [id], onUpdate: Restrict, map: "transaction_receiver_fk")
 
-  @@index([item], map: "transaction_item_fk")
   @@index([receiver], map: "transaction_receiver_id_index")
   @@index([sender], map: "transaction_sender_id_index")
+  @@index([camp], map: "transaction_camp_index")
+  @@index([item], map: "transaction_item_id_fk")
 }
 
 model user {
@@ -66,20 +85,43 @@ model user {
   login                                  String        @unique(map: "user_login") @db.VarChar(255)
   name                                   String        @db.VarChar(255)
   password                               String        @default("abc") @db.VarChar(255)
-  is_org                                 Boolean       @default(false)
-  is_admin                               Boolean       @default(false)
-  deleted                                Boolean       @default(false)
-  balance_balance_userTouser             balance?      @relation("balance_userTouser")
+  is_manager                             Boolean       @default(false)
+  balance_balance_userTouser             balance[]     @relation("balance_userTouser")
   inventory_inventory_userTouser         inventory[]   @relation("inventory_userTouser")
   item                                   item[]
-  transaction_transaction_receiverTouser transaction[] @relation("transaction_receiverTouser")
   transaction_transaction_senderTouser   transaction[] @relation("transaction_senderTouser")
+  transaction_transaction_receiverTouser transaction[] @relation("transaction_receiverTouser")
+  user_camp_user_camp_userTouser         user_camp[]   @relation("user_camp_userTouser")
 }
 
-model drizzle_migrations {
-  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
-  hash       String  @db.Text
-  created_at BigInt?
+model camp {
+  id                                 Int           @id @unique(map: "camp_id_uindex") @default(autoincrement())
+  name                               String        @db.VarChar(255)
+  name_url                           String        @unique(map: "camp_pk") @db.VarChar(255)
+  currency                           String?       @db.VarChar(3)
+  description                        String?       @db.VarChar(255)
+  balance_balance_campTocamp         balance[]     @relation("balance_campTocamp")
+  inventory_inventory_campTocamp     inventory[]   @relation("inventory_campTocamp")
+  item_item_campTocamp               item[]        @relation("item_campTocamp")
+  transaction_transaction_campTocamp transaction[] @relation("transaction_campTocamp")
+  user_camp_user_camp_campTocamp     user_camp[]   @relation("user_camp_campTocamp")
+}
 
-  @@map("__drizzle_migrations")
+model user_camp {
+  id                        Int     @id @default(autoincrement())
+  user                      Int
+  camp                      Int
+  is_org                    Boolean @default(false)
+  is_admin                  Boolean @default(false)
+  camp_user_camp_campTocamp camp    @relation("user_camp_campTocamp", fields: [camp], references: [id], onUpdate: Restrict, map: "user_camp_camp_id_fk")
+  user_user_camp_userTouser user    @relation("user_camp_userTouser", fields: [user], references: [id], onUpdate: Restrict, map: "user_camp_user_id_fk")
+
+  @@unique([user, camp], map: "idx_user_camp_lookup")
+  @@index([camp], map: "user_camp_camp_index")
+  @@index([user], map: "user_camp_user_index")
+}
+
+enum transaction_transaction_type {
+  transfer
+  purchase
 }

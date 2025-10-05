@@ -13,9 +13,7 @@ export async function GET() {
 	const items = await prisma.item.findMany({
 		where: {
 			on_marketplace: true,
-			user: {
-				deleted: false,
-			},
+			camp: session.camp_id || -1,
 		},
 		include: {
 			user: true,
@@ -50,6 +48,7 @@ export async function POST(req: NextRequest) {
 				on_marketplace: true,
 				from_marketplace: true,
 				owner: parseInt(session.user.id),
+				camp: session.camp_id || -1,
 			},
 		});
 

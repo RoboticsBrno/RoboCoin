@@ -1,4 +1,5 @@
 "use client";
+
 import { createContext, useContext } from "react";
 import { useSession } from "next-auth/react";
 
@@ -20,6 +21,7 @@ export default function RoleProvider({
 	children: React.ReactNode;
 }) {
 	const { data: session } = useSession();
+
 	const is_org = session?.user?.is_org || false;
 	const is_admin = session?.user?.is_admin || false;
 

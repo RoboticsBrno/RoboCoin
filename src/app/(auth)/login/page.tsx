@@ -36,7 +36,7 @@ export default function LoginPage() {
 		setError(null);
 		try {
 			const result = await signIn("credentials", {
-				...data,
+				...data, camp: null,
 				redirect: false,
 				callbackUrl: "/",
 			});
@@ -48,6 +48,8 @@ export default function LoginPage() {
 					);
 				} else if (result.error === "Invalid password") {
 					setError("Invalid password. Please try again.");
+				} else if (result.error === "User is not a manager") {
+					setError("You are not authorized to log in.");
 				} else {
 					setError(
 						"An unknown error occurred. Please try again later."
@@ -56,7 +58,6 @@ export default function LoginPage() {
 			} else {
 				try {
 					router.push("/");
-					console.log("Login successful, redirecting to home page.");
 					window.location.href = "/";
 				} catch (redirectError) {
 					console.error("Error during redirect:", redirectError);
@@ -64,6 +65,7 @@ export default function LoginPage() {
 				}
 			}
 		} catch (error) {
+			console.error("Error during login:", error);
 			setError("An unexpected error occurred. Please try again later.");
 		}
 	};
@@ -71,7 +73,7 @@ export default function LoginPage() {
 	return (
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-				<FormTitle>Login</FormTitle>
+				<FormTitle>Login to a manager account</FormTitle>
 				<FormSubtitle>
 					Welcome back! Please enter your details.
 				</FormSubtitle>

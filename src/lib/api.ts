@@ -13,8 +13,13 @@ export type UserSelect = Prisma.userGetPayload<{
 		id: true;
 		name: true;
 		login: true;
-		is_admin: true;
-		is_org: true;
+		user_camp_user_camp_userTouser: {
+			where: { camp: number };
+			select: {
+				is_org: true;
+				is_admin: true;
+			};
+		};
 	};
 }>;
 

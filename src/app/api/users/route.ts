@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth";
 import { UserSelect } from "@/lib/api";
 
@@ -12,21 +11,60 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const users: UserSelect[] = await prisma.user.findMany({
-		where: {
-			deleted: false,
-		},
-		select: {
-			id: true,
-			name: true,
-			login: true,
-			is_admin: true,
-			is_org: true,
-		},
-		orderBy: {
-			name: "asc",
-		},
-	});
+	const searchParams = req.nextUrl.searchParams;
+	const campUrl = searchParams.get('camp_url');
+
+	let users: UserSelect[] = [];
+
+	if (campUrl) {
+		const camp = await prisma.camp.findUnique({
+			where: { name_url: campUrl },
+			select: { id: true },
+		});
+
+		if (!camp) {
+			return NextResponse.json(
+				{ error: "Camp not found" },
+				{ status: 404 }
+			);
+		}
+
+		users = await prisma.user.findMany({
+			where: {
+				user_camp_user_camp_userTouser: {
+					some: {
+						camp: camp.id,
+					},
+				},
+			},
+			select: {
+				id: true,
+				name: true,
+				login: true,
+				user_camp_user_camp_userTouser: {
+					where: { camp: camp.id },
+					select: {
+						is_org: true,
+						is_admin: true,
+					},
+				},
+			},
+			orderBy: {
+				name: "asc",
+			},
+		});
+	} else {
+		users = await prisma.user.findMany({
+			select: {
+				id: true,
+				name: true,
+				login: true,
+			},
+			orderBy: {
+				name: "asc",
+			},
+		});
+	}
 
 	return NextResponse.json(users);
 }
@@ -39,6 +77,7 @@ export async function PUT(req: NextRequest) {
 	}
 
 	const { id, login, name, password, isOrg, isAdmin } = await req.json();
+	const camp = session.camp_id;
 
 	if (!id) {
 		return NextResponse.json(
@@ -47,9 +86,18 @@ export async function PUT(req: NextRequest) {
 		);
 	}
 
+	if (!camp) {
+		return NextResponse.json(
+			{ error: "Camp context is required" },
+			{ status: 400 }
+		);
+	}
+
 	const data: any = {
 		login,
 		name,
+	}
+	const permissions: any = {
 		is_org: isOrg,
 		is_admin: isAdmin,
 	};
@@ -66,9 +114,12 @@ export async function PUT(req: NextRequest) {
 				id: true,
 				name: true,
 				login: true,
-				is_admin: true,
-				is_org: true,
 			},
+		});
+
+		await prisma.user_camp.updateMany({
+			where: { user: id, camp },
+			data: permissions,
 		});
 
 		return NextResponse.json(updatedUser);
@@ -97,13 +148,17 @@ export async function DELETE(req: NextRequest) {
 	}
 
 	try {
-		await prisma.user.update({
-			where: { id: parseInt(id, 10) },
-			data: { deleted: true }, // Soft delete by marking as deleted
+		await prisma.user_camp.delete({
+			where: { user_camp: { user: parseInt(id), camp: session.camp_id || -1 } },
+		});
+
+		await prisma.balance.deleteMany({
+			where: { user: parseInt(id), camp: session.camp_id || -1 },
 		});
 
 		return NextResponse.json({ message: "User deleted successfully" });
 	} catch (error) {
+		console.error("Failed to delete user:", error);
 		return NextResponse.json(
 			{ error: "Failed to delete user" },
 			{ status: 500 }

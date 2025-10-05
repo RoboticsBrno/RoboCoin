@@ -13,9 +13,7 @@ export default function TransactionsTable({
 	transactions,
 	userId,
 }: TransactionsTableProps) {
-	console.log("Transactions:", transactions);
 	const processedTransactions = useMemo(() => {
-		console.log("Processing transactions for user ID:", userId);
 		return transactions.map((tx) => ({
 			...tx,
 			isOutgoing: tx.sender == userId,
@@ -25,7 +23,6 @@ export default function TransactionsTable({
 					: tx.user_transaction_senderTouser,
 		}));
 	}, [transactions, userId]);
-	console.log("Processed transactions:", processedTransactions);
 
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

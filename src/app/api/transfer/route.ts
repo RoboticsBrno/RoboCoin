@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		await prisma.$transaction(async (tx) => {
-			await transferBalance(tx, fromId, toId, parsedAmount, description);
+			await transferBalance(tx, fromId, toId, parsedAmount, description, session.camp_id || -1);
 		});
 
 		return NextResponse.json({ success: true });

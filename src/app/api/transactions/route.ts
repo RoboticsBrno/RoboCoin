@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 		const transactions: TransactionWithUsers[] = await getTransactions(
 			parseInt(session.user.id)
 		);
-		console.log("Fetched transactions:", transactions);
+
 		return NextResponse.json(transactions);
 	} catch (error) {
 		console.error("Failed to fetch transactions:", error);

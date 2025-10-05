@@ -1,23 +1,29 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useBalance() {
 	const { data: session, update } = useSession();
+	const updateRef = useRef(update);
+
+	useEffect(() => {
+		updateRef.current = update;
+	});
 
 	const { data, isLoading, mutate } = useSWR("/api/balance", fetcher, {
 		refreshInterval: 5 * 60 * 1000,
 	});
 
 	useEffect(() => {
+		// if (data && data.balance !== session?.user?.balance) {
 		if (data && data.balance !== session?.user?.balance) {
-			update({ balance: data.balance });
+			updateRef.current({ balance: data.balance });
 		}
-	}, [data, session?.user?.balance, update]);
+	}, [data, session?.user?.balance]);
 
 	return { balance: session?.user?.balance, isLoading, mutate };
 }

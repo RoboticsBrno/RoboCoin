@@ -5,7 +5,7 @@ import Provider from "./Provider";
 import RoleProvider from "./RoleProvider";
 import Header from "@/components/Header";
 import ConditionalBackButton from "@/components/ConditionalBackButton"; // Import the new component
-import { headers } from "next/headers";
+import { ToastProvider } from "@/components/Toast";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Robocoin V2",
+	title: "Robocoin V3",
 	description:
 		"Manage your Robocoins, trade on the marketplace, and view your achievements.",
 };
@@ -33,16 +33,17 @@ export default async function RootLayout({
 			<body
 				className={`bg-gray-900 ${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<Provider>
-					<RoleProvider>
-						<Header />
-						<div className={`container mx-auto p-8 pt-6`}>
-							<ConditionalBackButton />{" "}
-							{/* Use the conditional button */}
-							{children}
-						</div>
-					</RoleProvider>
-				</Provider>
+				<ToastProvider>
+					<Provider>
+						<RoleProvider>
+							<Header />
+							<div className={`container mx-auto p-8 pt-6`}>
+								<ConditionalBackButton />{" "}
+								{children}
+							</div>
+						</RoleProvider>
+					</Provider>
+				</ToastProvider>
 			</body>
 		</html>
 	);

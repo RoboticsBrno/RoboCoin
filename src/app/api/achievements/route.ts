@@ -10,8 +10,13 @@ export async function GET(req: NextRequest) {
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
+
+	if (!session.camp_id) {
+		return NextResponse.json({ error: "Camp not selected" }, { status: 400 });
+	}
+
 	const achievements: InventoryItem[] = await prisma.inventory.findMany({
-		where: { user: parseInt(session.user.id) },
+		where: { user: parseInt(session.user.id), camp: session.camp_id },
 		include: {
 			item_inventory_itemToitem: true,
 		},

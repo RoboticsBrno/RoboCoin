@@ -14,6 +14,7 @@ export async function GET() {
 		where: {
 			on_marketplace: true,
 			owner: parseInt(session.user.id),
+			camp: session.camp_id || -1,
 			transaction_transaction_itemToitem: {
 				none: {},
 			},

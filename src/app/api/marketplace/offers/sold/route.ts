@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
 	const items = await prisma.item.findMany({
 		where: {
 			on_marketplace: false,
+			camp: session.camp_id || -1,
 			transaction_transaction_itemToitem: {
 				some: {
 					receiver: parseInt(session.user.id),

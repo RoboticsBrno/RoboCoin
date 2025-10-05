@@ -37,6 +37,15 @@ export async function POST(req: Request) {
 				login,
 				name,
 				password: hashedPassword,
+			},
+		});
+
+		const camp_id = session?.camp_id || -1;
+
+		await prisma.user_camp.create({
+			data: {
+				user: user.id,
+				camp: camp_id,
 				is_org,
 				is_admin,
 			},
@@ -46,6 +55,7 @@ export async function POST(req: Request) {
 			data: {
 				user: user.id,
 				amount: 0,
+				camp: camp_id,
 			},
 		});
 

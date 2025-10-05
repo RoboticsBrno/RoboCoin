@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		await prisma.$transaction(async (tx) => {
-			await syncItemHolders(tx, parsedItemId, desiredUserIds);
+			await syncItemHolders(tx, parsedItemId, desiredUserIds, session.camp_id || -1);
 		});
 
 		return NextResponse.json({ success: true });

@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 		}
 
 		const buyerBalance = await prisma.balance.findUnique({
-			where: { user: buyerId },
+			where: { user_camp: { user: buyerId, camp: item.camp } },
 		});
 
 		if (!buyerBalance || buyerBalance.amount < item.price) {
@@ -49,20 +49,6 @@ export async function POST(req: NextRequest) {
 		}
 
 		await prisma.$transaction(async (tx) => {
-			console.log("Starting transaction for item purchase");
-			console.log(
-				`Buyer ID: ${buyerId}, Seller ID: ${item.owner}, Item ID: ${item.id}, Item Price: ${item.price}`
-			);
-			await tx.balance.update({
-				where: { user: buyerId },
-				data: { amount: { decrement: item.price } },
-			});
-
-			await tx.balance.update({
-				where: { user: item.owner },
-				data: { amount: { increment: item.price } },
-			});
-
 			await tx.item.update({
 				where: { id: item.id },
 				data: { owner: buyerId, on_marketplace: false },
@@ -75,6 +61,7 @@ export async function POST(req: NextRequest) {
 					item: item.id,
 					amount: item.price,
 					description: `Purchase of ${item.title}`,
+					camp: session.camp_id || -1,
 				},
 			});
 		});

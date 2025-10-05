@@ -5,7 +5,8 @@ type TransactionClient = Prisma.TransactionClient;
 export async function syncUserInventory(
 	tx: TransactionClient,
 	userId: number,
-	desiredItemIds: Set<number>
+	desiredItemIds: Set<number>,
+	camp_id: number | null,
 ) {
 	const currentInventory = await tx.inventory.findMany({
 		where: { user: userId },
@@ -41,6 +42,7 @@ export async function syncUserInventory(
 			data: idsToAdd.map((itemId) => ({
 				user: userId,
 				item: itemId,
+				camp: camp_id || -1,
 				quantity: 1,
 			})),
 		});
@@ -68,21 +70,26 @@ export async function syncUserInventory(
 
 	// Update balance
 	if (netChange !== 0) {
-		await tx.balance.update({
-			where: { user: userId },
+		await tx.balance.updateMany({
+			where: {
+				user: userId,
+				camp: camp_id || -1,
+			},
 			data: { amount: { increment: netChange } },
 		});
+
 	}
 }
 
 export async function syncItemHolders(
 	tx: TransactionClient,
 	itemId: number,
-	desiredUserIds: Set<number>
+	desiredUserIds: Set<number>,
+	camp: number,
 ) {
 	const item = await tx.item.findUnique({
 		where: { id: itemId },
-		select: { price: true },
+		select: { price: true, camp: true },
 	});
 
 	if (!item) {
@@ -115,6 +122,7 @@ export async function syncItemHolders(
 				user: userId,
 				item: itemId,
 				quantity: 1,
+				camp
 			})),
 		});
 	}
@@ -123,15 +131,16 @@ export async function syncItemHolders(
 	if (itemPrice !== 0) {
 		if (usersToRemove.length > 0) {
 			await tx.balance.updateMany({
-				where: { user: { in: usersToRemove } },
+				where: { user: { in: usersToRemove }, camp: item.camp },
 				data: { amount: { decrement: itemPrice } },
 			});
 		}
 		if (usersToAdd.length > 0) {
 			await tx.balance.updateMany({
-				where: { user: { in: usersToAdd } },
+				where: { user: { in: usersToAdd }, camp: item.camp },
 				data: { amount: { increment: itemPrice } },
 			});
 		}
+
 	}
 }

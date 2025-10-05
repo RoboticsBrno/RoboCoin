@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
 				price: price || 0,
 				on_marketplace: on_marketplace || false,
 				owner: parseInt(session.user.id),
+				camp: session.camp_id || -1,
 			},
 		});
 

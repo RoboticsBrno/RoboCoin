@@ -7,25 +7,16 @@ export async function transferBalance(
 	fromId: number,
 	toId: number,
 	amount: number,
-	description: string = "Balance transfer"
+	description: string = "Balance transfer",
+	camp: number
 ) {
 	const fromBalance = await tx.balance.findUnique({
-		where: { user: fromId },
+		where: { user_camp: { user: fromId, camp } },
 	});
 
 	if (!fromBalance || fromBalance.amount < amount) {
 		throw new Error("Insufficient funds");
 	}
-
-	await tx.balance.update({
-		where: { user: fromId },
-		data: { amount: { decrement: amount } },
-	});
-
-	await tx.balance.update({
-		where: { user: toId },
-		data: { amount: { increment: amount } },
-	});
 
 	await tx.transaction.create({
 		data: {
@@ -34,6 +25,7 @@ export async function transferBalance(
 			amount,
 			created_at: new Date(),
 			description,
+			camp,
 		},
 	});
 }
