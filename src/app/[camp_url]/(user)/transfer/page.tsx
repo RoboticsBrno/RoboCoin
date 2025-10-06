@@ -15,6 +15,7 @@ import FormTitle from "@/components/form/FormTitle";
 import { useBalance } from "@/hooks/useBalance";
 import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
+import { useParams } from "next/navigation";
 
 interface User {
 	id: number;
@@ -22,6 +23,7 @@ interface User {
 }
 
 export default function TransferPage() {
+	const { camp_url } = useParams<{ camp_url: string }>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [users, setUsers] = useState<User[]>([]);
 	const { data: session } = useSession();
@@ -62,7 +64,7 @@ export default function TransferPage() {
 		const fetchUsers = async () => {
 			try {
 				setLoading(true);
-				const response = await fetch("/api/users");
+				const response = await fetch("/api/users?camp_url=" + camp_url);
 				if (response.ok) {
 					const data = await response.json();
 					if (session?.user?.id) {

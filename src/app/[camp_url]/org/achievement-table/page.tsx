@@ -7,8 +7,10 @@ import Loader from "@/components/Loader";
 import Button from "@/components/Button";
 import { FormEvent } from "react";
 import { useToast } from "@/components/Toast";
+import { useParams } from "next/navigation";
 
 export default function AchievementTablePage() {
+	const { camp_url } = useParams<{ camp_url: string }>();
 	const [userItems, setUserItems] = useState<UserItems>({});
 	const [existingItems, setExistingItems] = useState<Set<string>>(new Set());
 	const [existingUsers, setExistingUsers] = useState<Set<string>>(new Set());
@@ -21,7 +23,7 @@ export default function AchievementTablePage() {
 		async function fetchData() {
 			try {
 				const [usersRes, itemsRes, inventoryRes] = await Promise.all([
-					fetch("/api/users"),
+					fetch("/api/users?camp_url=" + camp_url),
 					fetch("/api/items"),
 					fetch("/api/inventory"),
 				]);

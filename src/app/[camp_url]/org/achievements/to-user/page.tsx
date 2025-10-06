@@ -13,6 +13,7 @@ import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
+import { useParams } from "next/navigation";
 
 interface User {
 	id: number;
@@ -39,6 +40,7 @@ const syncSchema = z.object({
 type SyncSchema = z.infer<typeof syncSchema>;
 
 export default function ManageUserAchievementsPage() {
+	const { camp_url } = useParams<{ camp_url: string }>();
 	const [users, setUsers] = useState<User[]>([]);
 	const [items, setItems] = useState<Item[]>([]);
 	const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -64,7 +66,7 @@ export default function ManageUserAchievementsPage() {
 		const fetchData = async () => {
 			try {
 				const [usersRes, itemsRes] = await Promise.all([
-					fetch("/api/users"),
+					fetch("/api/users?camp_url=" + camp_url),
 					fetch("/api/items"),
 				]);
 				setUsers(await usersRes.json());

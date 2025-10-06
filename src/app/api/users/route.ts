@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { UserSelect } from "@/lib/api";
 
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -54,7 +53,28 @@ export async function GET(req: NextRequest) {
 			},
 		});
 	} else {
+		const managedCamps = await prisma.user_camp.findMany({
+			where: {
+				user: parseInt(session.user.id),
+				is_admin: true,
+			},
+			select: {
+				camp: true,
+			},
+		});
+
+		const managedCampIds = managedCamps.map(uc => uc.camp);
+
 		users = await prisma.user.findMany({
+			where: {
+				user_camp_user_camp_userTouser: {
+					some: {
+						camp: {
+							in: managedCampIds,
+						},
+					},
+				},
+			},
 			select: {
 				id: true,
 				name: true,
