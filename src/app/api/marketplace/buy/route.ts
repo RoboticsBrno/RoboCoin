@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { transferBalance } from "@/lib/balance";
 
 export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
@@ -54,16 +55,14 @@ export async function POST(req: NextRequest) {
 				data: { owner: buyerId, on_marketplace: false },
 			});
 
-			await tx.transaction.create({
-				data: {
-					sender: buyerId,
-					receiver: item.owner,
-					item: item.id,
-					amount: item.price,
-					description: `Purchase of ${item.title}`,
-					camp: session.camp_id || -1,
-				},
-			});
+			await transferBalance(
+				tx,
+				buyerId,
+				item.owner,
+				item.price,
+				`Purchase of ${item.title}`,
+				session.camp_id || -1
+			);
 		});
 
 		return NextResponse.json({ success: true });

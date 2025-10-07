@@ -17,10 +17,9 @@ export default function Home() {
 	const { data: session, status, update } = useSession();
 
 	useEffect(() => {
-		if (status === "loading") return; // Don't fetch until session is loaded
+		if (status === "loading") return;
 
 		const clearCampAndFetchCamps = async () => {
-			// Clear camp data from session
 			if (session && session.camp_url) {
 				await update({
 					camp_url: null,
@@ -31,9 +30,6 @@ export default function Home() {
 						is_org: false,
 					},
 				});
-				// After update, session object will change, which might trigger re-render.
-				// We return here to let the re-render with the new session happen.
-				// The next run of this effect will fetch camps.
 				return;
 			}
 
