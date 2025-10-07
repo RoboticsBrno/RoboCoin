@@ -63,6 +63,13 @@ export const authOptions: AuthOptions = {
 					throw new Error("User not found");
 				}
 
+				if (
+					(credentials.camp === "null" || !credentials.camp) &&
+					!user.is_manager
+				) {
+					throw new Error("User is not a manager");
+				}
+
 				const users_camps = await prisma.user_camp.findMany({
 					where: {
 						user: user.id,

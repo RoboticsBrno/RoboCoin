@@ -2,7 +2,6 @@
 
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
@@ -23,7 +22,6 @@ type LoginSchema = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
 	const [error, setError] = useState<string | null>(null);
-	const router = useRouter();
 	const methods = useForm<LoginSchema>({
 		resolver: zodResolver(loginSchema),
 	});
@@ -49,7 +47,7 @@ export default function LoginPage() {
 				} else if (result.error === "Invalid password") {
 					setError("Invalid password. Please try again.");
 				} else if (result.error === "User is not a manager") {
-					setError("You are not authorized to log in.");
+					setError("You are not authorized to log in. You must be a manager.");
 				} else {
 					setError(
 						"An unknown error occurred. Please try again later."
@@ -57,7 +55,6 @@ export default function LoginPage() {
 				}
 			} else {
 				try {
-					router.push("/");
 					window.location.href = "/";
 				} catch (redirectError) {
 					console.error("Error during redirect:", redirectError);

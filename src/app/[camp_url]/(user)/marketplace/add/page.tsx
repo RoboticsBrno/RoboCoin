@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormContainer from "@/components/form/FormContainer";
@@ -12,10 +11,12 @@ import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubtitle from "@/components/form/FormSubtitle";
 import { useToast } from "@/components/Toast";
+import FormFileInput from "@/components/form/FormFileInput";
 
 const createItemSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
 	description: z.string().optional(),
+	file: z.file().optional(),
 	price: z
 		.string()
 		.min(1, { message: "Price is required" })
@@ -101,6 +102,14 @@ export default function AddItemPage() {
 							type="number"
 							min={0}
 							required
+						/>
+					</FormGroup>
+
+					<FormGroup>
+						<FormFileInput
+							name="file"
+							label="File URL"
+							placeholder="Enter file URL (optional)"
 						/>
 					</FormGroup>
 

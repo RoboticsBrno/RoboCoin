@@ -8,7 +8,6 @@ import Button from "@/components/Button";
 import FormContainer from "@/components/form/FormContainer";
 import FormGroup from "@/components/form/FormGroup";
 import Loader from "@/components/Loader";
-import BackButton from "@/components/BackButton";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import { useToast } from "@/components/Toast";
 import { useSession } from "next-auth/react";

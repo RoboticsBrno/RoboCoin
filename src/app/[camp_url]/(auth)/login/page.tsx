@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
@@ -23,7 +23,6 @@ type LoginSchema = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
 	const [error, setError] = useState<string | null>(null);
-	const router = useRouter();
 	const methods = useForm<LoginSchema>({
 		resolver: zodResolver(loginSchema),
 	});
@@ -40,6 +39,7 @@ export default function LoginPage() {
 			const callbackUrl = params.camp_url
 				? `/${params.camp_url}`
 				: "/";
+			console.log("Callback URL:", callbackUrl);
 			const result = await signIn("credentials", {
 				...data, camp: params.camp_url,
 				redirect: false,
@@ -62,12 +62,7 @@ export default function LoginPage() {
 					);
 				}
 			} else {
-				try {
-					router.push(callbackUrl);
-				} catch (redirectError) {
-					console.error("Error during redirect:", redirectError);
-					setError("Failed to redirect. Please try again later.");
-				}
+				window.location.assign(callbackUrl);
 			}
 		} catch (error) {
 			console.error("Error during login:", error);
