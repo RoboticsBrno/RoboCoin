@@ -19,7 +19,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	const [isBuying, setIsBuying] = useState(false);
 	const [bought, setBought] = useState(false);
 
-	const { balance } = useBalance();
+	const { balance, mutate } = useBalance();
 	const { showError, showSuccess } = useToast();
 
 	useEffect(() => {
@@ -69,6 +69,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 		} else {
 			showSuccess("Item purchased successfully!");
 			setBought(true);
+			mutate();
 		}
 
 		setIsBuying(false);

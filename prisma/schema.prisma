@@ -42,13 +42,13 @@ model item {
   title                              String        @db.VarChar(255)
   description                        String?       @db.VarChar(255)
   price                              Int           @default(0)
+  content                            String?       @db.LongText
   on_marketplace                     Boolean
   from_marketplace                   Boolean       @default(false)
   owner                              Int
   camp                               Int
   created_at                         DateTime?     @default(now()) @db.Timestamp(0)
   updated_at                         DateTime?     @default(now()) @db.Timestamp(0)
-  deleted                            Boolean?      @default(false)
   inventory_inventory_itemToitem     inventory[]   @relation("inventory_itemToitem")
   camp_item_campTocamp               camp          @relation("item_campTocamp", fields: [camp], references: [id], onUpdate: Restrict, map: "item_camp_id_fk")
   user                               user          @relation(fields: [owner], references: [id], onUpdate: Restrict, map: "item_owner_fk")
@@ -86,6 +86,8 @@ model user {
   name                                   String        @db.VarChar(255)
   password                               String        @default("abc") @db.VarChar(255)
   is_manager                             Boolean       @default(false)
+  auction_auction_ownerTouser            auction[]     @relation("auction_ownerTouser")
+  auction_auction_highest_bidderTouser   auction[]     @relation("auction_highest_bidderTouser")
   balance_balance_userTouser             balance[]     @relation("balance_userTouser")
   inventory_inventory_userTouser         inventory[]   @relation("inventory_userTouser")
   item                                   item[]
@@ -100,6 +102,7 @@ model camp {
   name_url                           String        @unique(map: "camp_pk") @db.VarChar(255)
   currency                           String?       @db.VarChar(3)
   description                        String?       @db.VarChar(255)
+  auction_auction_campTocamp         auction[]     @relation("auction_campTocamp")
   balance_balance_campTocamp         balance[]     @relation("balance_campTocamp")
   inventory_inventory_campTocamp     inventory[]   @relation("inventory_campTocamp")
   item_item_campTocamp               item[]        @relation("item_campTocamp")
@@ -119,6 +122,26 @@ model user_camp {
   @@unique([user, camp], map: "idx_user_camp_lookup")
   @@index([camp], map: "user_camp_camp_index")
   @@index([user], map: "user_camp_user_index")
+}
+
+model auction {
+  id                                Int       @id @unique(map: "auction_id_uindex") @default(autoincrement())
+  title                             String    @db.VarChar(255)
+  description                       String?   @db.VarChar(255)
+  highest_bid                       Int
+  highest_bidder                    Int?
+  owner                             Int
+  camp                              Int
+  created_at                        DateTime? @default(now()) @db.Timestamp(0)
+  ends_at                           DateTime  @db.DateTime(0)
+  content                           String?   @db.LongText
+  camp_auction_campTocamp           camp      @relation("auction_campTocamp", fields: [camp], references: [id], onUpdate: Restrict, map: "auction_camp_id_fk")
+  user_auction_ownerTouser          user      @relation("auction_ownerTouser", fields: [owner], references: [id], onUpdate: Restrict, map: "auction_user_id_fk")
+  user_auction_highest_bidderTouser user?     @relation("auction_highest_bidderTouser", fields: [highest_bidder], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auction_user_id_fk_2")
+
+  @@index([camp], map: "auction_camp_index")
+  @@index([owner], map: "auction_owner_index")
+  @@index([highest_bidder], map: "auction_user_id_fk_2")
 }
 
 enum transaction_transaction_type {

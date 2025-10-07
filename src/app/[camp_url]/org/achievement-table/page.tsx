@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import { FormEvent } from "react";
 import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
+import { useBalance } from "@/hooks/useBalance";
 
 export default function AchievementTablePage() {
 	const { camp_url } = useParams<{ camp_url: string }>();
@@ -18,6 +19,8 @@ export default function AchievementTablePage() {
 		{}
 	);
 	const [isLoading, setIsLoading] = useState(true);
+
+	const { mutate } = useBalance();
 
 	useEffect(() => {
 		async function fetchData() {
@@ -100,6 +103,7 @@ export default function AchievementTablePage() {
 				existingItems={existingItems}
 				existingUsers={existingUsers}
 				userNames={userNames}
+				mutate={mutate}
 			/>
 		</div>
 	);
@@ -111,6 +115,7 @@ interface UserItemsListProps {
 	existingItems: Set<string>;
 	existingUsers: Set<string>;
 	userNames: Record<string, string | null>;
+	mutate: () => void;
 }
 
 function UserItemsList({
@@ -119,6 +124,7 @@ function UserItemsList({
 	existingItems,
 	existingUsers,
 	userNames,
+	mutate,
 }: UserItemsListProps) {
 	const { showError, showSuccess } = useToast();
 	const [hovered, setHovered] = useState({ row: -1, col: -1 });
@@ -231,7 +237,7 @@ function UserItemsList({
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		try {
-			const response = await fetch("/api/import/user-items", {
+			const response = await fetch("/api/table", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -246,6 +252,7 @@ function UserItemsList({
 			}
 
 			showSuccess("User items updated successfully!");
+			mutate();
 		} catch (error) {
 			console.error("Error updating user items:", error);
 			showError("An unknown error occurred while updating user items.");
