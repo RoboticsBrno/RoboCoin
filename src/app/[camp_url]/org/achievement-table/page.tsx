@@ -382,9 +382,7 @@ function UserItemsList({
 													: "bg-red-800"
 												}`
 												} ${(hovered.row === rowIndex &&
-													colIndex <= hovered.col) ||
-													(hovered.col === colIndex &&
-														rowIndex <= hovered.row)
+													hovered.col === colIndex)
 													? "brightness-125"
 													: ""
 												}`}
