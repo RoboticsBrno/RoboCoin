@@ -66,7 +66,7 @@ export default function AchievementsPage() {
 									"No description available"}
 							</p>
 							<p className="text-green-400 font-bold">
-								Price: ${achievement.price.toFixed(2)}
+								Value: ${achievement.price.toFixed(2)}
 							</p>
 						</Card>
 					))}

@@ -16,7 +16,6 @@ const createAchievementSchema = z.object({
 	description: z.string().optional(),
 	price: z
 		.string()
-		.optional()
 		.refine(
 			(val) => {
 				if (!val || val === "") return true;
@@ -106,7 +105,7 @@ export default function CreateAchievementPage() {
 
 					<FormGroup>
 						<FormInput
-							label="Price (optional)"
+							label="Value"
 							id="price"
 							name="price"
 							type="number"
