@@ -1,3 +1,34 @@
+/**
+ * @swagger
+ * /api/inventory/item/{itemId}:
+ *   get:
+ *     summary: Get owners of an item
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the item
+ *     responses:
+ *       200:
+ *         description: A list of user IDs who own the item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: integer
+ *       400:
+ *         description: Invalid Item ID
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to fetch item owners
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

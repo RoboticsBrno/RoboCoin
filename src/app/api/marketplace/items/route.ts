@@ -1,3 +1,56 @@
+/**
+ * @swagger
+ * /api/marketplace/items:
+ *   get:
+ *     summary: Get all items on the marketplace for the current camp
+ *     tags: [Marketplace]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of items on the marketplace
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Item'
+ *       401:
+ *         description: Unauthorized
+ *   post:
+ *     summary: Create a new item on the marketplace
+ *     tags: [Marketplace]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: The created item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Item'
+ *       400:
+ *         description: Title is required
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Failed to create item
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";

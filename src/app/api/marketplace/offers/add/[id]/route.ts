@@ -1,3 +1,32 @@
+/**
+ * @swagger
+ * /api/marketplace/offers/add/{id}:
+ *   post:
+ *     summary: Add an item to the marketplace
+ *     tags: [Marketplace]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the item to add to the marketplace
+ *     responses:
+ *       200:
+ *         description: Offer added
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Offer added"
+ *       401:
+ *         description: Unauthorized
+ */
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";

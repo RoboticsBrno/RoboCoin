@@ -1,3 +1,53 @@
+/**
+ * @swagger
+ * /api/manager/my-camps:
+ *   get:
+ *     summary: Get all camps for the current manager
+ *     tags: [Manager]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of camps
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Camp'
+ *       403:
+ *         description: Forbidden
+ *   post:
+ *     summary: Update admins of a camp
+ *     tags: [Manager]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - camp_url
+ *               - userIds
+ *             properties:
+ *               camp_url:
+ *                 type: string
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Admins updated successfully
+ *       400:
+ *         description: Missing camp_url or userIds
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

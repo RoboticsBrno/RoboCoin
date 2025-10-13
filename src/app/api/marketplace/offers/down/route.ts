@@ -1,3 +1,24 @@
+/**
+ * @swagger
+ * /api/marketplace/offers/down:
+ *   get:
+ *     summary: Get items to be taken down from the marketplace
+ *     description: Fetches items that are not on the marketplace, but were from the marketplace, are owned by the user, and have no transactions.
+ *     tags: [Marketplace]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Item'
+ *       401:
+ *         description: Unauthorized
+ */
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";

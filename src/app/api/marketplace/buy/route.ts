@@ -1,3 +1,41 @@
+/**
+ * @swagger
+ * /api/marketplace/buy:
+ *   post:
+ *     summary: Buy an item from the marketplace
+ *     tags: [Marketplace]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Purchase successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid item ID or insufficient funds
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Transaction failed
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";

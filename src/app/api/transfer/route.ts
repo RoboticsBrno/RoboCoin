@@ -1,3 +1,45 @@
+/**
+ * @swagger
+ * /api/transfer:
+ *   post:
+ *     summary: Transfer balance to another user
+ *     tags: [Transactions]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - to
+ *               - amount
+ *             properties:
+ *               to:
+ *                 type: integer
+ *                 description: The ID of the user to transfer to
+ *               amount:
+ *                 type: integer
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Transfer successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid input
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to transfer balance
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

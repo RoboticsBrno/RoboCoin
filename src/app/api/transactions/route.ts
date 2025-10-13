@@ -1,3 +1,25 @@
+/**
+ * @swagger
+ * /api/transactions:
+ *   get:
+ *     summary: Get transactions for the current user
+ *     tags: [Transactions]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/TransactionWithUsers'
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to fetch transactions
+ */
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 import { getTransactions, TransactionWithUsers } from "@/lib/transactions";

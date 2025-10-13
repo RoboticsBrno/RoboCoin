@@ -1,3 +1,43 @@
+/**
+ * @swagger
+ * /api/create-camp:
+ *   post:
+ *     summary: Create a new camp
+ *     tags: [Camps]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - name_url
+ *             properties:
+ *               name:
+ *                 type: string
+ *               name_url:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               currency:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Camp created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreateCampResponse'
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Camp already exists
+ *       500:
+ *         description: Error creating camp
+ */
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";

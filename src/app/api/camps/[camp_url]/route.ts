@@ -1,3 +1,59 @@
+/**
+ * @swagger
+ * /api/camps/{camp_url}:
+ *   get:
+ *     summary: Get camp details by camp_url
+ *     tags: [Camps]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: camp_url
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The URL name of the camp
+ *     responses:
+ *       200:
+ *         description: Camp details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CampDetails'
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ *       500:
+ *         description: Failed to fetch camp
+ *   put:
+ *     summary: Update a camp
+ *     tags: [Camps]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: camp_url
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The URL name of the camp to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Camp'
+ *     responses:
+ *       200:
+ *         description: Camp updated
+ *       400:
+ *         description: Missing name_url
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

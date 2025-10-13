@@ -1,3 +1,46 @@
+/**
+ * @swagger
+ * /api/inventory/to-achievement:
+ *   post:
+ *     summary: Synchronize item owners for an achievement
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - itemId
+ *               - userIds
+ *             properties:
+ *               itemId:
+ *                 type: integer
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Synchronization successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid input
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Failed to synchronize item owners
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

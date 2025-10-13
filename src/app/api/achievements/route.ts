@@ -1,3 +1,25 @@
+/**
+ * @swagger
+ * /api/achievements:
+ *   get:
+ *     summary: Get user's achievements for the current camp
+ *     tags: [Achievements]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of user's achievements
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/InventoryItem'
+ *       400:
+ *         description: Camp not selected
+ *       401:
+ *         description: Unauthorized
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

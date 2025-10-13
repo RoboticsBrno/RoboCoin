@@ -1,3 +1,95 @@
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Get users, optionally filtered by camp
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: camp_url
+ *         schema:
+ *           type: string
+ *         description: The URL name of the camp to filter users by
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ *   put:
+ *     summary: Update a user
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               login:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               isOrg:
+ *                 type: boolean
+ *               isAdmin:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: The updated user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid input
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to update user
+ *   delete:
+ *     summary: Delete a user from a camp
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       400:
+ *         description: User ID is required
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to delete user
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,3 +1,47 @@
+/**
+ * @swagger
+ * /api/signup:
+ *   post:
+ *     summary: Sign up a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - login
+ *               - name
+ *               - password
+ *             properties:
+ *               login:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               isOrg:
+ *                 type: boolean
+ *               isAdmin:
+ *                 type: boolean
+ *     responses:
+ *       201:
+ *         description: User created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 balance:
+ *                   $ref: '#/components/schemas/Balance'
+ *       409:
+ *         description: User already exists
+ *       500:
+ *         description: Error creating user
+ */
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";

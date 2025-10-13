@@ -1,3 +1,59 @@
+/**
+ * @swagger
+ * /api/inventory:
+ *   get:
+ *     summary: Get the entire inventory
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of inventory items with user login and item title
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/InventoryWithUserAndItem'
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to fetch inventory
+ *   post:
+ *     summary: Assign an item to a user
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - itemId
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *               itemId:
+ *                 type: integer
+ *               quantity:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: The created inventory item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/InventoryItem'
+ *       400:
+ *         description: Invalid input
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to assign item
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

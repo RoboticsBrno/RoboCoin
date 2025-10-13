@@ -1,3 +1,44 @@
+/**
+ * @swagger
+ * /api/inventory/to-user:
+ *   post:
+ *     summary: Synchronize inventory for a user
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - itemIds
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *               itemIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Synchronization successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid input
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to synchronize inventory
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

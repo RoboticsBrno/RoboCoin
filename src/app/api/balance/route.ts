@@ -3,6 +3,42 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 
+/**
+ * @swagger
+ * /api/balance:
+ *   get:
+ *     summary: Get balance for current user for a specific camp
+ *     tags: [Balance]
+ *     parameters:
+ *       - in: query
+ *         name: camp
+ *         schema:
+ *           type: string
+ *         description: The camp name to filter the balance
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successful response with user balance
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 balance:
+ *                   type: number
+ *                   example: 100
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ */
 export async function GET(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 

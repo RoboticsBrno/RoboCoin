@@ -1,3 +1,39 @@
+/**
+ * @swagger
+ * /api/manager/add-managers:
+ *   post:
+ *     summary: Add or remove managers to a camp
+ *     tags: [Manager]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userIds
+ *               - camp_url
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *               camp_url:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Managers updated successfully
+ *       400:
+ *         description: Missing camp_url or userIds
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ *       500:
+ *         description: Internal server error
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";

@@ -1,3 +1,23 @@
+/**
+ * @swagger
+ * /api/marketplace/offers/sold:
+ *   get:
+ *     summary: Get items sold by the user on the marketplace
+ *     tags: [Marketplace]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of items sold by the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ItemWithUser'
+ *       401:
+ *         description: Unauthorized
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";

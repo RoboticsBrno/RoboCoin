@@ -1,3 +1,34 @@
+/**
+ * @swagger
+ * /api/inventory/user/{userId}:
+ *   get:
+ *     summary: Get inventory for a user
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: A list of item IDs in the user's inventory
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: integer
+ *       400:
+ *         description: Invalid User ID
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Failed to fetch user inventory
+ */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,3 +1,61 @@
+/**
+ * @swagger
+ * /api/manager/users:
+ *   get:
+ *     summary: Get all managers, optionally filtered by camp
+ *     tags: [Manager]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: camp_url
+ *         schema:
+ *           type: string
+ *         description: The URL name of the camp to filter managers by
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ *   post:
+ *     summary: Add or remove users from a camp
+ *     tags: [Manager]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userIds
+ *               - camp_url
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *               camp_url:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Users updated successfully
+ *       400:
+ *         description: Invalid input
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Camp not found
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";

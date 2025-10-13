@@ -1,3 +1,25 @@
+/**
+ * @swagger
+ * /api/table:
+ *   post:
+ *     summary: Update user items and balances from a table
+ *     tags: [Inventory]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserItems'
+ *     responses:
+ *       200:
+ *         description: User items updated successfully
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: An error occurred while updating user items
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
