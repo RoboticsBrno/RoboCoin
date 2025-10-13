@@ -25,7 +25,6 @@ interface AuctionItem extends MarketplaceItem {
 export default function MarketplacePage() {
 	const [loading, setLoading] = useState(true);
 	const [offers, setOffers] = useState<MarketplaceItem[]>([]);
-	const [auctions, setAuctions] = useState<AuctionItem[]>([]);
 
 	const { showError, showInfo } = useToast();
 
@@ -43,16 +42,6 @@ export default function MarketplacePage() {
 			description: "See the items you have offered for sale.",
 			link: campUrl ? `/${campUrl}/marketplace/offers` : "/marketplace/offers",
 
-		},
-		{
-			title: "Create auction",
-			description: "Create an auction for your item.",
-			link: `/${campUrl}/marketplace/auction/create`,
-		},
-		{
-			title: "View your auctions",
-			description: "See the auctions you have created.",
-			link: `/${campUrl}/marketplace/auction/list`,
 		},
 	];
 
@@ -109,25 +98,6 @@ export default function MarketplacePage() {
 							href={`/${campUrl}/marketplace/item/${offer.id}`}
 							type="offered"
 							user={offer.user.name}
-						/>
-					))}
-				</div>
-			)}
-			<h2 className="text-2xl font-bold text-white mt-8 mb-4">
-				Auction Items
-			</h2>
-			{loading ? (
-				<Loader />
-			) : (
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-					{auctions.map((auction) => (
-						<Item
-							key={auction.id}
-							title={auction.title}
-							description={auction.description}
-							price={auction.highestBid}
-							href={`/${campUrl}/marketplace/auction/${auction.id}`}
-							user={auction.user.name}
 						/>
 					))}
 				</div>

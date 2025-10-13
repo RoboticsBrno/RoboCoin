@@ -42,7 +42,6 @@ model item {
   title                              String        @db.VarChar(255)
   description                        String?       @db.VarChar(255)
   price                              Int           @default(0)
-  content                            String?       @db.LongText
   on_marketplace                     Boolean
   from_marketplace                   Boolean       @default(false)
   owner                              Int

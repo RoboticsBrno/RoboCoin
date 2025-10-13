@@ -11,7 +11,6 @@ import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubtitle from "@/components/form/FormSubtitle";
 import { useToast } from "@/components/Toast";
-import FormFileInput from "@/components/form/FormFileInput";
 
 const createItemSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
@@ -102,14 +101,6 @@ export default function AddItemPage() {
 							type="number"
 							min={0}
 							required
-						/>
-					</FormGroup>
-
-					<FormGroup>
-						<FormFileInput
-							name="file"
-							label="File URL"
-							placeholder="Enter file URL (optional)"
 						/>
 					</FormGroup>
 
