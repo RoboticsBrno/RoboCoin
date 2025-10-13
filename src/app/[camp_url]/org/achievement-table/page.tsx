@@ -13,6 +13,7 @@ import { useBalance } from "@/hooks/useBalance";
 export default function AchievementTablePage() {
 	const { camp_url } = useParams<{ camp_url: string }>();
 	const [userItems, setUserItems] = useState<UserItems>({});
+	const [initialUserItems, setInitialUserItems] = useState<UserItems>({});
 	const [existingItems, setExistingItems] = useState<Set<string>>(new Set());
 	const [existingUsers, setExistingUsers] = useState<Set<string>>(new Set());
 	const [userNames, setUserNames] = useState<Record<string, string | null>>(
@@ -72,12 +73,13 @@ export default function AchievementTablePage() {
 
 				const userNamesMap: Record<string, string | null> = {};
 				usersData.forEach((user) => {
-					userNamesMap[user.login] = user.name; // Assuming login is the name, adjust as needed
+					userNamesMap[user.login] = user.name;
 				});
 
 				setUserNames(userNamesMap);
 
 				setUserItems(userItemsMap);
+				setInitialUserItems(JSON.parse(JSON.stringify(userItemsMap)));
 				setExistingUsers(existingUsersSet);
 				setExistingItems(existingItemsSet);
 			} catch (error) {
@@ -99,6 +101,7 @@ export default function AchievementTablePage() {
 			<PageTitle>Achievement Table</PageTitle>
 			<UserItemsList
 				userItems={userItems}
+				initialUserItems={initialUserItems}
 				setUserItems={setUserItems}
 				existingItems={existingItems}
 				existingUsers={existingUsers}
@@ -111,6 +114,7 @@ export default function AchievementTablePage() {
 
 interface UserItemsListProps {
 	userItems: UserItems;
+	initialUserItems: UserItems,
 	setUserItems: React.Dispatch<React.SetStateAction<UserItems>>;
 	existingItems: Set<string>;
 	existingUsers: Set<string>;
@@ -120,6 +124,7 @@ interface UserItemsListProps {
 
 function UserItemsList({
 	userItems,
+	initialUserItems,
 	setUserItems,
 	existingItems,
 	existingUsers,
@@ -222,6 +227,10 @@ function UserItemsList({
 		});
 	};
 
+	const handleRevert = () => {
+		setUserItems(initialUserItems);
+	};
+
 	const handleCheckboxChange = (
 		user: string,
 		item: string,
@@ -270,6 +279,9 @@ function UserItemsList({
 					</Button>
 					<Button onClick={handleDeselectAll} type="button">
 						Deselect All
+					</Button>
+					<Button onClick={handleRevert} type="button">
+						Revert
 					</Button>
 				</div>
 			</div>
