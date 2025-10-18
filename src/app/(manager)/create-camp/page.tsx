@@ -10,6 +10,8 @@ import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 import { useToast } from "@/components/Toast";
+import { fetcher, FetchError } from "@/lib/fetch";
+import { CreateCampResponse } from "@/types";
 
 const signupSchema = z.object({
 	name: z.string().min(1, { message: "Name is required" }),
@@ -32,19 +34,19 @@ export default function SignupPage() {
 	const { showError } = useToast();
 
 	const onFormSubmit = async (data: SignupSchema) => {
-		const response = await fetch("/api/create-camp", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		});
-
-		if (response.ok) {
+		try {
+			await fetcher<CreateCampResponse>("/api/create-camp", {
+				method: "POST",
+				body: data,
+			});
 			window.location.href = "/";
-		} else {
-			console.error("Camp creation failed");
-			showError("Camp creation failed. Please try again.");
+		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Camp creation failed. Please try again.");
+			} else {
+				console.error("Camp creation failed", error);
+				showError("Camp creation failed. Please try again.");
+			}
 		}
 	};
 

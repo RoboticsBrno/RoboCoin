@@ -43,7 +43,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 		};
 
 		fetchItem();
-	}, [id]);
+	}, [id, showError]);
 
 	const handleBuy = async () => {
 		setIsBuying(true);

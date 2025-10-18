@@ -7,10 +7,11 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { item } from "../../../../../generated/prisma";
 import { useToast } from "@/components/Toast";
+import { Item as ItemType } from "@/types";
 
 export default function YourItemsPage() {
 	const [loading, setLoading] = useState(true);
-	const [items, setItems] = useState<any[]>([]);
+	const [items, setItems] = useState<ItemType[]>([]);
 
 	const { data: session, status } = useSession();
 
@@ -41,7 +42,7 @@ export default function YourItemsPage() {
 		};
 
 		fetchItems();
-	}, [session, status]);
+	}, [session, status, showError]);
 
 	return (
 		<>

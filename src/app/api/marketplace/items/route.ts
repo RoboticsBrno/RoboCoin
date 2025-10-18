@@ -14,7 +14,7 @@
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Item'
+ *                 $ref: '#/components/schemas/ItemWithUser'
  *       401:
  *         description: Unauthorized
  *   post:
@@ -27,16 +27,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - title
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: number
+ *             $ref: '#/components/schemas/CreateMarketplaceItemRequest'
  *     responses:
  *       201:
  *         description: The created item
@@ -55,15 +46,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { CreateMarketplaceItemRequest, Item } from "@/types";
+import { ItemWithUser } from "@/lib/api";
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<ItemWithUser[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const items = await prisma.item.findMany({
+	const items: ItemWithUser[] = await prisma.item.findMany({
 		where: {
 			on_marketplace: true,
 			camp: session.camp_id || -1,
@@ -76,14 +69,14 @@ export async function GET() {
 	return NextResponse.json(items);
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<Item | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const { title, description, price } = await req.json();
+	const { title, description, price }: CreateMarketplaceItemRequest = await req.json();
 
 	if (!title) {
 		return NextResponse.json(

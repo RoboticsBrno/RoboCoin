@@ -12,6 +12,9 @@ import FormSubtitle from "@/components/form/FormSubtitle";
 import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
+import { useToast } from "@/components/Toast";
+import { fetcher, FetchError } from "@/lib/fetch";
+import { ManagerSignupResponse } from "@/types";
 
 const signupSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -32,21 +35,19 @@ export default function SignupPage() {
 			isManager: true,
 		},
 	});
+	const { showError } = useToast();
 	const {
 		handleSubmit,
 		formState: { isSubmitting },
 	} = methods;
 
 	const onFormSubmit = async (data: SignupSchema) => {
-		const response = await fetch("/api/manager/signup", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		});
+		try {
+			await fetcher<ManagerSignupResponse>("/api/manager/signup", {
+				method: "POST",
+				body: data,
+			});
 
-		if (response.ok) {
 			const result = await signIn("credentials", {
 				login: data.login,
 				password: data.password,
@@ -59,8 +60,13 @@ export default function SignupPage() {
 			} else {
 				router.push("/login");
 			}
-		} else {
-			console.error("Signup failed");
+		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Signup failed");
+			} else {
+				console.error("Signup failed", error);
+				showError("Signup failed");
+			}
 		}
 	};
 

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Card from "@/components/card/Card";
 import PageTitle from "@/components/PageTitle";
 import Loader from "@/components/Loader";
+import { useToast } from "@/components/Toast";
+import { fetcher, FetchError } from "@/lib/fetch";
 import { InventoryItem } from "@/lib/api";
 
 interface Achievement {
@@ -18,14 +20,12 @@ export default function AchievementsPage() {
 	const [achievements, setAchievements] = useState<Achievement[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
+	const { showError } = useToast();
+
 	useEffect(() => {
 		const fetchAchievements = async () => {
 			try {
-				const response = await fetch("/api/achievements");
-				if (!response.ok) {
-					throw new Error("Failed to fetch achievements");
-				}
-				const data: InventoryItem[] = await response.json();
+				const data = await fetcher<InventoryItem[]>("/api/achievements");
 				const parsedData: Achievement[] = data.map(
 					(item: InventoryItem) => ({
 						id: item.item_inventory_itemToitem.id,
@@ -38,14 +38,19 @@ export default function AchievementsPage() {
 				);
 				setAchievements(parsedData);
 			} catch (error) {
-				console.error(error);
+				if (error instanceof FetchError) {
+					showError(error.info.error || "Failed to fetch achievements");
+				} else {
+					console.error(error);
+					showError("Failed to fetch achievements");
+				}
 			} finally {
 				setIsLoading(false);
 			}
 		};
 
 		fetchAchievements();
-	}, []);
+	}, [showError]);
 
 	return (
 		<div className="container mx-auto px-4 py-8">

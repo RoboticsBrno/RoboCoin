@@ -18,6 +18,8 @@ import bcrypt from "bcryptjs";
 import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { fetcher, FetchError } from "@/lib/fetch";
+import { User } from "@/types";
 
 const editUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -65,23 +67,26 @@ export default function EditUserPage() {
 			if (!camp_url) return;
 			setLoading(true);
 			try {
-				const response = await fetch(`/api/users?camp_url=${camp_url}`);
-				if (response.ok) {
-					const data = await response.json();
-					const filteredData = data.filter((user: UserSelect) => user.id !== Number(session?.user?.id));
-					setUsers(filteredData);
-				} else {
-					showError("Failed to fetch users");
-				}
-				setLoading(false);
+				const data = await fetcher<UserSelect[]>(
+					`/api/users?camp_url=${camp_url}`
+				);
+				const filteredData = data.filter(
+					(user: UserSelect) => user.id !== Number(session?.user?.id)
+				);
+				setUsers(filteredData);
 			} catch (error) {
-				showError("An unexpected error occurred while fetching users.");
+				if (error instanceof FetchError) {
+					showError(error.info.error || "Failed to fetch users");
+				} else {
+					showError("An unexpected error occurred while fetching users.");
+				}
 				console.error("Error fetching users:", error);
+			} finally {
 				setLoading(false);
 			}
 		};
 		fetchUsers();
-	}, [camp_url, showError]);
+	}, [camp_url, showError, session?.user?.id]);
 
 	useEffect(() => {
 		const user =
@@ -122,34 +127,30 @@ export default function EditUserPage() {
 				delete dataWithHashedPassword.password;
 			}
 
-			const response = await fetch(`/api/users?camp_url=${camp_url}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					id: selectedUser.id,
-					...dataWithHashedPassword,
-				}),
-			});
+			const updatedUser = await fetcher<User>(
+				`/api/users?camp_url=${camp_url}`,
+				{
+					method: "PUT",
+					body: {
+						id: selectedUser.id,
+						...dataWithHashedPassword,
+					},
+				}
+			);
 
-			if (response.ok) {
-				const updatedUser = await response.json();
-				showSuccess(`User "${updatedUser.name}" updated successfully!`);
-				setSelectedUserId("");
-				setSelectedUser(null);
-				const userResponse = await fetch(
-					`/api/users?camp_url=${camp_url}`,
-				);
-				const usersData = await userResponse.json();
-				setUsers(usersData);
-			} else {
-				const errorData = await response.json();
-				showError("Failed to update user");
-				console.error("Update error:", errorData.error);
-			}
+			showSuccess(`User "${updatedUser.name}" updated successfully!`);
+			setSelectedUserId("");
+			setSelectedUser(null);
+			const usersData = await fetcher<UserSelect[]>(
+				`/api/users?camp_url=${camp_url}`
+			);
+			setUsers(usersData);
 		} catch (error) {
-			showError("An unexpected error occurred while updating user.");
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to update user");
+			} else {
+				showError("An unexpected error occurred while updating user.");
+			}
 		}
 	};
 
@@ -169,7 +170,7 @@ export default function EditUserPage() {
 								label="User"
 								name="userId"
 								options={users.map((user) => ({
-									value: user.id,
+									value: user.id.toString(),
 									label: `${user.name} (${user.login})`,
 								}))}
 								value={selectedUserId}

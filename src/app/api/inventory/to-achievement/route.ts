@@ -11,27 +11,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - itemId
- *               - userIds
- *             properties:
- *               itemId:
- *                 type: integer
- *               userIds:
- *                 type: array
- *                 items:
- *                   type: integer
+ *             $ref: '#/components/schemas/SyncAchievementRequest'
  *     responses:
  *       200:
  *         description: Synchronization successful
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
+ *               $ref: '#/components/schemas/SyncAchievementResponse'
  *       400:
  *         description: Invalid input
  *       403:
@@ -46,15 +33,16 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { syncItemHolders } from "@/lib/inventory";
 import { authOptions } from "@/lib/auth";
+import { SyncAchievementRequest, SyncAchievementResponse } from "@/types";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<SyncAchievementResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user?.is_org && !session?.user?.is_admin) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { itemId, userIds } = await req.json();
+	const { itemId, userIds }: SyncAchievementRequest = await req.json();
 
 	if (itemId === undefined || itemId === null || !Array.isArray(userIds)) {
 		return NextResponse.json(

@@ -58,26 +58,36 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { Camp, CampDetails, CampUpdateResponse } from "@/types";
 
 export async function GET(
 	req: NextRequest,
 	{ params }: { params: Promise<{ camp_url: string }> }
-) {
+): Promise<NextResponse<CampDetails | { error: string }>> {
 	const session = await getServerSession(authOptions);
+
+	const resolvedParams = await params;
 
 	if (!session) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
-	const resolvedParams = await params;
 
 	try {
-		const camp = await prisma.camp.findUnique({
+		const campFromPrisma = await prisma.camp.findUnique({
 			where: { name_url: resolvedParams.camp_url },
 		});
 
-		if (!camp) {
+		if (!campFromPrisma) {
 			return NextResponse.json({ error: "Camp not found" }, { status: 404 });
 		}
+
+		const camp: Camp = {
+			id: campFromPrisma.id,
+			name: campFromPrisma.name,
+			name_url: campFromPrisma.name_url,
+			currency: campFromPrisma.currency,
+			description: campFromPrisma.description,
+		};
 
 		const campUser = await prisma.user_camp.findFirst({
 			where: {
@@ -103,15 +113,16 @@ export async function GET(
 export async function PUT(
 	req: NextRequest,
 	{ params }: { params: Promise<{ camp_url: string }> }
-) {
+): Promise<NextResponse<CampUpdateResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_manager) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
+
 	const resolvedParams = await params;
 
-	const data: { name: string, name_url: string, description: string, currency: string } = await req.json();
+	const data: Camp = await req.json();
 
 	if (!data.name_url) {
 		return NextResponse.json({ error: "Missing name_url" }, { status: 400 });

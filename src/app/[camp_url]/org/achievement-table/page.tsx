@@ -9,6 +9,8 @@ import { FormEvent } from "react";
 import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
 import { useBalance } from "@/hooks/useBalance";
+import { fetcher, FetchError } from "@/lib/fetch";
+import { User, Item, InventoryWithUserAndItem, UpdateUserItemsResponse } from "@/types";
 
 export default function AchievementTablePage() {
 	const { camp_url } = useParams<{ camp_url: string }>();
@@ -26,24 +28,11 @@ export default function AchievementTablePage() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const [usersRes, itemsRes, inventoryRes] = await Promise.all([
-					fetch("/api/users?camp_url=" + camp_url),
-					fetch("/api/items"),
-					fetch("/api/inventory"),
+				const [usersData, itemsData, inventoryData] = await Promise.all([
+					fetcher<User[]>("/api/users?camp_url=" + camp_url),
+					fetcher<Item[]>("/api/items"),
+					fetcher<InventoryWithUserAndItem[]>("/api/inventory"),
 				]);
-
-				if (!usersRes.ok || !itemsRes.ok || !inventoryRes.ok) {
-					throw new Error("Failed to fetch data");
-				}
-
-				const usersData: { login: string; name: string }[] =
-					await usersRes.json();
-				const itemsData: { title: string }[] = await itemsRes.json();
-				const inventoryData: {
-					userLogin: string;
-					itemTitle: string;
-					quantity: number;
-				}[] = await inventoryRes.json();
 
 				const existingUsersSet = new Set(usersData.map((u) => u.login));
 				const existingItemsSet = new Set(itemsData.map((i) => i.title));
@@ -90,7 +79,7 @@ export default function AchievementTablePage() {
 		}
 
 		fetchData();
-	}, []);
+	}, [camp_url]);
 
 	if (isLoading) {
 		return <Loader />;
@@ -246,26 +235,20 @@ function UserItemsList({
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		try {
-			const response = await fetch("/api/table", {
+			await fetcher<UpdateUserItemsResponse>("/api/table", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(userItems),
+				body: userItems,
 			});
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				showError(errorData.error || "Failed to update user items.");
-				return;
-			}
 
 			showSuccess("User items updated successfully!");
 			mutate();
 		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to update user items.");
+			} else {
+				showError("An unknown error occurred while updating user items.");
+			}
 			console.error("Error updating user items:", error);
-			showError("An unknown error occurred while updating user items.");
-			return;
 		}
 	};
 

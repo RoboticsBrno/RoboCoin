@@ -10,6 +10,8 @@ import FormGroup from "@/components/form/FormGroup";
 import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 import { useToast } from "@/components/Toast";
+import { fetcher, FetchError } from "@/lib/fetch";
+import { Item } from "@/types";
 
 const createAchievementSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
@@ -52,25 +54,20 @@ export default function CreateAchievementPage() {
 				...(data.price &&
 					data.price !== "" && { price: Number(data.price) }),
 			};
-			const response = await fetch("/api/items", {
+			const newAchievement = await fetcher<Item>("/api/items", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(submitData),
+				body: submitData,
 			});
 
-			if (response.ok) {
-				const newAchievement = await response.json();
-				showSuccess(`Achievement "${newAchievement.title}" created successfully!`);
-				methods.reset(); // Reset the form after successful submission
-			} else {
-				const errorData = await response.json();
-				showError("Failed to create achievement");
-				console.error("Failed to create achievement:", errorData);
-			}
+			showSuccess(`Achievement "${newAchievement.title}" created successfully!`);
+			methods.reset(); // Reset the form after successful submission
 		} catch (error) {
-			showError("An unexpected error occurred while creating the achievement.");
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to create achievement");
+			} else {
+				showError("An unexpected error occurred while creating the achievement.");
+			}
+			console.error("Failed to create achievement:", error);
 		}
 	};
 

@@ -15,6 +15,10 @@
  *     responses:
  *       200:
  *         description: User items updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateUserItemsResponse'
  *       403:
  *         description: Forbidden
  *       500:
@@ -25,8 +29,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UserItems } from "@/lib/api";
+import { UpdateUserItemsResponse } from "@/types";
+import { Prisma } from "@prisma/client";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<UpdateUserItemsResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user || !session.user.is_org) {
@@ -82,7 +88,7 @@ export async function POST(req: NextRequest) {
 			currentInventory.map((inv) => [`${inv.user}-${inv.item}`, inv])
 		);
 
-		const operations: any[] = [];
+		const operations: Prisma.PrismaPromise<unknown>[] = [];
 		const balanceChanges = new Map<number, number>();
 
 		for (const userLogin of userLogins) {

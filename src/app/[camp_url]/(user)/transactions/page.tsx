@@ -43,7 +43,7 @@ export default function TransactionsPage() {
 		if (error) {
 			showError(error);
 		}
-	}, [error]);
+	}, [error, showError]);
 
 	if (loading) {
 		return (

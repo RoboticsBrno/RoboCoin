@@ -16,6 +16,7 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { UserSelect } from "@/lib/api";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { DeleteUserResponse } from "@/types";
 
 const deleteUserSchema = z.object({
 	userId: z.string().min(1, { message: "User is required" }),
@@ -66,11 +67,11 @@ export default function DeleteUserPage() {
 			}
 		};
 		fetchUsers();
-	}, [showError, camp_url]);
+	}, [showError, camp_url, session?.user?.id]);
 
 	const onFormSubmit = async (data: DeleteUserSchema) => {
 		try {
-			await fetcher(`/api/users?camp_url=${camp_url}`, {
+			await fetcher<DeleteUserResponse>(`/api/users?camp_url=${camp_url}`, {
 				method: "DELETE",
 				body: { id: data.userId },
 			});
@@ -107,7 +108,7 @@ export default function DeleteUserPage() {
 								label="User"
 								name="userId"
 								options={users.map((user) => ({
-									value: user.id,
+									value: user.id.toString(),
 									label: `${user.name} (${user.login})`,
 								}))}
 								value={selectedUserId}

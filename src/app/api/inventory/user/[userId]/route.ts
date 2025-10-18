@@ -33,11 +33,12 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { UserInventoryResponse } from "@/types";
 
 export async function GET(
 	req: NextRequest,
 	{ params }: { params: Promise<{ userId: string }> }
-) {
+): Promise<NextResponse<UserInventoryResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || (!session.user.is_org && !session.user.is_admin)) {

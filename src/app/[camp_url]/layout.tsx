@@ -1,16 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
-
-interface CampData {
-	id: string;
-	name_url: string;
-	is_admin: boolean;
-	is_org: boolean;
-}
+import { fetcher, FetchError } from "@/lib/fetch";
+import { CampDetails } from "@/types";
 
 export default function CampLayout({
 	children,
@@ -26,6 +21,29 @@ export default function CampLayout({
 
 	const campUrl = params.camp_url as string;
 
+	const updateSessionWithCampData = useCallback(async () => {
+		try {
+			const campData = await fetcher<CampDetails>(`/api/camps/${campUrl}`);
+
+			await update({
+				camp_url: campData.name_url,
+				camp_id: campData.id,
+				user: {
+					...session?.user,
+					is_admin: campData.is_admin,
+					is_org: campData.is_org,
+				},
+			});
+			setIsSessionReady(true);
+		} catch (error) {
+			if (error instanceof FetchError) {
+				router.push('/unauthorized');
+			} else {
+				console.error('Error updating session with camp data:', error);
+			}
+		}
+	}, [campUrl, router, session?.user, update]);
+
 	useEffect(() => {
 		const checkSession = async () => {
 			if (status === 'loading') return;
@@ -38,32 +56,7 @@ export default function CampLayout({
 		};
 
 		checkSession();
-	}, [session, campUrl, status]);
-
-	const updateSessionWithCampData = async () => {
-		try {
-			const response = await fetch(`/api/camps/${campUrl}`);
-
-			if (response.ok) {
-				const campData: CampData = await response.json();
-
-				await update({
-					camp_url: campData.name_url,
-					camp_id: parseInt(campData.id, 10),
-					user: {
-						...session?.user,
-						is_admin: campData.is_admin,
-						is_org: campData.is_org,
-					},
-				});
-				setIsSessionReady(true);
-			} else {
-				router.push('/unauthorized');
-			}
-		} catch (error) {
-			console.error('Error updating session with camp data:', error);
-		}
-	};
+	}, [session, campUrl, status, updateSessionWithCampData]);
 
 	if (pathname.includes('login') || pathname.includes('signup')) {
 		return <>{children}</>;

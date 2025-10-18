@@ -114,18 +114,18 @@ function ToastAlert({
 }) {
 	const [isVisible, setIsVisible] = useState(true);
 
+	const handleClose = useCallback(() => {
+		setIsVisible(false);
+		setTimeout(onClose, 300);
+	}, [onClose]);
+
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			handleClose();
 		}, 5000);
 
 		return () => clearTimeout(timer);
-	}, []);
-
-	const handleClose = () => {
-		setIsVisible(false);
-		setTimeout(onClose, 300);
-	};
+	}, [handleClose]);
 
 	const variantClasses = variants[variant];
 	const progressBarClass = progressBarVariants[variant];

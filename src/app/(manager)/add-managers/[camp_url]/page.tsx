@@ -12,12 +12,8 @@ import { useToast } from "@/components/Toast";
 import { useSession } from "next-auth/react";
 import FormTitle from "@/components/form/FormTitle";
 import FormSubtitle from "@/components/form/FormSubtitle";
-
-interface User {
-	id: string;
-	name: string;
-	login: string;
-}
+import { fetcher, FetchError } from "@/lib/fetch";
+import { AddManagersResponse, User } from "@/types";
 
 interface IForm {
 	selectedUsers: string[];
@@ -50,30 +46,24 @@ export default function AddManagersPage() {
 		if (!camp_url || !session) return;
 		setLoading(true);
 		try {
-			const [allManagersRes, campManagersRes] = await Promise.all([
-				fetch("/api/manager/users"),
-				fetch(`/api/manager/users?camp_url=${camp_url}`),
+			const [allManagers, campManagers] = await Promise.all([
+				fetcher<User[]>("/api/manager/users"),
+				fetcher<User[]>(`/api/manager/users?camp_url=${camp_url}`),
 			]);
 
-			if (!allManagersRes.ok || !campManagersRes.ok) {
-				throw new Error("Failed to fetch manager data");
-			}
-
-			const allManagersData = await allManagersRes.json();
-			const campData = await campManagersRes.json();
-
-			const allManagers = allManagersData || [];
-			const campManagers = campData || [];
-
-			const campManagerIds = campManagers.map((manager: User) =>
+			const campManagerIds = campManagers.map((manager) =>
 				manager.id.toString(),
 			);
 
 			setUsers(allManagers);
 			setValue("selectedUsers", campManagerIds);
 		} catch (e) {
-			showError("An unknown error occurred while fetching data.");
-			console.error("Error fetching managers:", e);
+			if (e instanceof FetchError) {
+				showError(e.info.error || "An unknown error occurred while fetching data.");
+			} else {
+				showError("An unknown error occurred while fetching data.");
+				console.error("Error fetching managers:", e);
+			}
 		} finally {
 			setLoading(false);
 		}
@@ -90,25 +80,23 @@ export default function AddManagersPage() {
 				showError("Camp URL is missing.");
 				return;
 			}
-			const res = await fetch("/api/manager/add-managers", {
+			await fetcher<AddManagersResponse>("/api/manager/add-managers", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
+				body: {
 					userIds: userIds,
 					camp_url,
-				}),
+				},
 			});
-
-			if (!res.ok) {
-				const errorData = await res.json();
-				throw new Error(errorData.error || "Failed to update managers");
-			}
 
 			showSuccess("Managers updated successfully!");
 			fetchManagers();
 		} catch (error) {
-			showError("Failed to update managers.");
-			console.error("Error updating managers:", error);
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to update managers.");
+			} else {
+				showError("Failed to update managers.");
+				console.error("Error updating managers:", error);
+			}
 		}
 	};
 

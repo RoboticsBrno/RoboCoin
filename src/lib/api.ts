@@ -1,4 +1,4 @@
-import { Prisma } from "../../generated/prisma";
+import { Prisma } from "#/prisma";
 
 export type InventoryItem = Prisma.inventoryGetPayload<{
 	include: { item_inventory_itemToitem: true };

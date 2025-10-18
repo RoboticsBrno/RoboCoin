@@ -1,8 +1,19 @@
-import { AuthOptions, User } from "next-auth";
+import { AuthOptions, User, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { JWT } from "next-auth/jwt";
+
+interface UpdateData {
+    balance?: number;
+    camp_url?: string;
+    camp_id?: number;
+    user?: {
+        is_admin: boolean;
+        is_org: boolean;
+    };
+    user_camps?: string[];
+}
 
 export const authOptions: AuthOptions = {
 	providers: [
@@ -101,7 +112,7 @@ export const authOptions: AuthOptions = {
 				}
 
 
-				const result = {
+				const result: User = {
 					id: user.id.toString(),
 					name: user.name,
 					login: user.login,
@@ -136,19 +147,19 @@ export const authOptions: AuthOptions = {
 			token: JWT;
 			user?: User;
 			trigger?: "signIn" | "signUp" | "update" | "delete";
-			session?: any;
+			session?: UpdateData;
 		}) {
 			if (user) {
 				token.id = user.id;
 				token.name = user.name;
-				token.login = (user as any).login;
-				token.is_org = (user as any).is_org || false;
-				token.is_admin = (user as any).is_admin || false;
-				token.is_manager = (user as any).is_manager;
-				token.balance = (user as any).balance;
-				token.camp_url = (user as any).camp_url || null;
-				token.camp_id = (user as any).camp_id || null;
-				token.user_camps = (user as any).user_camps || [];
+				token.login = user.login;
+				token.is_org = user.is_org;
+				token.is_admin = user.is_admin;
+				token.is_manager = user.is_manager;
+				token.balance = user.balance;
+				token.camp_url = user.camp_url;
+				token.camp_id = user.camp_id;
+				token.user_camps = user.user_camps;
 			}
 			if (trigger === "update" && session) {
 
@@ -173,18 +184,18 @@ export const authOptions: AuthOptions = {
 			}
 			return token;
 		},
-		async session({ session, token }: { session: any; token: any }) {
+		async session({ session, token }: { session: Session; token: JWT }) {
 			if (token) {
 				session.user.id = token.id;
 				session.user.name = token.name;
 				session.user.login = token.login;
-				session.user.is_org = token.is_org || false;
-				session.user.is_admin = token.is_admin || false;
+				session.user.is_org = token.is_org;
+				session.user.is_admin = token.is_admin;
 				session.user.is_manager = token.is_manager;
 				session.user.balance = token.balance;
-				session.camp_url = token.camp_url || null;
-				session.camp_id = token.camp_id || null;
-				session.user_camps = token.user_camps || [];
+				session.camp_url = token.camp_url ?? null;
+				session.camp_id = token.camp_id ?? null;
+				session.user_camps = token.user_camps ?? [];
 			}
 			return session;
 		},

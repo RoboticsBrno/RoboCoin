@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 import useSWR from "swr";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from "@/lib/fetch";
+import { BalanceResponse } from "@/types";
 
 export function useBalance() {
 	const { data: session, update } = useSession();
@@ -14,12 +14,11 @@ export function useBalance() {
 		updateRef.current = update;
 	});
 
-	const { data, isLoading, mutate } = useSWR("/api/balance", fetcher, {
+	const { data, isLoading, mutate } = useSWR<BalanceResponse>("/api/balance", fetcher, {
 		refreshInterval: 5 * 60 * 1000,
 	});
 
 	useEffect(() => {
-		// if (data && data.balance !== session?.user?.balance) {
 		if (data && data.balance !== session?.user?.balance) {
 			updateRef.current({ balance: data.balance });
 		}

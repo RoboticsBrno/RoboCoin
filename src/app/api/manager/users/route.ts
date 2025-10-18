@@ -35,20 +35,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - userIds
- *               - camp_url
- *             properties:
- *               userIds:
- *                 type: array
- *                 items:
- *                   type: integer
- *               camp_url:
- *                 type: string
+ *             $ref: '#/components/schemas/UpdateUsersInCampRequest'
  *     responses:
  *       200:
  *         description: Users updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateUsersInCampResponse'
  *       400:
  *         description: Invalid input
  *       403:
@@ -60,8 +54,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { UpdateUsersInCampRequest, UpdateUsersInCampResponse, User } from "@/types";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse<User[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_manager) {
@@ -71,7 +66,7 @@ export async function GET(req: NextRequest) {
 	const searchParams = req.nextUrl.searchParams;
 	const campUrl = searchParams.get('camp_url');
 
-	let users;
+	let users: User[];
 	if (campUrl) {
 		const camp = await prisma.camp.findUnique({
 			where: { name_url: campUrl },
@@ -94,7 +89,7 @@ export async function GET(req: NextRequest) {
 
 }
 
-async function getAllManagersInCamp(campId: number) {
+async function getAllManagersInCamp(campId: number): Promise<User[]> {
 	const managers = await prisma.user.findMany({
 		where: {
 			is_manager: true,
@@ -108,13 +103,14 @@ async function getAllManagersInCamp(campId: number) {
 			id: true,
 			name: true,
 			login: true,
+            is_manager: true,
 		}
 	});
 
 	return managers;
 }
 
-async function getAllManagers() {
+async function getAllManagers(): Promise<User[]> {
 	const managers = await prisma.user.findMany({
 		where: {
 			is_manager: true,
@@ -123,13 +119,14 @@ async function getAllManagers() {
 			id: true,
 			name: true,
 			login: true,
+            is_manager: true,
 		}
 	});
 
 	return managers;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<UpdateUsersInCampResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -140,7 +137,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { userIds, camp_url } = await req.json();
+	const { userIds, camp_url }: UpdateUsersInCampRequest = await req.json();
 
 	if (!Array.isArray(userIds) || userIds.length === 0) {
 		return NextResponse.json(
@@ -164,7 +161,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Camp not found." }, { status: 404 });
 	}
 
-	const userIdsInt = userIds.map((id: string) => parseInt(id, 10));
+	const userIdsInt = userIds.map((id: number) => id);
 
 	const users_in_camp = await prisma.user_camp.findMany({
 		where: { camp: camp.id, NOT: { user: parseInt(session.user.id) } },

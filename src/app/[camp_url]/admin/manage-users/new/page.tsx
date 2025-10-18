@@ -11,6 +11,8 @@ import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import { useToast } from "@/components/Toast";
+import { fetcher, FetchError } from "@/lib/fetch";
+import { SignupResponse } from "@/types";
 
 const createUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -44,24 +46,19 @@ export default function CreateUserPage() {
 
 	const onFormSubmit = async (data: CreateAchievementSchema) => {
 		try {
-			const response = await fetch("/api/signup", {
+			const newUser = await fetcher<SignupResponse>("/api/signup", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(data),
+				body: data,
 			});
 
-			if (response.ok) {
-				const newUser = await response.json();
-				showSuccess(`User "${newUser.user.name}" created successfully!`);
-				methods.reset();
-			} else {
-				const errorData = await response.json();
-				showError(errorData.error || "Failed to create user");
-			}
+			showSuccess(`User "${newUser.user.name}" created successfully!`);
+			methods.reset();
 		} catch (error) {
-			showError("An unexpected error occurred while creating user.");
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to create user");
+			} else {
+				showError("An unexpected error occurred while creating user.");
+			}
 		}
 	};
 

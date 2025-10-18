@@ -2,14 +2,14 @@
 type FetcherOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 	headers?: Record<string, string>;
-	body?: any;
+	body?: unknown;
 };
 
 export class FetchError extends Error {
 	status: number;
-	info: any;
+	info: { error: string };
 
-	constructor(status: number, info: any) {
+	constructor(status: number, info: { error: string }) {
 		super(`Request failed with status ${status}`);
 		this.status = status;
 		this.info = info;

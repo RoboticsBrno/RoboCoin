@@ -4,7 +4,7 @@ import Item from "@/components/Item";
 import Loader from "@/components/Loader";
 import PageTitle from "@/components/PageTitle";
 import { useToast } from "@/components/Toast";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface Offer {
 	id: number;
@@ -24,7 +24,7 @@ export default function OffersPage() {
 
 	const { showError, showInfo } = useToast();
 
-	const fetchOffers = async () => {
+	const fetchOffers = useCallback(async () => {
 		setLoading(true);
 		try {
 			const [upResponse, soldResponse, downResponse] = await Promise.all([
@@ -71,11 +71,11 @@ export default function OffersPage() {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [showError, showInfo]);
 
 	useEffect(() => {
 		fetchOffers();
-	}, []);
+	}, [fetchOffers]);
 
 	const handleRemove = async (id: number) => {
 		await fetch(`/api/marketplace/offers/remove/${id}`, {

@@ -80,11 +80,12 @@ export default function TransferPage() {
 				}
 			} catch (err) {
 				showError("Failed to fetch users.");
+				console.error("Error fetching users:", err);
 			}
 			setLoading(false);
 		};
 		fetchUsers();
-	}, [session]);
+	}, [session, camp_url, showError]);
 
 	const onSubmit = async (data: TransferSchema) => {
 		const response = await fetch("/api/transfer", {

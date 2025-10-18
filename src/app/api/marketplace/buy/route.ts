@@ -11,22 +11,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - id
- *             properties:
- *               id:
- *                 type: integer
+ *             $ref: '#/components/schemas/BuyItemRequest'
  *     responses:
  *       200:
  *         description: Purchase successful
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
+ *               $ref: '#/components/schemas/BuyItemResponse'
  *       400:
  *         description: Invalid item ID or insufficient funds
  *       401:
@@ -41,17 +33,18 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { transferBalance } from "@/lib/balance";
+import { BuyItemRequest, BuyItemResponse } from "@/types";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<BuyItemResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const { id: itemId } = await req.json();
+	const { id: itemId }: BuyItemRequest = await req.json();
 
-	if (!itemId || isNaN(parseInt(itemId))) {
+	if (!itemId || isNaN(itemId)) {
 		return NextResponse.json({ error: "Invalid item ID" }, { status: 400 });
 	}
 
@@ -59,7 +52,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		const item = await prisma.item.findUnique({
-			where: { id: parseInt(itemId) },
+			where: { id: itemId },
 		});
 
 		if (!item) {

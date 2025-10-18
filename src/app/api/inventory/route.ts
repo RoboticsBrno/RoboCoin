@@ -29,17 +29,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - userId
- *               - itemId
- *             properties:
- *               userId:
- *                 type: integer
- *               itemId:
- *                 type: integer
- *               quantity:
- *                 type: integer
+ *             $ref: '#/components/schemas/AssignItemRequest'
  *     responses:
  *       201:
  *         description: The created inventory item
@@ -59,8 +49,10 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { Prisma } from "../../../../generated/prisma";
+import { AssignItemRequest, InventoryWithUserAndItem } from "@/types";
+import { InventoryItem } from "@/lib/api";
 
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<InventoryWithUserAndItem[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user) {
@@ -79,7 +71,7 @@ export async function GET(req: NextRequest) {
 			},
 		});
 
-		const response = inventory.map((inv) => ({
+		const response: InventoryWithUserAndItem[] = inventory.map((inv) => ({
 			userLogin: inv.user_inventory_userTouser.login,
 			itemTitle: inv.item_inventory_itemToitem.title,
 			quantity: inv.quantity,
@@ -95,7 +87,7 @@ export async function GET(req: NextRequest) {
 	}
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<InventoryItem | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	// 1. Authenticate and authorize the user
@@ -107,7 +99,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Camp not found" }, { status: 400 });
 	}
 
-	const { userId, itemId, quantity } = await req.json();
+	const { userId, itemId, quantity }: AssignItemRequest = await req.json();
 
 	// 2. Validate the input data
 	if (!userId || !itemId) {
@@ -121,11 +113,14 @@ export async function POST(req: NextRequest) {
 		// 3. Create the inventory record to assign the achievement
 		const newInventoryItem = await prisma.inventory.create({
 			data: {
-				user: parseInt(userId, 10),
-				item: parseInt(itemId, 10),
-				quantity: quantity ? parseInt(quantity, 10) : 1,
+				user: userId,
+				item: itemId,
+				quantity: quantity || 1,
 				camp: session.camp_id,
 			},
+			include: {
+				item_inventory_itemToitem: true,
+			}
 		});
 
 		return NextResponse.json(newInventoryItem, { status: 201 });
@@ -140,13 +135,10 @@ export async function POST(req: NextRequest) {
 					{ status: 400 }
 				);
 			}
-		} else if (error instanceof Error) {
-			return NextResponse.json({ error: error.message }, { status: 400 });
-		} else {
-			return NextResponse.json(
-				{ error: "Failed to assign item" },
-				{ status: 500 }
-			);
 		}
+		return NextResponse.json(
+			{ error: "Failed to assign item" },
+			{ status: 500 }
+		);
 	}
 }

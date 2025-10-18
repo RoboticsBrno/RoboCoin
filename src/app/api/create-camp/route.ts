@@ -11,19 +11,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - name_url
- *             properties:
- *               name:
- *                 type: string
- *               name_url:
- *                 type: string
- *               description:
- *                 type: string
- *               currency:
- *                 type: string
+ *             $ref: '#/components/schemas/CreateCampRequest'
  *     responses:
  *       201:
  *         description: Camp created
@@ -39,13 +27,13 @@
  *         description: Error creating camp
  */
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { CreateCampRequest, CreateCampResponse } from "@/types";
 
-export async function POST(req: Request) {
-	const { name, name_url, description, currency } = await req.json();
+export async function POST(req: NextRequest): Promise<NextResponse<CreateCampResponse | { error: string }>> {
+	const { name, name_url, description, currency }: CreateCampRequest = await req.json();
 
 	const existingCamp = await prisma.camp.findUnique({
 		where: { name_url },
@@ -95,6 +83,6 @@ export async function POST(req: Request) {
 		return NextResponse.json({ user, balance }, { status: 201 });
 	} catch (error) {
 		console.error("Error creating camp:", error);
-		return NextResponse.json({ error }, { status: 500 });
+		return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 });
 	}
 }

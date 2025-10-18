@@ -12,7 +12,7 @@ export default function Item({
 	onAdd,
 }: {
 	title: string;
-	description: string;
+	description: string | null;
 	price: number;
 	href?: string;
 	type?: "bought" | "offered" | "up";

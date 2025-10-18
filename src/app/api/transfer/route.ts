@@ -11,28 +11,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - to
- *               - amount
- *             properties:
- *               to:
- *                 type: integer
- *                 description: The ID of the user to transfer to
- *               amount:
- *                 type: integer
- *               description:
- *                 type: string
+ *             $ref: '#/components/schemas/TransferBalanceRequest'
  *     responses:
  *       200:
  *         description: Transfer successful
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
+ *               $ref: '#/components/schemas/TransferBalanceResponse'
  *       400:
  *         description: Invalid input
  *       403:
@@ -45,15 +31,16 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { transferBalance } from "@/lib/balance";
 import { authOptions } from "@/lib/auth";
+import { TransferBalanceRequest, TransferBalanceResponse } from "@/types";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<TransferBalanceResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { to, amount, description } = await req.json();
+	const { to, amount, description }: TransferBalanceRequest = await req.json();
 
 	if (!to || !amount) {
 		return NextResponse.json(

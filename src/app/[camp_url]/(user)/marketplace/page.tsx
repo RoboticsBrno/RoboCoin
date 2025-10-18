@@ -18,10 +18,6 @@ interface MarketplaceItem {
 	};
 }
 
-interface AuctionItem extends MarketplaceItem {
-	highestBid: number;
-}
-
 export default function MarketplacePage() {
 	const [loading, setLoading] = useState(true);
 	const [offers, setOffers] = useState<MarketplaceItem[]>([]);
@@ -67,7 +63,7 @@ export default function MarketplacePage() {
 			}
 		};
 		fetchMarketplaceItems();
-	}, []);
+	}, [showError, showInfo]);
 
 	return (
 		<>

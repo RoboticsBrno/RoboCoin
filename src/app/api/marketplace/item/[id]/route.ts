@@ -30,7 +30,7 @@ import { ItemWithUser } from "@/lib/api";
 export async function GET(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
-) {
+): Promise<NextResponse<ItemWithUser | { error: string }>> {
 	const resolvedParams = await params;
 	const id = parseInt(resolvedParams.id);
 

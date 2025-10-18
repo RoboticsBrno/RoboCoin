@@ -9,34 +9,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - login
- *               - name
- *               - password
- *             properties:
- *               login:
- *                 type: string
- *               name:
- *                 type: string
- *               password:
- *                 type: string
- *               isOrg:
- *                 type: boolean
- *               isAdmin:
- *                 type: boolean
+ *             $ref: '#/components/schemas/SignupRequest'
  *     responses:
  *       201:
  *         description: User created
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *                 balance:
- *                   $ref: '#/components/schemas/Balance'
+ *               $ref: '#/components/schemas/SignupResponse'
  *       409:
  *         description: User already exists
  *       500:
@@ -45,11 +25,12 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { SignupRequest, SignupResponse, User, Balance } from "@/types";
 
-export async function POST(req: Request) {
-	const { login, name, password, isOrg, isAdmin } = await req.json();
+export async function POST(req: NextRequest): Promise<NextResponse<SignupResponse | { error: string }>> {
+	const { login, name, password, isOrg, isAdmin }: SignupRequest = await req.json();
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -95,7 +76,7 @@ export async function POST(req: Request) {
 			},
 		});
 
-		const balance = await prisma.balance.create({
+		const balance: Balance = await prisma.balance.create({
 			data: {
 				user: user.id,
 				amount: 0,
@@ -103,8 +84,16 @@ export async function POST(req: Request) {
 			},
 		});
 
-		return NextResponse.json({ user, balance }, { status: 201 });
+		const responseUser: User = {
+			id: user.id,
+			login: user.login,
+			name: user.name,
+			is_manager: user.is_manager,
+		}
+
+		return NextResponse.json({ user: responseUser, balance }, { status: 201 });
 	} catch (error) {
+		console.error("Error creating user:", error);
 		return NextResponse.json(
 			{ error: "Error creating user" },
 			{ status: 500 }

@@ -22,11 +22,11 @@
  */
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { InventoryItem } from "@/lib/api";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<InventoryItem[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {

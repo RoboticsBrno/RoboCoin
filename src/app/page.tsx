@@ -7,12 +7,13 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
+import { Camp as CampType } from "@/types";
 
 export default function Home() {
 	const [loading, setLoading] = useState(true);
 	const { showError } = useToast();
 
-	const [camps, setCamps] = useState<any[]>([]);
+	const [camps, setCamps] = useState<CampType[]>([]);
 
 	const { data: session, status, update } = useSession();
 
@@ -95,7 +96,7 @@ function Camp({
 	name_url,
 }: {
 	title: string;
-	description: string;
+	description: string | undefined | null;
 	name_url: string;
 }) {
 	return (

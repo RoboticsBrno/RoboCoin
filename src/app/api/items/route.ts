@@ -27,18 +27,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - title
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: integer
- *               on_marketplace:
- *                 type: boolean
+ *             $ref: '#/components/schemas/CreateItemRequest'
  *     responses:
  *       201:
  *         description: The created item
@@ -61,9 +50,10 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { CreateItemRequest, Item } from "@/types";
 
 // GET all items
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<Item[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -79,7 +69,7 @@ export async function GET(req: NextRequest) {
 }
 
 // POST a new item
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<Item | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -90,7 +80,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { title, description, price, on_marketplace } = await req.json();
+	const { title, description, price, on_marketplace }: CreateItemRequest = await req.json();
 
 	if (!title) {
 		return NextResponse.json(

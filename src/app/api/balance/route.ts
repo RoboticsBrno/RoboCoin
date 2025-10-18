@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { BalanceResponse } from "@/types";
 
 /**
  * @swagger
@@ -23,11 +24,7 @@ import { authOptions } from "@/lib/auth";
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 balance:
- *                   type: number
- *                   example: 100
+ *               $ref: '#/components/schemas/BalanceResponse'
  *       401:
  *         description: Unauthorized access
  *         content:
@@ -39,7 +36,7 @@ import { authOptions } from "@/lib/auth";
  *                   type: string
  *                   example: Unauthorized
  */
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse<BalanceResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {

@@ -13,17 +13,8 @@ import FormSelect from "@/components/form/FormSelect";
 import FormCheckbox from "@/components/form/FormCheckbox";
 import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
-
-// Define types for the data we'll fetch
-interface User {
-	id: number;
-	name: string;
-}
-
-interface Item {
-	id: number;
-	title: string;
-}
+import { fetcher, FetchError } from "@/lib/fetch";
+import { User, Item, SyncAchievementResponse } from "@/types";
 
 // Zod schema for the form validation
 const syncSchema = z.object({
@@ -62,20 +53,25 @@ export default function ManageAchievementUsersPage() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [usersRes, itemsRes] = await Promise.all([
-					fetch("/api/users"),
-					fetch("/api/items"),
+				const [users, items] = await Promise.all([
+					fetcher<User[]>("/api/users"),
+					fetcher<Item[]>("/api/items"),
 				]);
-				setUsers(await usersRes.json());
-				setItems(await itemsRes.json());
+				setUsers(users);
+				setItems(items);
 			} catch (error) {
+				if (error instanceof FetchError) {
+					showError(error.info.error || "Failed to fetch data");
+				} else {
+					showError("Failed to fetch data");
+				}
 				console.error("Failed to fetch data:", error);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 		fetchData();
-	}, []);
+	}, [showError]);
 
 	useEffect(() => {
 		if (!selectedItemId) {
@@ -86,15 +82,19 @@ export default function ManageAchievementUsersPage() {
 		const fetchItemOwners = async () => {
 			setIsOwnersLoading(true);
 			try {
-				const response = await fetch(
+				const ownerIds = await fetcher<number[]>(
 					`/api/inventory/item/${selectedItemId}`
 				);
-				const ownerIds: number[] = await response.json();
 				setValue(
 					"userIds",
 					ownerIds.map((id) => id.toString())
 				);
 			} catch (error) {
+				if (error instanceof FetchError) {
+					showError(error.info.error || "Failed to fetch item owners");
+				} else {
+					showError("Failed to fetch item owners");
+				}
 				console.error("Failed to fetch item owners:", error);
 			} finally {
 				setIsOwnersLoading(false);
@@ -102,7 +102,7 @@ export default function ManageAchievementUsersPage() {
 		};
 
 		fetchItemOwners();
-	}, [selectedItemId, setValue]);
+	}, [selectedItemId, setValue, showError]);
 
 	const onFormSubmit = async (data: SyncSchema) => {
 		try {
@@ -110,23 +110,20 @@ export default function ManageAchievementUsersPage() {
 				itemId: data.itemId,
 				userIds: data.userIds.map((id) => Number(id)), // Convert to numbers here
 			};
-			const response = await fetch("/api/inventory/to-achievement", {
+			await fetcher<SyncAchievementResponse>("/api/inventory/to-achievement", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(submitData),
+				body: submitData,
 			});
 
-			if (!response.ok) {
-				const errorData = await response.json();
-				showError("Failed to sync achievement owners");
-				console.error("Sync error:", errorData);
-			} else {
-				showSuccess("Achievement owners updated successfully!");
-				setValue("itemId", ""); // Reset item selection
-				setSelectedItemId("");
-			}
+			showSuccess("Achievement owners updated successfully!");
+			setValue("itemId", ""); // Reset item selection
+			setSelectedItemId("");
 		} catch (error) {
-			showError("An unexpected error occurred while updating owners.");
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to sync achievement owners");
+			} else {
+				showError("An unexpected error occurred while updating owners.");
+			}
 		}
 	};
 
@@ -144,78 +141,77 @@ export default function ManageAchievementUsersPage() {
 					</FormSubtitle>
 
 					<FormGroup>
-						<FormSelect
-							label="Achievement"
-							name="itemId"
-							options={items.map((item) => ({
-								value: item.id,
-								label: item.title,
-							}))}
-							onChange={(e) => setSelectedItemId(e.target.value)}
-						/>
-					</FormGroup>
-
-					<FormGroup>
-						<label className="block text-sm font-medium text-gray-300">
-							Users {isOwnersLoading ? "(loading)" : ""}
-						</label>
-						{!selectedItemId ? (
-							<p className="text-gray-500 text-sm mt-1">
-								Please select an achievement to see its owners.
-							</p>
-						) : (
-							<UserOptions
-								items={users}
-								currentUserIds={currentUserIds} // Keep as string[]
-								setValue={setValue}
-							/>
-						)}
-					</FormGroup>
-
-					<FormSubmit isLoading={isSubmitting}>
-						Update Owners
-					</FormSubmit>
-				</FormContainer>
-			</FormProvider>
-		</div>
-	);
-}
-
-function UserOptions({
-	items,
-	currentUserIds,
-	setValue,
-}: {
-	items: User[];
-	currentUserIds: string[] | undefined;
-	setValue: UseFormSetValue<{ itemId: string; userIds: string[] }>;
-}) {
-	return (
-		<div className="mt-2 grid grid-cols-2 gap-4">
-			{items.map((item) => (
-				<FormCheckbox
-					key={item.id}
-					id={`item-${item.id}`}
-					label={item.name}
-					name="itemIds"
-					value={item.id}
-					checked={currentUserIds?.includes(item.id.toString())} // Convert to string for comparison
-					onChange={(e) => {
-						const checked = e.target.checked;
-						const currentIds = currentUserIds || [];
-						const itemIdString = item.id.toString(); // Convert to string
-
-						if (checked) {
-							setValue("userIds", [...currentIds, itemIdString]);
-						} else {
-							setValue(
-								"userIds",
-								currentIds.filter((id) => id !== itemIdString)
-							);
-						}
-					}}
-				/>
-			))}
-		</div>
-	);
+													<FormSelect
+														label="Achievement"
+														name="itemId"
+														options={items.map((item) => ({
+															value: item.id.toString(),
+															label: item.title,
+														}))}
+														onChange={(e) => setSelectedItemId(e.target.value)}
+													/>
+												</FormGroup>
+						
+												<FormGroup>
+													<label className="block text-sm font-medium text-gray-300">
+														Users {isOwnersLoading ? "(loading)" : ""}
+													</label>
+													{!selectedItemId ? (
+														<p className="text-gray-500 text-sm mt-1">
+															Please select an achievement to see its owners.
+														</p>
+													) : (
+														<UserOptions
+															items={users}
+															currentUserIds={currentUserIds} // Keep as string[]
+															setValue={setValue}
+														/>
+													)}
+												</FormGroup>
+						
+												<FormSubmit isLoading={isSubmitting}>
+													Update Owners
+												</FormSubmit>
+											</FormContainer>
+										</FormProvider>
+									</div>
+								);
+							}
+						
+						function UserOptions({
+							items,
+							currentUserIds,
+							setValue,
+						}: {
+							items: User[];
+							currentUserIds: string[] | undefined;
+							setValue: UseFormSetValue<{ itemId: string; userIds: string[] }>;
+						}) {
+							return (
+								<div className="mt-2 grid grid-cols-2 gap-4">
+									{items.map((item) => (
+										<FormCheckbox
+											key={item.id}
+											id={`item-${item.id}`}
+											label={item.name}
+											name="itemIds"
+											value={item.id.toString()}
+											checked={currentUserIds?.includes(item.id.toString())} // Convert to string for comparison
+											onChange={(e) => {
+												const checked = e.target.checked;
+												const currentIds = currentUserIds || [];
+												const itemIdString = item.id.toString(); // Convert to string
+						
+												if (checked) {
+													setValue("userIds", [...currentIds, itemIdString]);
+												} else {
+													setValue(
+														"userIds",
+														currentIds.filter((id) => id !== itemIdString)
+													);
+												}
+											}}
+										/>
+									))}
+								</div>	);
 }

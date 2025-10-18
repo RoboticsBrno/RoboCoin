@@ -40,7 +40,11 @@ export default function EditCampPage({
 
 	useEffect(() => {
 		if (camp) {
-			reset(camp);
+			reset({
+				...camp,
+				description: camp.description ?? "",
+				currency: camp.currency ?? "",
+			});
 		}
 	}, [camp, reset]);
 

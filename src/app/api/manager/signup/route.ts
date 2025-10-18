@@ -9,30 +9,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - login
- *               - name
- *               - password
- *             properties:
- *               login:
- *                 type: string
- *               name:
- *                 type: string
- *               password:
- *                 type: string
- *               is_manager:
- *                 type: boolean
+ *             $ref: '#/components/schemas/ManagerSignupRequest'
  *     responses:
  *       201:
  *         description: User created
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/ManagerSignupResponse'
  *       409:
  *         description: User already exists
  *       500:
@@ -40,10 +24,11 @@
  */
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { ManagerSignupRequest, ManagerSignupResponse, User } from "@/types";
 
-export async function POST(req: Request) {
-	const { login, name, password, is_manager } = await req.json();
+export async function POST(req: NextRequest): Promise<NextResponse<ManagerSignupResponse | { error: string }>> {
+	const { login, name, password, is_manager }: ManagerSignupRequest = await req.json();
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -71,7 +56,14 @@ export async function POST(req: Request) {
 			},
 		});
 
-		return NextResponse.json({ user }, { status: 201 });
+        const responseUser: User = {
+            id: user.id,
+            login: user.login,
+            name: user.name,
+            is_manager: user.is_manager,
+        }
+
+		return NextResponse.json({ user: responseUser }, { status: 201 });
 	} catch (error) {
 		console.error("Error creating user:", error);
 		return NextResponse.json(

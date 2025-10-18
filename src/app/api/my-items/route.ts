@@ -21,13 +21,13 @@
  *       500:
  *         description: Failed to fetch user items
  */
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { item } from "../../../../generated/prisma";
+import { Item } from "@/types";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<Item[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 	const userId = parseInt(session.user.id);
 
 	try {
-		const items: item[] = await prisma.item.findMany({
+		const items: Item[] = await prisma.item.findMany({
 			where: {
 				owner: userId,
 				from_marketplace: true,

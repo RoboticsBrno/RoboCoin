@@ -14,18 +14,8 @@ import FormCheckbox from "@/components/form/FormCheckbox";
 import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
-
-interface User {
-	id: number;
-	name: string;
-	login: string;
-}
-
-interface Item {
-	id: number;
-	title: string;
-	price: number;
-}
+import { fetcher, FetchError } from "@/lib/fetch";
+import { User, Item, SyncUserInventoryResponse } from "@/types";
 
 const syncSchema = z.object({
 	userId: z.string().min(1, { message: "Please select a user" }),
@@ -65,20 +55,25 @@ export default function ManageUserAchievementsPage() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [usersRes, itemsRes] = await Promise.all([
-					fetch("/api/users?camp_url=" + camp_url),
-					fetch("/api/items"),
+				const [users, items] = await Promise.all([
+					fetcher<User[]>("/api/users?camp_url=" + camp_url),
+					fetcher<Item[]>("/api/items"),
 				]);
-				setUsers(await usersRes.json());
-				setItems(await itemsRes.json());
+				setUsers(users);
+				setItems(items);
 			} catch (error) {
+				if (error instanceof FetchError) {
+					showError(error.info.error || "Failed to fetch data");
+				} else {
+					showError("Failed to fetch data");
+				}
 				console.error("Failed to fetch data:", error);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 		fetchData();
-	}, []);
+	}, [camp_url, showError]);
 
 	useEffect(() => {
 		if (!selectedUserId) {
@@ -89,15 +84,19 @@ export default function ManageUserAchievementsPage() {
 		const fetchUserInventory = async () => {
 			setIsInventoryLoading(true);
 			try {
-				const response = await fetch(
+				const ownedItemIds = await fetcher<number[]>(
 					`/api/inventory/user/${selectedUserId}`
 				);
-				const ownedItemIds: number[] = await response.json();
 				setValue(
 					"itemIds",
 					ownedItemIds.map((id) => id.toString())
 				); // Convert to strings for the form
 			} catch (error) {
+				if (error instanceof FetchError) {
+					showError(error.info.error || "Failed to fetch user inventory");
+				} else {
+					showError("Failed to fetch user inventory");
+				}
 				console.error("Failed to fetch user inventory:", error);
 			} finally {
 				setIsInventoryLoading(false);
@@ -105,7 +104,7 @@ export default function ManageUserAchievementsPage() {
 		};
 
 		fetchUserInventory();
-	}, [selectedUserId, setValue]);
+	}, [selectedUserId, setValue, showError]);
 
 	const onFormSubmit = async (data: SyncSchema) => {
 		try {
@@ -114,25 +113,21 @@ export default function ManageUserAchievementsPage() {
 				itemIds: data.itemIds.map((id) => Number(id)), // Convert to numbers for API
 			};
 
-			const response = await fetch("/api/inventory/to-user", {
+			await fetcher<SyncUserInventoryResponse>("/api/inventory/to-user", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(submitData),
+				body: submitData,
 			});
 
-			if (!response.ok) {
-				console.error("Failed to sync achievements");
-				const errorData = await response.json();
-				showError("Failed to sync achievements");
-				console.error("Sync error:", errorData.error);
-			} else {
-				showSuccess("Achievements updated successfully!");
-				setValue("userId", "");
-				setSelectedUserId("");
-			}
+			showSuccess("Achievements updated successfully!");
+			setValue("userId", "");
+			setSelectedUserId("");
 		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to sync achievements");
+			} else {
+				showError("An unexpected error occurred while updating achievements.");
+			}
 			console.error("An unexpected error occurred:", error);
-			showError("An unexpected error occurred while updating achievements.");
 		}
 	};
 
@@ -154,7 +149,7 @@ export default function ManageUserAchievementsPage() {
 							label="User"
 							name="userId"
 							options={users.map((user) => ({
-								value: user.id,
+								value: user.id.toString(),
 								label: `${user.name} (${user.login})`,
 							}))}
 							onChange={(e) => setSelectedUserId(e.target.value)}
@@ -205,7 +200,7 @@ function ItemOptions({
 					id={`item-${item.id}`}
 					label={`${item.title} (${item.price})`}
 					name="itemIds"
-					value={item.id}
+					value={item.id.toString()}
 					checked={currentItemIds?.includes(item.id.toString())}
 					onChange={(e) => {
 						const checked = e.target.checked;

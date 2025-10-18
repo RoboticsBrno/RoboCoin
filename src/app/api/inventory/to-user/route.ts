@@ -11,27 +11,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - userId
- *               - itemIds
- *             properties:
- *               userId:
- *                 type: integer
- *               itemIds:
- *                 type: array
- *                 items:
- *                   type: integer
+ *             $ref: '#/components/schemas/SyncUserInventoryRequest'
  *     responses:
  *       200:
  *         description: Synchronization successful
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
+ *               $ref: '#/components/schemas/SyncUserInventoryResponse'
  *       400:
  *         description: Invalid input
  *       403:
@@ -44,15 +31,16 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { syncUserInventory } from "@/lib/inventory";
 import { authOptions } from "@/lib/auth";
+import { SyncUserInventoryRequest, SyncUserInventoryResponse } from "@/types";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<SyncUserInventoryResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user?.is_org && !session?.user?.is_admin) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { userId, itemIds } = await req.json();
+	const { userId, itemIds }: SyncUserInventoryRequest = await req.json();
 
 	if (userId === undefined || userId === null || !Array.isArray(itemIds)) {
 		return NextResponse.json(

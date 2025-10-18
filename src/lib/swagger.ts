@@ -65,6 +65,71 @@ export const getApiDocs = async () => {
 							is_manager: { type: "boolean" },
 						},
 					},
+                    UpdateUserRequest: {
+                        type: "object",
+                        required: ["id"],
+                        properties: {
+                            id: { type: "integer" },
+                            login: { type: "string" },
+                            name: { type: "string" },
+                            password: { type: "string" },
+                            isOrg: { type: "boolean" },
+                            isAdmin: { type: "boolean" },
+                        },
+                    },
+                    DeleteUserRequest: {
+                        type: "object",
+                        required: ["id"],
+                        properties: {
+                            id: { type: "integer" },
+                        },
+                    },
+                    DeleteUserResponse: {
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                        },
+                    },
+                    ManagerSignupRequest: {
+                        type: "object",
+                        required: ["login", "name", "password"],
+                        properties: {
+                            login: { type: "string" },
+                            name: { type: "string" },
+                            password: { type: "string" },
+                            is_manager: { type: "boolean" },
+                        },
+                    },
+                    ManagerSignupResponse: {
+                        type: "object",
+                        properties: {
+                            user: {
+                                "$ref": "#/components/schemas/User",
+                            },
+                        },
+                    },
+                    SignupRequest: {
+                        type: "object",
+                        required: ["login", "name", "password"],
+                        properties: {
+                            login: { type: "string" },
+                            name: { type: "string" },
+                            password: { type: "string" },
+                            isOrg: { type: "boolean" },
+                            isAdmin: { type: "boolean" },
+                        },
+                    },
+                    SignupResponse: {
+                        type: "object",
+                        properties: {
+                            user: {
+                                "$ref": "#/components/schemas/User",
+                            },
+                            balance: {
+                                "$ref": "#/components/schemas/Balance",
+                            },
+                        },
+                    },
 					Item: {
 						type: "object",
 						properties: {
@@ -81,6 +146,25 @@ export const getApiDocs = async () => {
 							user: { "$ref": "#/components/schemas/User" },
 						},
 					},
+                    CreateItemRequest: {
+                        type: "object",
+                        required: ["title"],
+                        properties: {
+                            title: { type: "string" },
+                            description: { type: "string" },
+                            price: { type: "integer" },
+                            on_marketplace: { type: "boolean" },
+                        },
+                    },
+                    CreateMarketplaceItemRequest: {
+                        type: "object",
+                        required: ["title"],
+                        properties: {
+                            title: { type: "string" },
+                            description: { type: "string" },
+                            price: { type: "number" },
+                        },
+                    },
 					InventoryItem: {
 						type: "object",
 						properties: {
@@ -94,6 +178,123 @@ export const getApiDocs = async () => {
 							},
 						},
 					},
+                    AssignItemRequest: {
+                        type: "object",
+                        required: ["userId", "itemId"],
+                        properties: {
+                            userId: { type: "integer" },
+                            itemId: { type: "integer" },
+                            quantity: { type: "integer" },
+                        },
+                    },
+                    SyncAchievementRequest: {
+                        type: "object",
+                        required: ["itemId", "userIds"],
+                        properties: {
+                            itemId: { type: "integer" },
+                            userIds: {
+                                type: "array",
+                                items: {
+                                    type: "integer",
+                                },
+                            },
+                        },
+                    },
+                    SyncAchievementResponse: {
+                        type: "object",
+                        properties: {
+                            success: { type: "boolean" },
+                        },
+                    },
+                    SyncUserInventoryRequest: {
+                        type: "object",
+                        required: ["userId", "itemIds"],
+                        properties: {
+                            userId: { type: "integer" },
+                            itemIds: {
+                                type: "array",
+                                items: {
+                                    type: "integer",
+                                },
+                            },
+                        },
+                    },
+                    SyncUserInventoryResponse: {
+                        type: "object",
+                        properties: {
+                            success: { type: "boolean" },
+                        },
+                    },
+                    AddManagersRequest: {
+                        type: "object",
+                        required: ["userIds", "camp_url"],
+                        properties: {
+                            userIds: {
+                                type: "array",
+                                items: {
+                                    type: "integer",
+                                },
+                            },
+                            camp_url: { type: "string" },
+                        },
+                    },
+                    AddManagersResponse: {
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                        },
+                    },
+                    UpdateAdminsRequest: {
+                        type: "object",
+                        required: ["camp_url", "userIds"],
+                        properties: {
+                            camp_url: { type: "string" },
+                            userIds: {
+                                type: "array",
+                                items: {
+                                    type: "integer",
+                                },
+                            },
+                        },
+                    },
+                    UpdateAdminsResponse: {
+                        type: "object",
+                        properties: {
+                            success: { type: "boolean" },
+                        },
+                    },
+                    UpdateUsersInCampRequest: {
+                        type: "object",
+                        required: ["userIds", "camp_url"],
+                        properties: {
+                            userIds: {
+                                type: "array",
+                                items: {
+                                    type: "integer",
+                                },
+                            },
+                            camp_url: { type: "string" },
+                        },
+                    },
+                    UpdateUsersInCampResponse: {
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                        },
+                    },
+                    BuyItemRequest: {
+                        type: "object",
+                        required: ["id"],
+                        properties: {
+                            id: { type: "integer" },
+                        },
+                    },
+                    BuyItemResponse: {
+                        type: "object",
+                        properties: {
+                            success: { type: "boolean" },
+                        },
+                    },
 					Camp: {
 						type: "object",
 						properties: {
@@ -104,6 +305,16 @@ export const getApiDocs = async () => {
 							description: { type: "string" },
 						},
 					},
+                    CreateCampRequest: {
+                        type: "object",
+                        required: ["name", "name_url"],
+                        properties: {
+                            name: { type: "string" },
+                            name_url: { type: "string" },
+                            description: { type: "string" },
+                            currency: { type: "string" },
+                        },
+                    },
 					CampDetails: {
 						allOf: [
 							{ "$ref": "#/components/schemas/Camp" },
@@ -123,6 +334,12 @@ export const getApiDocs = async () => {
 							user: { type: "integer" },
 							amount: { type: "integer" },
 							camp: { type: "integer" },
+						},
+					},
+					BalanceResponse: {
+						type: "object",
+						properties: {
+							balance: { type: "integer" },
 						},
 					},
 					CreateCampResponse: {
@@ -171,6 +388,12 @@ export const getApiDocs = async () => {
 							},
 						},
 					},
+                    UpdateUserItemsResponse: {
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                        },
+                    },
 					Transaction: {
 						type: "object",
 						properties: {
@@ -185,6 +408,21 @@ export const getApiDocs = async () => {
 							transaction_type: { type: "string", enum: ["transfer", "purchase"] },
 						},
 					},
+                    TransferBalanceRequest: {
+                        type: "object",
+                        required: ["to", "amount"],
+                        properties: {
+                            to: { type: "integer" },
+                            amount: { type: "integer" },
+                            description: { type: "string" },
+                        },
+                    },
+                    TransferBalanceResponse: {
+                        type: "object",
+                        properties: {
+                            success: { type: "boolean" },
+                        },
+                    },
 					TransactionWithUsers: {
 						allOf: [
 							{ "$ref": "#/components/schemas/Transaction" },

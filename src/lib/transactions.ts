@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "../../generated/prisma";
+import { Prisma } from "#/prisma";
 
 export type TransactionWithUsers = Prisma.transactionGetPayload<{
 	include: {

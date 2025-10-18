@@ -13,6 +13,11 @@ export default function Header() {
 	const { balance, isLoading } = useBalance();
 	const { camp } = useCamp();
 
+	let campCurrency = "";
+	if (camp && camp !== undefined && camp.currency) {
+		campCurrency = getSymbolFromCurrency(camp.currency) || camp.currency;
+	}
+
 	const pathname = usePathname();
 
 	const params = useParams();
@@ -41,7 +46,7 @@ export default function Header() {
 							{session?.camp_url != null && (
 								<span className="text-gray-300 font-bold">
 									Balance: {isLoading ? "..." : balance || 0}{" "}
-									{getSymbolFromCurrency(camp?.currency) || camp?.currency}
+									{campCurrency}
 								</span>
 							)}
 							<Button

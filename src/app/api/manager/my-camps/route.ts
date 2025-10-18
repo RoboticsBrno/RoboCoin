@@ -27,20 +27,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - camp_url
- *               - userIds
- *             properties:
- *               camp_url:
- *                 type: string
- *               userIds:
- *                 type: array
- *                 items:
- *                   type: integer
+ *             $ref: '#/components/schemas/UpdateAdminsRequest'
  *     responses:
  *       200:
  *         description: Admins updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateAdminsResponse'
  *       400:
  *         description: Missing camp_url or userIds
  *       403:
@@ -52,8 +46,9 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { Camp, UpdateAdminsRequest, UpdateAdminsResponse } from "@/types";
 
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<Camp[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_manager) {
@@ -73,14 +68,14 @@ export async function GET(req: NextRequest) {
 	return NextResponse.json(camps);
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_manager) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { camp_url, userIds } = await req.json();
+	const { camp_url, userIds }: UpdateAdminsRequest = await req.json();
 
 	if (!camp_url || !userIds) {
 		return NextResponse.json({ error: "Missing camp_url or userIds" }, { status: 400 });
@@ -102,7 +97,7 @@ export async function POST(req: NextRequest) {
 	});
 
 	const currentAdminIds = currentAdmins.map(uc => uc.user);
-	const newAdminIds = userIds.map((id: string) => parseInt(id, 10));
+	const newAdminIds = userIds;
 
 	const ownId = parseInt(session.user.id, 10);
 	if (!newAdminIds.includes(ownId)) {
