@@ -27,27 +27,27 @@ export default function Item({
 			<p className="text-lg font-bold mt-2">${price.toFixed(2)}</p>
 			{type === "bought" && (
 				<h5 className="text-sm text-gray-400 mt-2">
-					Bought by: {user || "Unknown"}
+					Koupil: {user || "Neznámý"}
 				</h5>
 			)}
 			{type === "offered" && (
 				<h5 className="text-sm text-gray-400 mt-2">
-					Offered by: {user || "Unknown"}
+					Nabídl: {user || "Neznámý"}
 				</h5>
 			)}
 			{type === "up" && (
 				<h5 className="text-sm text-gray-400 mt-2">
-					Available for purchase
+					K dispozici k nákupu
 				</h5>
 			)}
 			{onRemove && (
 				<Button onClick={onRemove} className="mt-4 w-full">
-					Remove from marketplace
+					Odebrat z tržiště
 				</Button>
 			)}
 			{onAdd && (
 				<Button onClick={onAdd} className="mt-4 w-full">
-					Add to marketplace
+					Přidat na tržiště
 				</Button>
 			)}
 		</Card>

@@ -14,10 +14,10 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { CreateCampResponse } from "@/types";
 
 const signupSchema = z.object({
-	name: z.string().min(1, { message: "Name is required" }),
-	name_url: z.string().min(1, { message: "Valid URL is required" }),
+	name: z.string().min(1, { message: "Je vyžadován název" }),
+	name_url: z.string().min(1, { message: "Je vyžadována platná URL" }),
 	description: z.string(),
-	currency: z.string().max(3, { message: "Currency code max length is 3" }),
+	currency: z.string().max(3, { message: "Maximální délka kódu měny jsou 3 znaky" }),
 });
 
 type SignupSchema = z.infer<typeof signupSchema>;
@@ -42,10 +42,10 @@ export default function SignupPage() {
 			window.location.href = "/";
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Camp creation failed. Please try again.");
+				showError(error.info.error || "Vytvoření tábora se nezdařilo. Zkuste to prosím znovu.");
 			} else {
 				console.error("Camp creation failed", error);
-				showError("Camp creation failed. Please try again.");
+				showError("Vytvoření tábora se nezdařilo. Zkuste to prosím znovu.");
 			}
 		}
 	};
@@ -53,13 +53,13 @@ export default function SignupPage() {
 	return (
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-				<FormTitle>Create a new camp</FormTitle>
+				<FormTitle>Vytvořit nový tábor</FormTitle>
 				<FormSubtitle>
-					Please fill in the details to create your camp.
+					Vyplňte prosím podrobnosti pro vytvoření tábora.
 				</FormSubtitle>
 				<FormGroup>
 					<FormInput
-						label="Camp Name"
+						label="Název tábora"
 						id="name"
 						name="name"
 						type="text"
@@ -67,7 +67,7 @@ export default function SignupPage() {
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Camp URL"
+						label="URL tábora"
 						id="name_url"
 						name="name_url"
 						type="text"
@@ -75,7 +75,7 @@ export default function SignupPage() {
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Description"
+						label="Popis"
 						id="description"
 						name="description"
 						type="text"
@@ -83,13 +83,13 @@ export default function SignupPage() {
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Currency (e.g., USD)"
+						label="Měna (např. CZK)"
 						id="currency"
 						name="currency"
 						type="text"
 					/>
 				</FormGroup>
-				<FormSubmit isLoading={isSubmitting}>Create camp</FormSubmit>
+				<FormSubmit isLoading={isSubmitting}>Vytvořit tábor</FormSubmit>
 			</FormContainer>
 		</FormProvider>
 	);

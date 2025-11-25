@@ -9,23 +9,23 @@ export default function Page() {
 	const campUrl = params.camp_url;
 	return (
 		<>
-			<PageTitle>Manage Users</PageTitle>
+			<PageTitle>Spravovat uživatele</PageTitle>
 			<div className="container mx-auto px-4 py-8">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
 					<MenuCard
 						href={`/${campUrl}/admin/manage-users/new`}
-						title="Create New User"
-						description="Add a new user to the system with their details."
+						title="Vytvořit nového uživatele"
+						description="Přidejte do systému nového uživatele s jeho údaji."
 					/>
 					<MenuCard
 						href={`/${campUrl}/admin/manage-users/edit`}
-						title="Edit Existing User"
-						description="Modify the details of an existing user."
+						title="Upravit stávajícího uživatele"
+						description="Upravte podrobnosti o stávajícím uživateli."
 					/>
 					<MenuCard
 						href={`/${campUrl}/admin/manage-users/delete`}
-						title="Delete User"
-						description="Remove a user from the system."
+						title="Smazat uživatele"
+						description="Odeberte uživatele ze systému."
 					/>
 				</div>
 			</div>

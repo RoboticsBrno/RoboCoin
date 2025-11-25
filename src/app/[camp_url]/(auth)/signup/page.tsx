@@ -17,11 +17,11 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { ManagerSignupResponse } from "@/types";
 
 const signupSchema = z.object({
-	login: z.string().min(1, { message: "Login is required" }),
-	name: z.string().min(1, { message: "Name is required" }),
+	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
+	name: z.string().min(1, { message: "Je vyžadováno jméno" }),
 	password: z
 		.string()
-		.min(6, { message: "Password must be at least 6 characters" }),
+		.min(6, { message: "Heslo musí mít alespoň 6 znaků" }),
 	isManager: z.boolean().optional(),
 });
 
@@ -62,10 +62,10 @@ export default function SignupPage() {
 			}
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Signup failed");
+				showError(error.info.error || "Registrace se nezdařila");
 			} else {
 				console.error("Signup failed", error);
-				showError("Signup failed");
+				showError("Registrace se nezdařila");
 			}
 		}
 	};
@@ -74,38 +74,38 @@ export default function SignupPage() {
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
 				<input type="hidden" name="isManager" value="true" />
-				<FormTitle>Create a manager account</FormTitle>
+				<FormTitle>Vytvořit manažerský účet</FormTitle>
 				<FormSubtitle>
-					Join us! Please fill in your details to get started.
+					Připojte se k nám! Pro začátek prosím vyplňte své údaje.
 				</FormSubtitle>
 				<FormGroup>
 					<FormInput
-						label="Login"
+						label="Přihlašovací jméno"
 						id="login"
 						name="login"
 						type="text"
 					/>
 				</FormGroup>
 				<FormGroup>
-					<FormInput label="Name" id="name" name="name" type="text" />
+					<FormInput label="Jméno" id="name" name="name" type="text" />
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Password"
+						label="Heslo"
 						id="password"
 						name="password"
 						type="password"
 						autoComplete="new-password"
 					/>
 				</FormGroup>
-				<FormSubmit isLoading={isSubmitting}>Sign up</FormSubmit>
+				<FormSubmit isLoading={isSubmitting}>Zaregistrovat se</FormSubmit>
 				<p className="text-sm text-center text-gray-400">
-					Already have an account?{" "}
+					Máte již účet?{" "}
 					<Link
 						href="/login"
 						className="font-medium text-indigo-500 hover:text-indigo-400"
 					>
-						Login
+						Přihlásit se
 					</Link>
 				</p>
 			</FormContainer>

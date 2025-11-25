@@ -27,7 +27,7 @@ export default function FormFileInput({ label, name, ...props }: FormInputProps)
 				htmlFor={inputId}
 				className="block w-full cursor-pointer px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md shadow-sm"
 			>
-				{fileName || "Click to select a file"}
+				{fileName || "Klikněte pro výběr souboru"}
 			</label>
 			<input
 				type="file"

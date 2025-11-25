@@ -59,9 +59,9 @@ export default function AddManagersPage() {
 			setValue("selectedUsers", campManagerIds);
 		} catch (e) {
 			if (e instanceof FetchError) {
-				showError(e.info.error || "An unknown error occurred while fetching data.");
+				showError(e.info.error || "Při načítání dat došlo k neznámé chybě.");
 			} else {
-				showError("An unknown error occurred while fetching data.");
+				showError("Při načítání dat došlo k neznámé chybě.");
 				console.error("Error fetching managers:", e);
 			}
 		} finally {
@@ -77,7 +77,7 @@ export default function AddManagersPage() {
 		try {
 			const userIds = data.selectedUsers.map((id) => parseInt(id, 10));
 			if (!camp_url) {
-				showError("Camp URL is missing.");
+				showError("Chybí URL tábora.");
 				return;
 			}
 			await fetcher<AddManagersResponse>("/api/manager/add-managers", {
@@ -88,13 +88,13 @@ export default function AddManagersPage() {
 				},
 			});
 
-			showSuccess("Managers updated successfully!");
+			showSuccess("Manažeři byli úspěšně aktualizováni!");
 			fetchManagers();
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to update managers.");
+				showError(error.info.error || "Nepodařilo se aktualizovat manažery.");
 			} else {
-				showError("Failed to update managers.");
+				showError("Nepodařilo se aktualizovat manažery.");
 				console.error("Error updating managers:", error);
 			}
 		}
@@ -108,15 +108,14 @@ export default function AddManagersPage() {
 		<div>
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-					<FormTitle>Manage Camp Managers</FormTitle>
+					<FormTitle>Spravovat manažery tábora</FormTitle>
 					<FormSubtitle>
-						Select users to grant them manager permissions for this
-						camp.
+						Vyberte uživatele, kterým chcete udělit oprávnění manažera pro tento tábor.
 					</FormSubtitle>
 
 					<FormGroup>
 						<label className="block text-sm font-medium text-gray-300">
-							Users
+							Uživatelé
 						</label>
 						<div className="mt-2 grid grid-cols-2 gap-4">
 							{users.length > 0 ? (
@@ -164,13 +163,13 @@ export default function AddManagersPage() {
 									);
 								})
 							) : (
-								<p>No managers found in the system.</p>
+								<p>V systému nebyli nalezeni žádní manažeři.</p>
 							)}
 						</div>
 					</FormGroup>
 
 					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Updating..." : "Update Managers"}
+						{isSubmitting ? "Aktualizuji..." : "Aktualizovat manažery"}
 					</Button>
 				</FormContainer>
 			</FormProvider>

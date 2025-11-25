@@ -148,7 +148,7 @@ function ToastAlert({
 							onClick={handleClose}
 							className={`inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantClasses}`}
 						>
-							<span className="sr-only">Dismiss</span>
+							<span className="sr-only">Zavřít</span>
 							<svg
 								className="h-5 w-5"
 								xmlns="http://www.w3.org/2000/svg"

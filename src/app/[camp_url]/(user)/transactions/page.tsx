@@ -29,7 +29,7 @@ export default function TransactionsPage() {
 				if (err instanceof FetchError) {
 					setError(err.info.error);
 				} else {
-					setError("An unexpected error occurred.");
+					setError("Došlo k neočekávané chybě.");
 				}
 			} finally {
 				setLoading(false);
@@ -48,7 +48,7 @@ export default function TransactionsPage() {
 	if (loading) {
 		return (
 			<>
-				<PageTitle>Transactions</PageTitle>
+				<PageTitle>Transakce</PageTitle>
 				<Loader />
 			</>
 		);
@@ -57,14 +57,14 @@ export default function TransactionsPage() {
 	if (error) {
 		return (
 			<>
-				<PageTitle>Transactions</PageTitle>
+				<PageTitle>Transakce</PageTitle>
 			</>
 		);
 	}
 
 	return (
 		<>
-			<PageTitle>Transactions</PageTitle>
+			<PageTitle>Transakce</PageTitle>
 			{session?.user?.id && (
 				<TransactionsTable
 					transactions={transactions}

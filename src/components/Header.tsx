@@ -35,7 +35,7 @@ export default function Header() {
 					</Link>
 					{is_manager && pathname !== "/" && (
 						<Link href="/" className="text-white ms-5 hover:text-indigo-300">
-							Manager Panel
+							Manažerský panel
 						</Link>
 					)}
 				</div>
@@ -45,7 +45,7 @@ export default function Header() {
 							<span className="text-gray-300">{name}</span>
 							{session?.camp_url != null && (
 								<span className="text-gray-300 font-bold">
-									Balance: {isLoading ? "..." : balance || 0}{" "}
+									Zůstatek: {isLoading ? "..." : balance || 0}{" "}
 									{campCurrency}
 								</span>
 							)}
@@ -54,16 +54,16 @@ export default function Header() {
 								variant="secondary"
 								size="sm"
 							>
-								Logout
+								Odhlásit se
 							</Button>
 						</>
 					) : (
 						<>
 							<Link href={campUrl ? `/${campUrl}/login` : "/login"}>
-								<Button variant="info">Login</Button>
+								<Button variant="info">Přihlásit se</Button>
 							</Link>
 							<Link href={campUrl ? `/${campUrl}/signup` : "/signup"}>
-								<Button variant="primary">Sign Up</Button>
+								<Button variant="primary">Zaregistrovat se</Button>
 							</Link>
 						</>
 					)}

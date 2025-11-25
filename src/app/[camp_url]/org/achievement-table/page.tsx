@@ -72,7 +72,7 @@ export default function AchievementTablePage() {
 				setExistingUsers(existingUsersSet);
 				setExistingItems(existingItemsSet);
 			} catch (error) {
-				console.error("Failed to fetch achievement data:", error);
+				console.error("Nepodařilo se načíst data o úspěších:", error);
 			} finally {
 				setIsLoading(false);
 			}
@@ -87,7 +87,7 @@ export default function AchievementTablePage() {
 
 	return (
 		<div className="achievement-table">
-			<PageTitle>Achievement Table</PageTitle>
+			<PageTitle>Tabulka úspěchů</PageTitle>
 			<UserItemsList
 				userItems={userItems}
 				initialUserItems={initialUserItems}
@@ -240,13 +240,13 @@ function UserItemsList({
 				body: userItems,
 			});
 
-			showSuccess("User items updated successfully!");
+			showSuccess("Předměty uživatelů byly úspěšně aktualizovány!");
 			mutate();
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to update user items.");
+				showError(error.info.error || "Nepodařilo se aktualizovat předměty uživatelů.");
 			} else {
-				showError("An unknown error occurred while updating user items.");
+				showError("Při aktualizaci předmětů uživatelů došlo k neznámé chybě.");
 			}
 			console.error("Error updating user items:", error);
 		}
@@ -255,16 +255,16 @@ function UserItemsList({
 	return (
 		<div className="mt-6">
 			<div className="flex justify-between items-center mb-4">
-				<PageTitle>User Items</PageTitle>
+				<PageTitle>Předměty uživatelů</PageTitle>
 				<div className="flex gap-2">
 					<Button onClick={handleSelectAll} type="button">
-						Select All
+						Vybrat vše
 					</Button>
 					<Button onClick={handleDeselectAll} type="button">
-						Deselect All
+						Odznačit vše
 					</Button>
 					<Button onClick={handleRevert} type="button">
-						Revert
+						Vrátit zpět
 					</Button>
 				</div>
 			</div>
@@ -280,7 +280,7 @@ function UserItemsList({
 									scope="col"
 									className={`sticky z-11 left-0 bg-gray-800 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6 ${hovered.row !== -1 ? "bg-gray-800" : ""}`}
 								>
-									User
+									Uživatel
 								</th>
 								{itemHeaders.map((item, colIndex) => (
 									<th
@@ -421,7 +421,7 @@ function UserItemsList({
 					</table>
 				</div>
 				<div className="mt-4 flex justify-end">
-					<Button type="submit">Save Changes</Button>
+					<Button type="submit">Uložit změny</Button>
 				</div>
 			</form>
 		</div>

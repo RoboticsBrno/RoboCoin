@@ -49,7 +49,7 @@ export default function ManageUsersPage() {
 			);
 
 			if (!allUsersRes.ok || !campUsersRes.ok) {
-				throw new Error("Failed to fetch user data");
+				throw new Error("Nepodařilo se načíst data uživatelů");
 			}
 
 			const allUsersData = await allUsersRes.json();
@@ -67,7 +67,7 @@ export default function ManageUsersPage() {
 			setUsers(filteredUsers);
 			methods.setValue("selectedUsers", campUserIds);
 		} catch (e) {
-			showError("An unknown error occurred");
+			showError("Došlo k neznámé chybě");
 			console.error("Error fetching users:", e);
 		} finally {
 			setLoading(false);
@@ -80,7 +80,7 @@ export default function ManageUsersPage() {
 
 	const handleSubmit = async (data: IForm) => {
 		if (data.selectedUsers.length === 0) {
-			showError("Please select at least one user.");
+			showError("Vyberte prosím alespoň jednoho uživatele.");
 			return;
 		}
 
@@ -93,13 +93,13 @@ export default function ManageUsersPage() {
 
 			if (!res.ok) {
 				const errorData = await res.json();
-				throw new Error(errorData.error || "Failed to assign users");
+				throw new Error(errorData.error || "Nepodařilo se přiřadit uživatele");
 			}
 
-			showSuccess("Users assigned successfully!");
+			showSuccess("Uživatelé byli úspěšně přiřazeni!");
 			fetchUsers();
 		} catch (error) {
-			showError("Failed to assign users.");
+			showError("Nepodařilo se přiřadit uživatele.");
 			console.error("Error assigning users:", error);
 		}
 	};
@@ -112,10 +112,10 @@ export default function ManageUsersPage() {
 		<>
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={methods.handleSubmit(handleSubmit)}>
-					<FormTitle>Assign Users to {camp_url}</FormTitle>
+					<FormTitle>Přiřadit uživatele do {camp_url}</FormTitle>
 					<FormGroup>
 						<label className="block text-sm font-medium text-gray-300">
-							Users
+							Uživatelé
 						</label>
 						{users.length > 0 ? (
 							users.map((user) => (
@@ -143,11 +143,11 @@ export default function ManageUsersPage() {
 								/>
 							))
 						) : (
-							<p>No users found in the system.</p>
+							<p>V systému nebyli nalezeni žádní uživatelé.</p>
 						)}
 					</FormGroup>
 					<Button type="submit" disabled={selectedUsers.length === 0}>
-						Assign Selected Users
+						Přiřadit vybrané uživatele
 					</Button>
 				</FormContainer>
 			</FormProvider>

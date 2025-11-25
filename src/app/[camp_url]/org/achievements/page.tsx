@@ -9,22 +9,22 @@ export default function ManageAchievementsPage() {
 	const campUrl = params.camp_url;
 	return (
 		<div className="container mx-auto px-4 py-8">
-			<PageTitle>Manage Achievements</PageTitle>
+			<PageTitle>Spravovat úspěchy</PageTitle>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
 				<MenuCard
 					href={`/${campUrl}/org/achievements/new`}
-					title="Create New Achievement"
-					description="Define a new achievement that can be awarded to users, including its title and description."
+					title="Vytvořit nový úspěch"
+					description="Definujte nový úspěch, který lze udělit uživatelům, včetně jeho názvu a popisu."
 				/>
 				<MenuCard
 					href={`/${campUrl}/org/achievements/to-user`}
-					title="Give Achievements to User"
-					description="Award achievements to a specific user."
+					title="Udělit úspěchy uživateli"
+					description="Udělejte úspěchy konkrétnímu uživateli."
 				/>
 				<MenuCard
 					href={`/${campUrl}/org/achievements/to-achievement`}
-					title="Assign Users to Achievement"
-					description="Assign users to a specific achievement."
+					title="Přiřadit uživatele k úspěchu"
+					description="Přiřaďte uživatele ke konkrétnímu úspěchu."
 				/>
 			</div>
 		</div>

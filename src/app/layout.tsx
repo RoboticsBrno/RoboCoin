@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
 	title: "Robocoin V3",
 	description:
-		"Manage your Robocoins, trade on the marketplace, and view your achievements.",
+		"Spravujte své Robocoiny, obchodujte na tržišti a prohlížejte si své úspěchy.",
 };
 
 export default async function RootLayout({
@@ -29,7 +29,7 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="cs">
 			<body
 				className={`bg-gray-900 ${geistSans.variable} ${geistMono.variable} antialiased`}
 			>

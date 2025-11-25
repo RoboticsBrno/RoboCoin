@@ -14,8 +14,8 @@ import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 
 const loginSchema = z.object({
-	login: z.string().min(1, { message: "Login is required" }),
-	password: z.string().min(1, { message: "Password is required" }),
+	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
+	password: z.string().min(1, { message: "Je vyžadováno heslo" }),
 });
 
 type LoginSchema = z.infer<typeof loginSchema>;
@@ -42,15 +42,15 @@ export default function LoginPage() {
 			if (result?.error) {
 				if (result.error === "User not found") {
 					setError(
-						"User not found. Please check your login and try again."
+						"Uživatel nenalezen. Zkontrolujte prosím své přihlašovací jméno a zkuste to znovu."
 					);
 				} else if (result.error === "Invalid password") {
-					setError("Invalid password. Please try again.");
+					setError("Neplatné heslo. Zkuste to prosím znovu.");
 				} else if (result.error === "User is not a manager") {
-					setError("You are not authorized to log in. You must be a manager.");
+					setError("Nemáte oprávnění k přihlášení. Musíte být manažer.");
 				} else {
 					setError(
-						"An unknown error occurred. Please try again later."
+						"Došlo k neznámé chybě. Zkuste to prosím později."
 					);
 				}
 			} else {
@@ -58,28 +58,28 @@ export default function LoginPage() {
 					window.location.href = "/";
 				} catch (redirectError) {
 					console.error("Error during redirect:", redirectError);
-					setError("Failed to redirect. Please try again later.");
+					setError("Nepodařilo se přesměrovat. Zkuste to prosím později.");
 				}
 			}
 		} catch (error) {
 			console.error("Error during login:", error);
-			setError("An unexpected error occurred. Please try again later.");
+			setError("Došlo k neočekávané chybě. Zkuste to prosím později.");
 		}
 	};
 
 	return (
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-				<FormTitle>Login to a manager account</FormTitle>
+				<FormTitle>Přihlášení k manažerskému účtu</FormTitle>
 				<FormSubtitle>
-					Welcome back! Please enter your details.
+					Vítejte zpět! Zadejte prosím své údaje.
 				</FormSubtitle>
 				{error && (
 					<p className="text-sm text-center text-red-500">{error}</p>
 				)}
 				<FormGroup>
 					<FormInput
-						label="Login"
+						label="Přihlašovací jméno"
 						id="login"
 						name="login"
 						type="text"
@@ -88,21 +88,21 @@ export default function LoginPage() {
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Password"
+						label="Heslo"
 						id="password"
 						name="password"
 						type="password"
 						autoComplete="current-password"
 					/>
 				</FormGroup>
-				<FormSubmit isLoading={isSubmitting}>Login</FormSubmit>
+				<FormSubmit isLoading={isSubmitting}>Přihlásit se</FormSubmit>
 				<p className="text-sm text-center text-gray-400">
-					Don&apos;t have an account?{" "}
+					Nemáte účet?{" "}
 					<Link
 						href="/signup"
 						className="font-medium text-indigo-500 hover:text-indigo-400"
 					>
-						Sign up
+						Zaregistrujte se
 					</Link>
 				</p>
 			</FormContainer>

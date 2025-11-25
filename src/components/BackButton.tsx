@@ -17,7 +17,7 @@ export default function BackButton({ href }: { href?: string }) {
 	return (
 		<div className="mb-2">
 			<Button onClick={handleBack} variant="secondary" size="sm">
-				&lt;&nbsp;&nbsp;Back
+				&lt;&nbsp;&nbsp;Zpět
 			</Button>
 		</div>
 	);

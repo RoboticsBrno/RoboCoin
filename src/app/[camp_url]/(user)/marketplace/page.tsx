@@ -29,13 +29,13 @@ export default function MarketplacePage() {
 
 	const actions = [
 		{
-			title: "Offer item",
-			description: "Offer your item to be bought by other users.",
+			title: "Nabídnout předmět",
+			description: "Nabídněte svůj předmět k zakoupení ostatními uživateli.",
 			link: campUrl ? `/${campUrl}/marketplace/add` : "/marketplace/add",
 		},
 		{
-			title: "View your offers",
-			description: "See the items you have offered for sale.",
+			title: "Zobrazit vaše nabídky",
+			description: "Podívejte se na předměty, které jste nabídli k prodeji.",
 			link: campUrl ? `/${campUrl}/marketplace/offers` : "/marketplace/offers",
 
 		},
@@ -50,14 +50,14 @@ export default function MarketplacePage() {
 					const data = await response.json();
 					setOffers(data);
 					if (data.length === 0) {
-						showInfo("No items are currently available in the marketplace.");
+						showInfo("Na tržišti nejsou aktuálně k dispozici žádné předměty.");
 					}
 				} else {
-					showError("Failed to fetch marketplace items.");
+					showError("Nepodařilo se načíst předměty z tržiště.");
 				}
 				setLoading(false);
 			} catch (error) {
-				showError("An unexpected error occurred while fetching items.");
+				showError("Při načítání předmětů došlo k neočekávané chybě.");
 				console.error(error);
 				setLoading(false);
 			}
@@ -67,7 +67,7 @@ export default function MarketplacePage() {
 
 	return (
 		<>
-			<PageTitle>Marketplace</PageTitle>
+			<PageTitle>Tržiště</PageTitle>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{actions.map((action, index) => (
 					<MenuCard
@@ -79,7 +79,7 @@ export default function MarketplacePage() {
 				))}
 			</div>
 			<h2 className="text-2xl font-bold text-white mt-8 mb-4">
-				Marketplace Items
+				Předměty na tržišti
 			</h2>
 			{loading ? (
 				<Loader />

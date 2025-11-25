@@ -54,7 +54,7 @@ export default function FormSelect({
 				{...props}
 				onChange={handleChange} // Use our combined handler
 			>
-				<option value="">-- Select an Option --</option>
+				<option value="">-- Vyberte možnost --</option>
 				{options.map((option) => (
 					<option key={option.value} value={option.value}>
 						{option.label}

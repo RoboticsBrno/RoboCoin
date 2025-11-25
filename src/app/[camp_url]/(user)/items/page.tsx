@@ -28,14 +28,14 @@ export default function YourItemsPage() {
 			try {
 				const response = await fetch(`/api/my-items`);
 				if (!response.ok) {
-					showError("Failed to fetch items");
+					showError("Nepodařilo se načíst předměty");
 					throw new Error("Failed to fetch items");
 				}
 				const data: item[] = await response.json();
 				setItems(data);
 			} catch (error) {
 				console.error("Error fetching items:", error);
-				showError("An unexpected error occurred while fetching items.");
+				showError("Při načítání předmětů došlo k neočekávané chybě.");
 			} finally {
 				setLoading(false);
 			}
@@ -46,7 +46,7 @@ export default function YourItemsPage() {
 
 	return (
 		<>
-			<PageTitle>Your Items</PageTitle>
+			<PageTitle>Vaše předměty</PageTitle>
 			{loading ? (
 				<Loader />
 			) : (

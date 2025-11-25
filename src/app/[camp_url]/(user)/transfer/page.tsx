@@ -31,21 +31,21 @@ export default function TransferPage() {
 
 	const transferSchema = useMemo(() => {
 		return z.object({
-			recipient: z.string().min(1, "Recipient is required"),
+			recipient: z.string().min(1, "Je vyžadován příjemce"),
 			amount: z
 				.string()
-				.min(1, "Amount is required")
+				.min(1, "Je vyžadována částka")
 				.refine((val) => {
 					const num = Number(val);
 					return !isNaN(num) && num > 0 && Number.isInteger(num);
-				}, "Amount must be a positive integer")
+				}, "Částka musí být kladné celé číslo")
 				.refine((val) => {
 					const num = Number(val);
 					return num <= (balance ?? 0);
-				}, "Amount cannot exceed your balance"),
+				}, "Částka nemůže překročit váš zůstatek"),
 			description: z
 				.string()
-				.max(255, "Description cannot exceed 255 characters")
+				.max(255, "Popis nemůže překročit 255 znaků")
 				.optional(),
 		});
 	}, [balance]);
@@ -79,7 +79,7 @@ export default function TransferPage() {
 					}
 				}
 			} catch (err) {
-				showError("Failed to fetch users.");
+				showError("Nepodařilo se načíst uživatele.");
 				console.error("Error fetching users:", err);
 			}
 			setLoading(false);
@@ -101,11 +101,11 @@ export default function TransferPage() {
 		const result = await response.json();
 
 		if (response.ok) {
-			showSuccess("Transfer successful!");
+			showSuccess("Převod úspěšný!");
 			methods.reset();
 			mutate();
 		} else {
-			showError("An unexpected error occurred.");
+			showError("Došlo k neočekávané chybě.");
 			console.error("Transfer error:", result);
 		}
 	};
@@ -119,14 +119,14 @@ export default function TransferPage() {
 		<>
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={handleSubmit(onSubmit)}>
-					<FormTitle>Transfer Balance</FormTitle>
+					<FormTitle>Převést zůstatek</FormTitle>
 					{loading ? (
 						<Loader />
 					) : (
 						<>
 							<FormGroup>
 								<FormSelect
-									label="Recipient"
+									label="Příjemce"
 									name="recipient"
 									options={userOptions}
 									required
@@ -134,7 +134,7 @@ export default function TransferPage() {
 							</FormGroup>
 							<FormGroup>
 								<FormInput
-									label="Amount"
+									label="Částka"
 									type="number"
 									name="amount"
 									required
@@ -142,13 +142,13 @@ export default function TransferPage() {
 							</FormGroup>
 							<FormGroup>
 								<FormInput
-									label="Description (optional)"
+									label="Popis (volitelný)"
 									type="text"
 									name="description"
 									maxLength={255}
 								/>
 							</FormGroup>
-							<FormSubmit>Transfer</FormSubmit>
+							<FormSubmit>Převést</FormSubmit>
 						</>
 					)}
 				</FormContainer>

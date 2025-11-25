@@ -39,10 +39,10 @@ export default function AchievementsPage() {
 				setAchievements(parsedData);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch achievements");
+					showError(error.info.error || "Nepodařilo se načíst úspěchy");
 				} else {
 					console.error(error);
-					showError("Failed to fetch achievements");
+					showError("Nepodařilo se načíst úspěchy");
 				}
 			} finally {
 				setIsLoading(false);
@@ -54,7 +54,7 @@ export default function AchievementsPage() {
 
 	return (
 		<div className="container mx-auto px-4 py-8">
-			<PageTitle>Your Achievements</PageTitle>
+			<PageTitle>Vaše úspěchy</PageTitle>
 			{isLoading ? (
 				<Loader />
 			) : achievements.length > 0 ? (
@@ -68,17 +68,17 @@ export default function AchievementsPage() {
 							</h2>
 							<p className="text-gray-400 mb-4">
 								{achievement.description ||
-									"No description available"}
+									"Popis není k dispozici"}
 							</p>
 							<p className="text-green-400 font-bold">
-								Value: ${achievement.price.toFixed(2)}
+								Hodnota: {achievement.price.toFixed(2)}
 							</p>
 						</Card>
 					))}
 				</div>
 			) : (
 				<p className="text-center text-gray-400">
-					You have not earned any achievements yet.
+					Zatím jste nezískali žádné úspěchy.
 				</p>
 			)}
 		</div>

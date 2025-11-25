@@ -29,11 +29,11 @@ export default function TransactionsTable({
 			{processedTransactions.map((tx) => (
 				<Card key={tx.id}>
 					<h2 className="text-xl font-semibold text-white mb-2">
-						{tx.peer?.name || "Unknown User"}
+						{tx.peer?.name || "Neznámý uživatel"}
 					</h2>
 					{tx.description && (
 						<p className="text-gray-400 mb-4">
-							{tx.description || "No description available"}
+							{tx.description || "Popis není k dispozici"}
 						</p>
 					)}
 					{tx.isOutgoing ? (

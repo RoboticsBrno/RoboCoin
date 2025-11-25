@@ -15,7 +15,7 @@ function FormSubmit({ children, isLoading, ...props }: FormSubmitProps) {
 			disabled={isLoading}
 			{...props}
 		>
-			{isLoading ? "Loading..." : children}
+			{isLoading ? "Načítání..." : children}
 		</Button>
 	);
 }

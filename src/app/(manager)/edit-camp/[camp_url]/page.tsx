@@ -15,10 +15,10 @@ import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
 
 const editCampSchema = z.object({
-	name: z.string().min(1, { message: "Name is required" }),
-	name_url: z.string().min(1, { message: "Valid URL is required" }),
+	name: z.string().min(1, { message: "Je vyžadován název" }),
+	name_url: z.string().min(1, { message: "Je vyžadována platná URL" }),
 	description: z.string(),
-	currency: z.string().max(3, { message: "Currency code max length is 3" }),
+	currency: z.string().max(3, { message: "Maximální délka kódu měny jsou 3 znaky" }),
 });
 
 type EditCampSchema = z.infer<typeof editCampSchema>;
@@ -61,10 +61,10 @@ export default function EditCampPage({
 		});
 
 		if (response.ok) {
-			showSuccess("Camp edited successfully!");
+			showSuccess("Tábor byl úspěšně upraven!");
 		} else {
 			console.error("Failed to edit camp:", response.statusText);
-			showError("Failed to edit camp. Please try again.");
+			showError("Úprava tábora se nezdařila. Zkuste to prosím znovu.");
 		}
 	};
 
@@ -75,13 +75,13 @@ export default function EditCampPage({
 	return (
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-				<FormTitle>Edit a camp</FormTitle>
+				<FormTitle>Upravit tábor</FormTitle>
 				<FormSubtitle>
-					Please fill in the details to edit your camp.
+					Vyplňte prosím podrobnosti pro úpravu tábora.
 				</FormSubtitle>
 				<FormGroup>
 					<FormInput
-						label="Camp Name"
+						label="Název tábora"
 						id="name"
 						name="name"
 						type="text"
@@ -89,7 +89,7 @@ export default function EditCampPage({
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Camp URL"
+						label="URL tábora"
 						id="name_url"
 						name="name_url"
 						type="text"
@@ -97,7 +97,7 @@ export default function EditCampPage({
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Description"
+						label="Popis"
 						id="description"
 						name="description"
 						type="text"
@@ -105,13 +105,13 @@ export default function EditCampPage({
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Currency (e.g., USD)"
+						label="Měna (např. CZK)"
 						id="currency"
 						name="currency"
 						type="text"
 					/>
 				</FormGroup>
-				<FormSubmit isLoading={isSubmitting}>Edit camp</FormSubmit>
+				<FormSubmit isLoading={isSubmitting}>Upravit tábor</FormSubmit>
 			</FormContainer>
 		</FormProvider>
 	);

@@ -15,11 +15,11 @@ import FormSubmit from "@/components/form/FormSubmit";
 import { useToast } from "@/components/Toast";
 
 const signupSchema = z.object({
-	login: z.string().min(1, { message: "Login is required" }),
-	name: z.string().min(1, { message: "Name is required" }),
+	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
+	name: z.string().min(1, { message: "Je vyžadováno jméno" }),
 	password: z
 		.string()
-		.min(6, { message: "Password must be at least 6 characters" }),
+		.min(6, { message: "Heslo musí mít alespoň 6 znaků" }),
 });
 
 type SignupSchema = z.infer<typeof signupSchema>;
@@ -60,45 +60,45 @@ export default function SignupPage() {
 			}
 		} else {
 			const errorData = await response.json();
-			showError(errorData.error || "Signup failed");
+			showError(errorData.error || "Registrace se nezdařila");
 		}
 	};
 
 	return (
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-				<FormTitle>Create a manager account</FormTitle>
+				<FormTitle>Vytvořit manažerský účet</FormTitle>
 				<FormSubtitle>
-					Join us! Please fill in your details to get started.
+					Připojte se k nám! Pro začátek prosím vyplňte své údaje.
 				</FormSubtitle>
 				<FormGroup>
 					<FormInput
-						label="Login"
+						label="Přihlašovací jméno"
 						id="login"
 						name="login"
 						type="text"
 					/>
 				</FormGroup>
 				<FormGroup>
-					<FormInput label="Name" id="name" name="name" type="text" />
+					<FormInput label="Jméno" id="name" name="name" type="text" />
 				</FormGroup>
 				<FormGroup>
 					<FormInput
-						label="Password"
+						label="Heslo"
 						id="password"
 						name="password"
 						type="password"
 						autoComplete="new-password"
 					/>
 				</FormGroup>
-				<FormSubmit isLoading={isSubmitting}>Sign up</FormSubmit>
+				<FormSubmit isLoading={isSubmitting}>Zaregistrovat se</FormSubmit>
 				<p className="text-sm text-center text-gray-400">
-					Already have an account?{" "}
+					Máte již účet?{" "}
 					<Link
 						href="/login"
 						className="font-medium text-indigo-500 hover:text-indigo-400"
 					>
-						Login
+						Přihlásit se
 					</Link>
 				</p>
 			</FormContainer>

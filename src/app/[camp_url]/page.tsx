@@ -17,48 +17,51 @@ export default function Home() {
 
 	const userCards: CardProps[] = [
 		{
-			title: "Achievements",
-			description: "View all your camp achievements.",
+			title: "Úspěchy",
+			description: "Zobrazit všechny úspěchy tábora.",
 			href: `${params.camp_url}/achievements`,
 		},
 		{
-			title: "Marketplace",
-			description: "Browse and purchase items from the marketplace.",
+			title: "Tržiště",
+			description: "Procházejte a nakupujte předměty na tržišti.",
 			href: `${params.camp_url}/marketplace`,
 		},
 		{
-			title: "Send Money",
-			description: "Transfer money to other people.",
+			title: "Poslat peníze",
+			description: "Převádějte peníze ostatním lidem.",
 			href: `${params.camp_url}/transfer`,
 		},
 		{
-			title: "Transactions",
-			description: "View your transaction history.",
+			title: "Transakce",
+			description: "Zobrazit historii transakcí.",
 			href: `${params.camp_url}/transactions`,
 		},
 		{
-			title: "Your Items",
-			description: "View and manage your items.",
+			title: "Vaše předměty",
+			description: "Zobrazte a spravujte své předměty.",
 			href: `${params.camp_url}/items`,
 		},
 	];
 	const orgCards: CardProps[] = [
 		{
-			title: "Manage Achievements",
-			description: "Add, edit, or delete achievements.",
+			title: "Spravovat úspěchy",
+			description: "Přidávejte, upravujte nebo mažte úspěchy.",
 			href: `${params.camp_url}/org/achievements`,
+			type: "org"
 		},
 		{
-			title: "Achievement Table",
-			description: "View achievement table.",
+			title: "Tabulka úspěchů",
+			description: "Zobrazit tabulku úspěchů.",
 			href: `${params.camp_url}/org/achievement-table`,
+			type: "org"
 		},
 	];
 	const adminCards: CardProps[] = [
 		{
-			title: "Manage Users",
-			description: "Administer user accounts and permissions.",
+			title: "Spravovat uživatele",
+			description: "Spravujte uživatelské účty a oprávnění.",
 			href: `${params.camp_url}/admin/manage-users`,
+			type: "admin"
 		},
 	];
 
