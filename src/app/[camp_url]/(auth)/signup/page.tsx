@@ -19,9 +19,7 @@ import { ManagerSignupResponse } from "@/types";
 const signupSchema = z.object({
 	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
 	name: z.string().min(1, { message: "Je vyžadováno jméno" }),
-	password: z
-		.string()
-		.min(6, { message: "Heslo musí mít alespoň 6 znaků" }),
+	password: z.string().min(6, { message: "Heslo musí mít alespoň 6 znaků" }),
 	isManager: z.boolean().optional(),
 });
 
@@ -87,7 +85,12 @@ export default function SignupPage() {
 					/>
 				</FormGroup>
 				<FormGroup>
-					<FormInput label="Jméno" id="name" name="name" type="text" />
+					<FormInput
+						label="Jméno"
+						id="name"
+						name="name"
+						type="text"
+					/>
 				</FormGroup>
 				<FormGroup>
 					<FormInput
@@ -98,7 +101,9 @@ export default function SignupPage() {
 						autoComplete="new-password"
 					/>
 				</FormGroup>
-				<FormSubmit isLoading={isSubmitting}>Zaregistrovat se</FormSubmit>
+				<FormSubmit isLoading={isSubmitting}>
+					Zaregistrovat se
+				</FormSubmit>
 				<p className="text-sm text-center text-gray-400">
 					Máte již účet?{" "}
 					<Link

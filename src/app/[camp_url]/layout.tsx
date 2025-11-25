@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
+import { useEffect, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import Loader from "@/components/Loader";
 import { fetcher, FetchError } from "@/lib/fetch";
 import { CampDetails } from "@/types";
 
@@ -18,12 +18,13 @@ export default function CampLayout({
 	const router = useRouter();
 	const [isSessionReady, setIsSessionReady] = useState(false);
 
-
 	const campUrl = params.camp_url as string;
 
 	const updateSessionWithCampData = useCallback(async () => {
 		try {
-			const campData = await fetcher<CampDetails>(`/api/camps/${campUrl}`);
+			const campData = await fetcher<CampDetails>(
+				`/api/camps/${campUrl}`
+			);
 
 			await update({
 				camp_url: campData.name_url,
@@ -37,16 +38,16 @@ export default function CampLayout({
 			setIsSessionReady(true);
 		} catch (error) {
 			if (error instanceof FetchError) {
-				router.push('/unauthorized');
+				router.push("/unauthorized");
 			} else {
-				console.error('Error updating session with camp data:', error);
+				console.error("Error updating session with camp data:", error);
 			}
 		}
 	}, [campUrl, router, session?.user, update]);
 
 	useEffect(() => {
 		const checkSession = async () => {
-			if (status === 'loading') return;
+			if (status === "loading") return;
 
 			if (session && campUrl && session.camp_url !== campUrl) {
 				await updateSessionWithCampData();
@@ -58,7 +59,7 @@ export default function CampLayout({
 		checkSession();
 	}, [session, campUrl, status, updateSessionWithCampData]);
 
-	if (pathname.includes('login') || pathname.includes('signup')) {
+	if (pathname.includes("login") || pathname.includes("signup")) {
 		return <>{children}</>;
 	}
 

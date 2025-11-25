@@ -30,11 +30,17 @@ export default function Header() {
 		<header className="bg-gray-800 shadow-md">
 			<nav className="container mx-auto px-6 py-3 flex max-md:flex-wrap justify-between items-center">
 				<div className="text-white">
-					<Link href={campUrl ? `/${campUrl}` : '/'} className="text-2xl font-bold text-indigo-500">
+					<Link
+						href={campUrl ? `/${campUrl}` : "/"}
+						className="text-2xl font-bold text-indigo-500"
+					>
 						RoboCoin
 					</Link>
 					{is_manager && pathname !== "/" && (
-						<Link href="/" className="text-white ms-5 hover:text-indigo-300">
+						<Link
+							href="/"
+							className="text-white ms-5 hover:text-indigo-300"
+						>
 							Manažerský panel
 						</Link>
 					)}
@@ -59,11 +65,19 @@ export default function Header() {
 						</>
 					) : (
 						<>
-							<Link href={campUrl ? `/${campUrl}/login` : "/login"}>
+							<Link
+								href={campUrl ? `/${campUrl}/login` : "/login"}
+							>
 								<Button variant="info">Přihlásit se</Button>
 							</Link>
-							<Link href={campUrl ? `/${campUrl}/signup` : "/signup"}>
-								<Button variant="primary">Zaregistrovat se</Button>
+							<Link
+								href={
+									campUrl ? `/${campUrl}/signup` : "/signup"
+								}
+							>
+								<Button variant="primary">
+									Zaregistrovat se
+								</Button>
 							</Link>
 						</>
 					)}

@@ -14,9 +14,13 @@ export function useBalance() {
 		updateRef.current = update;
 	});
 
-	const { data, isLoading, mutate } = useSWR<BalanceResponse>("/api/balance", fetcher, {
-		refreshInterval: 5 * 60 * 1000,
-	});
+	const { data, isLoading, mutate } = useSWR<BalanceResponse>(
+		"/api/balance",
+		fetcher,
+		{
+			refreshInterval: 5 * 60 * 1000,
+		}
+	);
 
 	useEffect(() => {
 		if (data && data.balance !== session?.user?.balance) {

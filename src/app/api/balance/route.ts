@@ -36,7 +36,9 @@ import { BalanceResponse } from "@/types";
  *                   type: string
  *                   example: Unauthorized
  */
-export async function GET(req: NextRequest): Promise<NextResponse<BalanceResponse | { error: string }>> {
+export async function GET(
+	req: NextRequest
+): Promise<NextResponse<BalanceResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -47,10 +49,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<BalanceRespons
 	const campName = searchParams.get("camp");
 
 	if (!session.camp_id && !campName) {
-		return NextResponse.json(
-			{ balance: 0 },
-			{ status: 200 }
-		);
+		return NextResponse.json({ balance: 0 }, { status: 200 });
 	}
 
 	let campId = session.camp_id;

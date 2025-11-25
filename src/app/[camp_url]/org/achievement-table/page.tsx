@@ -10,7 +10,12 @@ import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
 import { useBalance } from "@/hooks/useBalance";
 import { fetcher, FetchError } from "@/lib/fetch";
-import { User, Item, InventoryWithUserAndItem, UpdateUserItemsResponse } from "@/types";
+import {
+	User,
+	Item,
+	InventoryWithUserAndItem,
+	UpdateUserItemsResponse,
+} from "@/types";
 
 export default function AchievementTablePage() {
 	const { camp_url } = useParams<{ camp_url: string }>();
@@ -28,11 +33,13 @@ export default function AchievementTablePage() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const [usersData, itemsData, inventoryData] = await Promise.all([
-					fetcher<User[]>("/api/users?camp_url=" + camp_url),
-					fetcher<Item[]>("/api/items"),
-					fetcher<InventoryWithUserAndItem[]>("/api/inventory"),
-				]);
+				const [usersData, itemsData, inventoryData] = await Promise.all(
+					[
+						fetcher<User[]>("/api/users?camp_url=" + camp_url),
+						fetcher<Item[]>("/api/items"),
+						fetcher<InventoryWithUserAndItem[]>("/api/inventory"),
+					]
+				);
 
 				const existingUsersSet = new Set(usersData.map((u) => u.login));
 				const existingItemsSet = new Set(itemsData.map((i) => i.title));
@@ -103,7 +110,7 @@ export default function AchievementTablePage() {
 
 interface UserItemsListProps {
 	userItems: UserItems;
-	initialUserItems: UserItems,
+	initialUserItems: UserItems;
 	setUserItems: React.Dispatch<React.SetStateAction<UserItems>>;
 	existingItems: Set<string>;
 	existingUsers: Set<string>;
@@ -244,9 +251,14 @@ function UserItemsList({
 			mutate();
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Nepodařilo se aktualizovat předměty uživatelů.");
+				showError(
+					error.info.error ||
+						"Nepodařilo se aktualizovat předměty uživatelů."
+				);
 			} else {
-				showError("Při aktualizaci předmětů uživatelů došlo k neznámé chybě.");
+				showError(
+					"Při aktualizaci předmětů uživatelů došlo k neznámé chybě."
+				);
 			}
 			console.error("Error updating user items:", error);
 		}
@@ -367,20 +379,23 @@ function UserItemsList({
 									{itemHeaders.map((item, colIndex) => (
 										<td
 											key={item}
-											className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center ${!existingItems.has(item) ||
+											className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center ${
+												!existingItems.has(item) ||
 												!existingUsers.has(user)
-												? "cursor-not-allowed bg-gray-800"
-												: `cursor-pointer ${userItems[user][
-													item
-												]
-													? "bg-green-800"
-													: "bg-red-800"
-												}`
-												} ${(hovered.row === rowIndex &&
-													hovered.col === colIndex)
+													? "cursor-not-allowed bg-gray-800"
+													: `cursor-pointer ${
+															userItems[user][
+																item
+															]
+																? "bg-green-800"
+																: "bg-red-800"
+														}`
+											} ${
+												hovered.row === rowIndex &&
+												hovered.col === colIndex
 													? "brightness-125"
 													: ""
-												}`}
+											}`}
 											onMouseEnter={() =>
 												setHovered({
 													row: rowIndex,

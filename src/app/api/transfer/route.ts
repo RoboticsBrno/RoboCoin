@@ -33,14 +33,17 @@ import { transferBalance } from "@/lib/balance";
 import { authOptions } from "@/lib/auth";
 import { TransferBalanceRequest, TransferBalanceResponse } from "@/types";
 
-export async function POST(req: NextRequest): Promise<NextResponse<TransferBalanceResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<TransferBalanceResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { to, amount, description }: TransferBalanceRequest = await req.json();
+	const { to, amount, description }: TransferBalanceRequest =
+		await req.json();
 
 	if (!to || !amount) {
 		return NextResponse.json(
@@ -73,7 +76,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<TransferBalan
 
 	try {
 		await prisma.$transaction(async (tx) => {
-			await transferBalance(tx, fromId, toId, parsedAmount, description, session.camp_id || -1);
+			await transferBalance(
+				tx,
+				fromId,
+				toId,
+				parsedAmount,
+				description,
+				session.camp_id || -1
+			);
 		});
 
 		return NextResponse.json({ success: true });

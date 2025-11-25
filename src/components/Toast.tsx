@@ -1,7 +1,13 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { usePathname } from "next/navigation";
+import React, {
+	createContext,
+	useContext,
+	useState,
+	useCallback,
+	useEffect,
+} from "react";
 
 const variants = {
 	primary: "bg-blue-900 border-blue-700 text-blue-200",
@@ -46,43 +52,63 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 		setToasts([]);
 	}, [pathname]);
 
-	const showToast = useCallback((message: string, variant: keyof typeof variants = 'info') => {
-		setToasts(prev => {
-			const isDuplicate = prev.some(toast => toast.message === message && toast.variant === variant);
-			if (isDuplicate) {
-				return prev;
-			}
-			const id = nextId;
-			setNextId(n => n + 1);
-			return [...prev, { id, message, variant }];
-		});
-	}, [nextId, setNextId]);
+	const showToast = useCallback(
+		(message: string, variant: keyof typeof variants = "info") => {
+			setToasts((prev) => {
+				const isDuplicate = prev.some(
+					(toast) =>
+						toast.message === message && toast.variant === variant
+				);
+				if (isDuplicate) {
+					return prev;
+				}
+				const id = nextId;
+				setNextId((n) => n + 1);
+				return [...prev, { id, message, variant }];
+			});
+		},
+		[nextId, setNextId]
+	);
 
-	const showSuccess = useCallback((message: string) => {
-		showToast(message, 'success');
-	}, [showToast]);
+	const showSuccess = useCallback(
+		(message: string) => {
+			showToast(message, "success");
+		},
+		[showToast]
+	);
 
-	const showError = useCallback((message: string) => {
-		showToast(message, 'danger');
-	}, [showToast]);
+	const showError = useCallback(
+		(message: string) => {
+			showToast(message, "danger");
+		},
+		[showToast]
+	);
 
-	const showWarning = useCallback((message: string) => {
-		showToast(message, 'warning');
-	}, [showToast]);
+	const showWarning = useCallback(
+		(message: string) => {
+			showToast(message, "warning");
+		},
+		[showToast]
+	);
 
-	const showInfo = useCallback((message: string) => {
-		showToast(message, 'info');
-	}, [showToast]);
+	const showInfo = useCallback(
+		(message: string) => {
+			showToast(message, "info");
+		},
+		[showToast]
+	);
 
 	const removeToast = useCallback((id: number) => {
-		setToasts(prev => prev.filter(toast => toast.id !== id));
+		setToasts((prev) => prev.filter((toast) => toast.id !== id));
 	}, []);
 
 	return (
-		<ToastContext.Provider value={{ showToast, showSuccess, showError, showWarning, showInfo }}>
+		<ToastContext.Provider
+			value={{ showToast, showSuccess, showError, showWarning, showInfo }}
+		>
 			{children}
 			<div className="fixed top-4 right-4 z-50 space-y-2 max-w-md">
-				{toasts.map(toast => (
+				{toasts.map((toast) => (
 					<ToastAlert
 						key={toast.id}
 						message={toast.message}
@@ -98,7 +124,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 export function useToast() {
 	const context = useContext(ToastContext);
 	if (!context) {
-		throw new Error('useToast must be used within a ToastProvider');
+		throw new Error("useToast must be used within a ToastProvider");
 	}
 	return context;
 }
@@ -130,11 +156,13 @@ function ToastAlert({
 	const variantClasses = variants[variant];
 	const progressBarClass = progressBarVariants[variant];
 
-
 	return (
 		<div
-			className={`relative border-l-4 rounded-md shadow-lg transition-all duration-300 overflow-hidden ${variantClasses} ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-				}`}
+			className={`relative border-l-4 rounded-md shadow-lg transition-all duration-300 overflow-hidden ${variantClasses} ${
+				isVisible
+					? "opacity-100 translate-x-0"
+					: "opacity-0 translate-x-full"
+			}`}
 			role="alert"
 		>
 			<div className="p-4">
@@ -169,29 +197,30 @@ function ToastAlert({
 			</div>
 
 			{/* Progress bar */}
-			<div className={`absolute bottom-0 left-0 right-0 h-1 bg-opacity-20 bg-transparent`}>
+			<div
+				className={`absolute bottom-0 left-0 right-0 h-1 bg-opacity-20 bg-transparent`}
+			>
 				<div
 					className={`h-full animate-shrink ${progressBarClass}`}
 					style={{
-						width: '100%',
+						width: "100%",
 					}}
 				/>
 			</div>
 
 			<style jsx>{`
-        @keyframes shrink {
-          from {
-            width: 100%;
-          }
-          to {
-            width: 0%;
-          }
-        }
-        .animate-shrink {
-          animation: shrink 5s linear forwards;
-        }
-      `}</style>
+				@keyframes shrink {
+					from {
+						width: 100%;
+					}
+					to {
+						width: 0%;
+					}
+				}
+				.animate-shrink {
+					animation: shrink 5s linear forwards;
+				}
+			`}</style>
 		</div>
 	);
 }
-

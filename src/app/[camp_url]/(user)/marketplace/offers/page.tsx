@@ -57,16 +57,16 @@ export default function OffersPage() {
 				const data = await downResponse.json();
 				setOffersDown(data);
 				if (data.length === 0) {
-					showInfo("No offers have been taken down from the marketplace.");
+					showInfo(
+						"No offers have been taken down from the marketplace."
+					);
 				}
 			} else {
 				console.error("Failed to fetch items down from marketplace.");
 				showError("Failed to fetch items down from marketplace.");
 			}
 		} catch (error) {
-			showError(
-				"An unexpected error occurred while fetching items."
-			);
+			showError("An unexpected error occurred while fetching items.");
 			console.error("Error fetching offers:", error);
 		} finally {
 			setLoading(false);

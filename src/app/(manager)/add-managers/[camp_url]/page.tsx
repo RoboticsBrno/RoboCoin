@@ -52,14 +52,16 @@ export default function AddManagersPage() {
 			]);
 
 			const campManagerIds = campManagers.map((manager) =>
-				manager.id.toString(),
+				manager.id.toString()
 			);
 
 			setUsers(allManagers);
 			setValue("selectedUsers", campManagerIds);
 		} catch (e) {
 			if (e instanceof FetchError) {
-				showError(e.info.error || "Při načítání dat došlo k neznámé chybě.");
+				showError(
+					e.info.error || "Při načítání dat došlo k neznámé chybě."
+				);
 			} else {
 				showError("Při načítání dat došlo k neznámé chybě.");
 				console.error("Error fetching managers:", e);
@@ -92,7 +94,9 @@ export default function AddManagersPage() {
 			fetchManagers();
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Nepodařilo se aktualizovat manažery.");
+				showError(
+					error.info.error || "Nepodařilo se aktualizovat manažery."
+				);
 			} else {
 				showError("Nepodařilo se aktualizovat manažery.");
 				console.error("Error updating managers:", error);
@@ -110,7 +114,8 @@ export default function AddManagersPage() {
 				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
 					<FormTitle>Spravovat manažery tábora</FormTitle>
 					<FormSubtitle>
-						Vyberte uživatele, kterým chcete udělit oprávnění manažera pro tento tábor.
+						Vyberte uživatele, kterým chcete udělit oprávnění
+						manažera pro tento tábor.
 					</FormSubtitle>
 
 					<FormGroup>
@@ -132,12 +137,13 @@ export default function AddManagersPage() {
 											value={user.id.toString()}
 											checked={
 												selectedUsers?.includes(
-													user.id.toString(),
+													user.id.toString()
 												) || isCurrentUser
 											}
 											disabled={isCurrentUser}
 											onChange={(e) => {
-												const checked = e.target.checked;
+												const checked =
+													e.target.checked;
 												const currentIds =
 													selectedUsers || [];
 												const userIdString =
@@ -154,8 +160,8 @@ export default function AddManagersPage() {
 														currentIds.filter(
 															(id) =>
 																id !==
-																userIdString,
-														),
+																userIdString
+														)
 													);
 												}
 											}}
@@ -169,7 +175,9 @@ export default function AddManagersPage() {
 					</FormGroup>
 
 					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Aktualizuji..." : "Aktualizovat manažery"}
+						{isSubmitting
+							? "Aktualizuji..."
+							: "Aktualizovat manažery"}
 					</Button>
 				</FormContainer>
 			</FormProvider>

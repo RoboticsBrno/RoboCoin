@@ -30,14 +30,17 @@ export default function MarketplacePage() {
 	const actions = [
 		{
 			title: "Nabídnout předmět",
-			description: "Nabídněte svůj předmět k zakoupení ostatními uživateli.",
+			description:
+				"Nabídněte svůj předmět k zakoupení ostatními uživateli.",
 			link: campUrl ? `/${campUrl}/marketplace/add` : "/marketplace/add",
 		},
 		{
 			title: "Zobrazit vaše nabídky",
-			description: "Podívejte se na předměty, které jste nabídli k prodeji.",
-			link: campUrl ? `/${campUrl}/marketplace/offers` : "/marketplace/offers",
-
+			description:
+				"Podívejte se na předměty, které jste nabídli k prodeji.",
+			link: campUrl
+				? `/${campUrl}/marketplace/offers`
+				: "/marketplace/offers",
 		},
 	];
 
@@ -50,7 +53,9 @@ export default function MarketplacePage() {
 					const data = await response.json();
 					setOffers(data);
 					if (data.length === 0) {
-						showInfo("Na tržišti nejsou aktuálně k dispozici žádné předměty.");
+						showInfo(
+							"Na tržišti nejsou aktuálně k dispozici žádné předměty."
+						);
 					}
 				} else {
 					showError("Nepodařilo se načíst předměty z tržiště.");

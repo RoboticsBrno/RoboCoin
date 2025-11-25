@@ -12,7 +12,7 @@ export function useCamp() {
 	const { status } = useSession();
 
 	const { data, isLoading, mutate } = useSWR<CampDetails>(
-		campUrl && status === 'authenticated' ? `/api/camps/${campUrl}` : null,
+		campUrl && status === "authenticated" ? `/api/camps/${campUrl}` : null,
 		fetcher
 	);
 

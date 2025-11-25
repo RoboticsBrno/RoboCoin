@@ -25,7 +25,8 @@ export default function AchievementsPage() {
 	useEffect(() => {
 		const fetchAchievements = async () => {
 			try {
-				const data = await fetcher<InventoryItem[]>("/api/achievements");
+				const data =
+					await fetcher<InventoryItem[]>("/api/achievements");
 				const parsedData: Achievement[] = data.map(
 					(item: InventoryItem) => ({
 						id: item.item_inventory_itemToitem.id,
@@ -39,7 +40,9 @@ export default function AchievementsPage() {
 				setAchievements(parsedData);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Nepodařilo se načíst úspěchy");
+					showError(
+						error.info.error || "Nepodařilo se načíst úspěchy"
+					);
 				} else {
 					console.error(error);
 					showError("Nepodařilo se načíst úspěchy");

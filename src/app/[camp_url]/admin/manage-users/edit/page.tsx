@@ -78,7 +78,9 @@ export default function EditUserPage() {
 				if (error instanceof FetchError) {
 					showError(error.info.error || "Failed to fetch users");
 				} else {
-					showError("An unexpected error occurred while fetching users.");
+					showError(
+						"An unexpected error occurred while fetching users."
+					);
 				}
 				console.error("Error fetching users:", error);
 			} finally {
@@ -99,8 +101,12 @@ export default function EditUserPage() {
 			reset({
 				login: selectedUser.login,
 				name: selectedUser.name,
-				isOrg: selectedUser.user_camp_user_camp_userTouser[0]?.is_org || false,
-				isAdmin: selectedUser.user_camp_user_camp_userTouser[0]?.is_admin || false,
+				isOrg:
+					selectedUser.user_camp_user_camp_userTouser[0]?.is_org ||
+					false,
+				isAdmin:
+					selectedUser.user_camp_user_camp_userTouser[0]?.is_admin ||
+					false,
 				password: "",
 			});
 		} else {

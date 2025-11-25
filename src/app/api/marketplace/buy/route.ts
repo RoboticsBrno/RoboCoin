@@ -35,7 +35,9 @@ import { authOptions } from "@/lib/auth";
 import { transferBalance } from "@/lib/balance";
 import { BuyItemRequest, BuyItemResponse } from "@/types";
 
-export async function POST(req: NextRequest): Promise<NextResponse<BuyItemResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<BuyItemResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {

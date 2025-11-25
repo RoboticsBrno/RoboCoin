@@ -62,13 +62,15 @@ export async function GET(): Promise<NextResponse<Camp[] | { error: string }>> {
 					user: parseInt(session.user.id, 10),
 				},
 			},
-		}
+		},
 	});
 
 	return NextResponse.json(camps);
 }
 
-export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<UpdateAdminsResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_manager) {
@@ -78,7 +80,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsR
 	const { camp_url, userIds }: UpdateAdminsRequest = await req.json();
 
 	if (!camp_url || !userIds) {
-		return NextResponse.json({ error: "Missing camp_url or userIds" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Missing camp_url or userIds" },
+			{ status: 400 }
+		);
 	}
 
 	const camp = await prisma.camp.findUnique({
@@ -93,10 +98,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsR
 		where: {
 			camp: camp.id,
 			is_admin: true,
-		}
+		},
 	});
 
-	const currentAdminIds = currentAdmins.map(uc => uc.user);
+	const currentAdminIds = currentAdmins.map((uc) => uc.user);
 	const newAdminIds = userIds;
 
 	const ownId = parseInt(session.user.id, 10);
@@ -104,16 +109,20 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsR
 		newAdminIds.push(ownId);
 	}
 
-	const adminsToAdd = newAdminIds.filter((id: number) => !currentAdminIds.includes(id));
-	const adminsToRemove = currentAdminIds.filter((id: number) => !newAdminIds.includes(id));
+	const adminsToAdd = newAdminIds.filter(
+		(id: number) => !currentAdminIds.includes(id)
+	);
+	const adminsToRemove = currentAdminIds.filter(
+		(id: number) => !newAdminIds.includes(id)
+	);
 
 	for (const userId of adminsToAdd) {
 		await prisma.user_camp.upsert({
 			where: {
 				user_camp: {
 					user: userId,
-					camp: camp.id
-				}
+					camp: camp.id,
+				},
 			},
 			create: {
 				user: userId,
@@ -123,7 +132,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsR
 			},
 			update: {
 				is_admin: true,
-			}
+			},
 		});
 	}
 
@@ -132,12 +141,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateAdminsR
 			where: {
 				user_camp: {
 					user: userId,
-					camp: camp.id
-				}
+					camp: camp.id,
+				},
 			},
 			data: {
 				is_admin: false,
-			}
+			},
 		});
 	}
 

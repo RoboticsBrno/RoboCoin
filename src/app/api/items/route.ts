@@ -69,7 +69,9 @@ export async function GET(): Promise<NextResponse<Item[] | { error: string }>> {
 }
 
 // POST a new item
-export async function POST(req: NextRequest): Promise<NextResponse<Item | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<Item | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -80,7 +82,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<Item | { erro
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { title, description, price, on_marketplace }: CreateItemRequest = await req.json();
+	const { title, description, price, on_marketplace }: CreateItemRequest =
+		await req.json();
 
 	if (!title) {
 		return NextResponse.json(

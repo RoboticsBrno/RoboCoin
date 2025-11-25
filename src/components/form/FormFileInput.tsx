@@ -6,7 +6,11 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name: string;
 }
 
-export default function FormFileInput({ label, name, ...props }: FormInputProps) {
+export default function FormFileInput({
+	label,
+	name,
+	...props
+}: FormInputProps) {
 	const {
 		register,
 		watch,
@@ -20,7 +24,10 @@ export default function FormFileInput({ label, name, ...props }: FormInputProps)
 
 	return (
 		<>
-			<label htmlFor={inputId} className="block text-sm font-medium text-gray-300">
+			<label
+				htmlFor={inputId}
+				className="block text-sm font-medium text-gray-300"
+			>
 				{label}
 			</label>
 			<label

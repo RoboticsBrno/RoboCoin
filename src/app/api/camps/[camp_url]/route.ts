@@ -78,7 +78,10 @@ export async function GET(
 		});
 
 		if (!campFromPrisma) {
-			return NextResponse.json({ error: "Camp not found" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Camp not found" },
+				{ status: 404 }
+			);
 		}
 
 		const camp: Camp = {
@@ -93,14 +96,18 @@ export async function GET(
 			where: {
 				user: parseInt(session.user.id),
 				camp: camp.id,
-			}
+			},
 		});
 
 		if (!campUser) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
-		return NextResponse.json({ ...camp, is_admin: !!campUser?.is_admin, is_org: !!campUser?.is_org });
+		return NextResponse.json({
+			...camp,
+			is_admin: !!campUser?.is_admin,
+			is_org: !!campUser?.is_org,
+		});
 	} catch (error) {
 		console.error("Failed to fetch camp:", error);
 		return NextResponse.json(
@@ -125,7 +132,10 @@ export async function PUT(
 	const data: Camp = await req.json();
 
 	if (!data.name_url) {
-		return NextResponse.json({ error: "Missing name_url" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Missing name_url" },
+			{ status: 400 }
+		);
 	}
 
 	const camp = await prisma.camp.findUnique({

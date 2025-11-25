@@ -48,18 +48,22 @@ export default function DeleteUserPage() {
 			setLoading(true);
 			try {
 				const data = await fetcher<UserSelect[]>(
-					`/api/users?camp_url=${camp_url}`,
+					`/api/users?camp_url=${camp_url}`
 				);
 
-				const sessionUserId = session?.user?.id
-				const filteredData = data.filter((user) => user.id !== parseInt(sessionUserId || "-1", 10));
+				const sessionUserId = session?.user?.id;
+				const filteredData = data.filter(
+					(user) => user.id !== parseInt(sessionUserId || "-1", 10)
+				);
 
 				setUsers(filteredData);
 			} catch (error) {
 				if (error instanceof FetchError) {
 					showError(error.info.error || "Failed to fetch users");
 				} else {
-					showError("An unexpected error occurred while fetching users.");
+					showError(
+						"An unexpected error occurred while fetching users."
+					);
 					console.error(error);
 				}
 			} finally {
@@ -71,14 +75,17 @@ export default function DeleteUserPage() {
 
 	const onFormSubmit = async (data: DeleteUserSchema) => {
 		try {
-			await fetcher<DeleteUserResponse>(`/api/users?camp_url=${camp_url}`, {
-				method: "DELETE",
-				body: { id: data.userId },
-			});
+			await fetcher<DeleteUserResponse>(
+				`/api/users?camp_url=${camp_url}`,
+				{
+					method: "DELETE",
+					body: { id: data.userId },
+				}
+			);
 			showSuccess("User deleted successfully!");
 			setSelectedUserId("");
 			const usersData = await fetcher<UserSelect[]>(
-				`/api/users?camp_url=${camp_url}`,
+				`/api/users?camp_url=${camp_url}`
 			);
 			setUsers(usersData);
 			methods.reset();

@@ -35,7 +35,9 @@ import { syncItemHolders } from "@/lib/inventory";
 import { authOptions } from "@/lib/auth";
 import { SyncAchievementRequest, SyncAchievementResponse } from "@/types";
 
-export async function POST(req: NextRequest): Promise<NextResponse<SyncAchievementResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<SyncAchievementResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user?.is_org && !session?.user?.is_admin) {
@@ -62,7 +64,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<SyncAchieveme
 
 	try {
 		await prisma.$transaction(async (tx) => {
-			await syncItemHolders(tx, parsedItemId, desiredUserIds, session.camp_id || -1);
+			await syncItemHolders(
+				tx,
+				parsedItemId,
+				desiredUserIds,
+				session.camp_id || -1
+			);
 		});
 
 		return NextResponse.json({ success: true });

@@ -80,11 +80,19 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	}
 
 	if (!item) {
-		return <div className="bg-red-900 border-red-700 text-red-200 relative p-4 my-4 border-l-4 rounded-md shadow-lg">Item not found</div>;
+		return (
+			<div className="bg-red-900 border-red-700 text-red-200 relative p-4 my-4 border-l-4 rounded-md shadow-lg">
+				Item not found
+			</div>
+		);
 	}
 
 	if (!balance && balance !== 0) {
-		return <div className="bg-red-900 border-red-700 text-red-200 relative p-4 my-4 border-l-4 rounded-md shadow-lg">Failed to fetch balance</div>;
+		return (
+			<div className="bg-red-900 border-red-700 text-red-200 relative p-4 my-4 border-l-4 rounded-md shadow-lg">
+				Failed to fetch balance
+			</div>
+		);
 	}
 
 	const canAfford = balance !== null && balance >= item.price;

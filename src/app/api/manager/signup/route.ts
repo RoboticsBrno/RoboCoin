@@ -27,8 +27,11 @@ import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { ManagerSignupRequest, ManagerSignupResponse, User } from "@/types";
 
-export async function POST(req: NextRequest): Promise<NextResponse<ManagerSignupResponse | { error: string }>> {
-	const { login, name, password, is_manager }: ManagerSignupRequest = await req.json();
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<ManagerSignupResponse | { error: string }>> {
+	const { login, name, password, is_manager }: ManagerSignupRequest =
+		await req.json();
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -56,12 +59,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<ManagerSignup
 			},
 		});
 
-        const responseUser: User = {
-            id: user.id,
-            login: user.login,
-            name: user.name,
-            is_manager: user.is_manager,
-        }
+		const responseUser: User = {
+			id: user.id,
+			login: user.login,
+			name: user.name,
+			is_manager: user.is_manager,
+		};
 
 		return NextResponse.json({ user: responseUser }, { status: 201 });
 	} catch (error) {

@@ -44,9 +44,7 @@ export default function ManageUsersPage() {
 		setLoading(true);
 		try {
 			const allUsersRes = await fetch("/api/users");
-			const campUsersRes = await fetch(
-				`/api/users?camp_url=${camp_url}`,
-			);
+			const campUsersRes = await fetch(`/api/users?camp_url=${camp_url}`);
 
 			if (!allUsersRes.ok || !campUsersRes.ok) {
 				throw new Error("Nepodařilo se načíst data uživatelů");
@@ -58,9 +56,8 @@ export default function ManageUsersPage() {
 			const allUsers = allUsersData || [];
 			const campUsers = campUsersData || [];
 
-
 			const filteredUsers = allUsers.filter(
-				(user: User) => user.id != session.user.id,
+				(user: User) => user.id != session.user.id
 			);
 			const campUserIds = campUsers.map((user: User) => user.id);
 
@@ -93,7 +90,9 @@ export default function ManageUsersPage() {
 
 			if (!res.ok) {
 				const errorData = await res.json();
-				throw new Error(errorData.error || "Nepodařilo se přiřadit uživatele");
+				throw new Error(
+					errorData.error || "Nepodařilo se přiřadit uživatele"
+				);
 			}
 
 			showSuccess("Uživatelé byli úspěšně přiřazeni!");
@@ -132,11 +131,16 @@ export default function ManageUsersPage() {
 										const userId = user.id;
 
 										if (checked) {
-											methods.setValue("selectedUsers", [...currentIds, userId]);
+											methods.setValue("selectedUsers", [
+												...currentIds,
+												userId,
+											]);
 										} else {
 											methods.setValue(
 												"selectedUsers",
-												currentIds.filter((id) => id !== userId),
+												currentIds.filter(
+													(id) => id !== userId
+												)
 											);
 										}
 									}}

@@ -93,7 +93,9 @@ export default function ManageUserAchievementsPage() {
 				); // Convert to strings for the form
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch user inventory");
+					showError(
+						error.info.error || "Failed to fetch user inventory"
+					);
 				} else {
 					showError("Failed to fetch user inventory");
 				}
@@ -125,7 +127,9 @@ export default function ManageUserAchievementsPage() {
 			if (error instanceof FetchError) {
 				showError(error.info.error || "Failed to sync achievements");
 			} else {
-				showError("An unexpected error occurred while updating achievements.");
+				showError(
+					"An unexpected error occurred while updating achievements."
+				);
 			}
 			console.error("An unexpected error occurred:", error);
 		}

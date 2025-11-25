@@ -1,6 +1,5 @@
-
 type FetcherOptions = {
-	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	method?: "GET" | "POST" | "PUT" | "DELETE";
 	headers?: Record<string, string>;
 	body?: unknown;
 };
@@ -16,13 +15,16 @@ export class FetchError extends Error {
 	}
 }
 
-export async function fetcher<T>(url: string, options?: FetcherOptions): Promise<T> {
-	const { method = 'GET', headers = {}, body } = options || {};
+export async function fetcher<T>(
+	url: string,
+	options?: FetcherOptions
+): Promise<T> {
+	const { method = "GET", headers = {}, body } = options || {};
 
 	const response = await fetch(url, {
 		method,
 		headers: {
-			'Content-Type': 'application/json',
+			"Content-Type": "application/json",
 			...headers,
 		},
 		body: body ? JSON.stringify(body) : null,

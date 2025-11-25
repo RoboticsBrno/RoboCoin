@@ -5,14 +5,14 @@ import bcrypt from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 
 interface UpdateData {
-    balance?: number;
-    camp_url?: string;
-    camp_id?: number;
-    user?: {
-        is_admin: boolean;
-        is_org: boolean;
-    };
-    user_camps?: string[];
+	balance?: number;
+	camp_url?: string;
+	camp_id?: number;
+	user?: {
+		is_admin: boolean;
+		is_org: boolean;
+	};
+	user_camps?: string[];
 }
 
 export const authOptions: AuthOptions = {
@@ -33,7 +33,7 @@ export const authOptions: AuthOptions = {
 				let user;
 				let camp;
 				let camp_user;
-				if (credentials.camp === 'null' || !credentials.camp) {
+				if (credentials.camp === "null" || !credentials.camp) {
 					user = await prisma.user.findFirst({
 						where: { login: credentials.login },
 					});
@@ -70,7 +70,10 @@ export const authOptions: AuthOptions = {
 				}
 
 				if (!user) {
-					console.error("User not found for login:", credentials.login);
+					console.error(
+						"User not found for login:",
+						credentials.login
+					);
 					throw new Error("User not found");
 				}
 
@@ -85,19 +88,27 @@ export const authOptions: AuthOptions = {
 					where: {
 						user: user.id,
 					},
-					select: { camp_user_camp_campTocamp: { select: { name_url: true } } },
+					select: {
+						camp_user_camp_campTocamp: {
+							select: { name_url: true },
+						},
+					},
 				});
 
-				const user_camps_list = users_camps.map((uc) => uc.camp_user_camp_campTocamp.name_url);
+				const user_camps_list = users_camps.map(
+					(uc) => uc.camp_user_camp_campTocamp.name_url
+				);
 
 				const isValid = bcrypt.compareSync(
 					credentials.password,
 					user.password
 				);
 
-
 				if (!isValid) {
-					console.error("Invalid password for user:", credentials.login);
+					console.error(
+						"Invalid password for user:",
+						credentials.login
+					);
 					throw new Error("Invalid password");
 				}
 
@@ -111,7 +122,6 @@ export const authOptions: AuthOptions = {
 					});
 				}
 
-
 				const result: User = {
 					id: user.id.toString(),
 					name: user.name,
@@ -124,7 +134,6 @@ export const authOptions: AuthOptions = {
 					user_camps: user_camps_list || [],
 					camp_id: camp?.id || null,
 				};
-
 
 				return result;
 			},
@@ -162,7 +171,6 @@ export const authOptions: AuthOptions = {
 				token.user_camps = user.user_camps;
 			}
 			if (trigger === "update" && session) {
-
 				if (session.balance !== undefined) {
 					token.balance = session.balance;
 				}
@@ -180,7 +188,6 @@ export const authOptions: AuthOptions = {
 				if (session.user_camps !== undefined) {
 					token.user_camps = session.user_camps;
 				}
-
 			}
 			return token;
 		},

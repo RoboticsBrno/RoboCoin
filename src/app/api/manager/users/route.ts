@@ -54,9 +54,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
-import { UpdateUsersInCampRequest, UpdateUsersInCampResponse, User } from "@/types";
+import {
+	UpdateUsersInCampRequest,
+	UpdateUsersInCampResponse,
+	User,
+} from "@/types";
 
-export async function GET(req: NextRequest): Promise<NextResponse<User[] | { error: string }>> {
+export async function GET(
+	req: NextRequest
+): Promise<NextResponse<User[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_manager) {
@@ -64,7 +70,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<User[] | { err
 	}
 
 	const searchParams = req.nextUrl.searchParams;
-	const campUrl = searchParams.get('camp_url');
+	const campUrl = searchParams.get("camp_url");
 
 	let users: User[];
 	if (campUrl) {
@@ -86,7 +92,6 @@ export async function GET(req: NextRequest): Promise<NextResponse<User[] | { err
 	}
 
 	return NextResponse.json(users);
-
 }
 
 async function getAllManagersInCamp(campId: number): Promise<User[]> {
@@ -103,8 +108,8 @@ async function getAllManagersInCamp(campId: number): Promise<User[]> {
 			id: true,
 			name: true,
 			login: true,
-            is_manager: true,
-		}
+			is_manager: true,
+		},
 	});
 
 	return managers;
@@ -119,14 +124,16 @@ async function getAllManagers(): Promise<User[]> {
 			id: true,
 			name: true,
 			login: true,
-            is_manager: true,
-		}
+			is_manager: true,
+		},
 	});
 
 	return managers;
 }
 
-export async function POST(req: NextRequest): Promise<NextResponse<UpdateUsersInCampResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<UpdateUsersInCampResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -170,9 +177,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateUsersIn
 
 	const existingUserIds = users_in_camp.map((uc) => uc.user);
 
-	const toAddUserIds = userIdsInt.filter((id) => !existingUserIds.includes(id));
+	const toAddUserIds = userIdsInt.filter(
+		(id) => !existingUserIds.includes(id)
+	);
 
-	const toRemoveUserIds = existingUserIds.filter((id) => !userIdsInt.includes(id));
+	const toRemoveUserIds = existingUserIds.filter(
+		(id) => !userIdsInt.includes(id)
+	);
 
 	await prisma.$transaction(async (prisma) => {
 		if (toAddUserIds.length > 0) {
@@ -187,7 +198,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateUsersIn
 					user: userId,
 					camp: camp.id,
 					amount: 0,
-				}))
+				})),
 			});
 		}
 
@@ -203,14 +214,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateUsersIn
 				where: {
 					user: { in: toRemoveUserIds },
 					camp: camp.id,
-				}
+				},
 			});
 
 			await prisma.item.deleteMany({
 				where: {
 					owner: { in: toRemoveUserIds },
 					camp: camp.id,
-				}
+				},
 			});
 		}
 	});

@@ -52,7 +52,9 @@ import { Prisma } from "../../../../generated/prisma";
 import { AssignItemRequest, InventoryWithUserAndItem } from "@/types";
 import { InventoryItem } from "@/lib/api";
 
-export async function GET(): Promise<NextResponse<InventoryWithUserAndItem[] | { error: string }>> {
+export async function GET(): Promise<
+	NextResponse<InventoryWithUserAndItem[] | { error: string }>
+> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user) {
@@ -87,7 +89,9 @@ export async function GET(): Promise<NextResponse<InventoryWithUserAndItem[] | {
 	}
 }
 
-export async function POST(req: NextRequest): Promise<NextResponse<InventoryItem | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<InventoryItem | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	// 1. Authenticate and authorize the user
@@ -120,7 +124,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<InventoryItem
 			},
 			include: {
 				item_inventory_itemToitem: true,
-			}
+			},
 		});
 
 		return NextResponse.json(newInventoryItem, { status: 201 });

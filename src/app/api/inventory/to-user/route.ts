@@ -33,7 +33,9 @@ import { syncUserInventory } from "@/lib/inventory";
 import { authOptions } from "@/lib/auth";
 import { SyncUserInventoryRequest, SyncUserInventoryResponse } from "@/types";
 
-export async function POST(req: NextRequest): Promise<NextResponse<SyncUserInventoryResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<SyncUserInventoryResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user?.is_org && !session?.user?.is_admin) {
@@ -60,7 +62,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<SyncUserInven
 
 	try {
 		await prisma.$transaction(async (tx) => {
-			await syncUserInventory(tx, parsedUserId, desiredItemIds, session.camp_id);
+			await syncUserInventory(
+				tx,
+				parsedUserId,
+				desiredItemIds,
+				session.camp_id
+			);
 		});
 
 		return NextResponse.json({ success: true });

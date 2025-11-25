@@ -23,7 +23,8 @@ export default function TransactionsPage() {
 			if (!session) return;
 
 			try {
-				const data = await fetcher<TransactionWithUsers[]>("/api/transactions");
+				const data =
+					await fetcher<TransactionWithUsers[]>("/api/transactions");
 				setTransactions(data);
 			} catch (err) {
 				if (err instanceof FetchError) {

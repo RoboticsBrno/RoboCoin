@@ -91,7 +91,9 @@ export default function ManageAchievementUsersPage() {
 				);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch item owners");
+					showError(
+						error.info.error || "Failed to fetch item owners"
+					);
 				} else {
 					showError("Failed to fetch item owners");
 				}
@@ -110,19 +112,26 @@ export default function ManageAchievementUsersPage() {
 				itemId: data.itemId,
 				userIds: data.userIds.map((id) => Number(id)), // Convert to numbers here
 			};
-			await fetcher<SyncAchievementResponse>("/api/inventory/to-achievement", {
-				method: "POST",
-				body: submitData,
-			});
+			await fetcher<SyncAchievementResponse>(
+				"/api/inventory/to-achievement",
+				{
+					method: "POST",
+					body: submitData,
+				}
+			);
 
 			showSuccess("Achievement owners updated successfully!");
 			setValue("itemId", ""); // Reset item selection
 			setSelectedItemId("");
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to sync achievement owners");
+				showError(
+					error.info.error || "Failed to sync achievement owners"
+				);
 			} else {
-				showError("An unexpected error occurred while updating owners.");
+				showError(
+					"An unexpected error occurred while updating owners."
+				);
 			}
 		}
 	};
@@ -141,77 +150,78 @@ export default function ManageAchievementUsersPage() {
 					</FormSubtitle>
 
 					<FormGroup>
-													<FormSelect
-														label="Achievement"
-														name="itemId"
-														options={items.map((item) => ({
-															value: item.id.toString(),
-															label: item.title,
-														}))}
-														onChange={(e) => setSelectedItemId(e.target.value)}
-													/>
-												</FormGroup>
-						
-												<FormGroup>
-													<label className="block text-sm font-medium text-gray-300">
-														Users {isOwnersLoading ? "(loading)" : ""}
-													</label>
-													{!selectedItemId ? (
-														<p className="text-gray-500 text-sm mt-1">
-															Please select an achievement to see its owners.
-														</p>
-													) : (
-														<UserOptions
-															items={users}
-															currentUserIds={currentUserIds} // Keep as string[]
-															setValue={setValue}
-														/>
-													)}
-												</FormGroup>
-						
-												<FormSubmit isLoading={isSubmitting}>
-													Update Owners
-												</FormSubmit>
-											</FormContainer>
-										</FormProvider>
-									</div>
-								);
-							}
-						
-						function UserOptions({
-							items,
-							currentUserIds,
-							setValue,
-						}: {
-							items: User[];
-							currentUserIds: string[] | undefined;
-							setValue: UseFormSetValue<{ itemId: string; userIds: string[] }>;
-						}) {
-							return (
-								<div className="mt-2 grid grid-cols-2 gap-4">
-									{items.map((item) => (
-										<FormCheckbox
-											key={item.id}
-											id={`item-${item.id}`}
-											label={item.name}
-											name="itemIds"
-											value={item.id.toString()}
-											checked={currentUserIds?.includes(item.id.toString())} // Convert to string for comparison
-											onChange={(e) => {
-												const checked = e.target.checked;
-												const currentIds = currentUserIds || [];
-												const itemIdString = item.id.toString(); // Convert to string
-						
-												if (checked) {
-													setValue("userIds", [...currentIds, itemIdString]);
-												} else {
-													setValue(
-														"userIds",
-														currentIds.filter((id) => id !== itemIdString)
-													);
-												}
-											}}
-										/>
-									))}
-								</div>	);
+						<FormSelect
+							label="Achievement"
+							name="itemId"
+							options={items.map((item) => ({
+								value: item.id.toString(),
+								label: item.title,
+							}))}
+							onChange={(e) => setSelectedItemId(e.target.value)}
+						/>
+					</FormGroup>
+
+					<FormGroup>
+						<label className="block text-sm font-medium text-gray-300">
+							Users {isOwnersLoading ? "(loading)" : ""}
+						</label>
+						{!selectedItemId ? (
+							<p className="text-gray-500 text-sm mt-1">
+								Please select an achievement to see its owners.
+							</p>
+						) : (
+							<UserOptions
+								items={users}
+								currentUserIds={currentUserIds} // Keep as string[]
+								setValue={setValue}
+							/>
+						)}
+					</FormGroup>
+
+					<FormSubmit isLoading={isSubmitting}>
+						Update Owners
+					</FormSubmit>
+				</FormContainer>
+			</FormProvider>
+		</div>
+	);
+}
+
+function UserOptions({
+	items,
+	currentUserIds,
+	setValue,
+}: {
+	items: User[];
+	currentUserIds: string[] | undefined;
+	setValue: UseFormSetValue<{ itemId: string; userIds: string[] }>;
+}) {
+	return (
+		<div className="mt-2 grid grid-cols-2 gap-4">
+			{items.map((item) => (
+				<FormCheckbox
+					key={item.id}
+					id={`item-${item.id}`}
+					label={item.name}
+					name="itemIds"
+					value={item.id.toString()}
+					checked={currentUserIds?.includes(item.id.toString())} // Convert to string for comparison
+					onChange={(e) => {
+						const checked = e.target.checked;
+						const currentIds = currentUserIds || [];
+						const itemIdString = item.id.toString(); // Convert to string
+
+						if (checked) {
+							setValue("userIds", [...currentIds, itemIdString]);
+						} else {
+							setValue(
+								"userIds",
+								currentIds.filter((id) => id !== itemIdString)
+							);
+						}
+					}}
+				/>
+			))}
+		</div>
+	);
 }

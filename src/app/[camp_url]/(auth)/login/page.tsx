@@ -36,14 +36,13 @@ export default function LoginPage() {
 	const onFormSubmit = async (data: LoginSchema) => {
 		setError(null);
 		try {
-			const callbackUrl = params.camp_url
-				? `/${params.camp_url}`
-				: "/";
+			const callbackUrl = params.camp_url ? `/${params.camp_url}` : "/";
 			console.log("Callback URL:", callbackUrl);
 			const result = await signIn("credentials", {
-				...data, camp: params.camp_url,
+				...data,
+				camp: params.camp_url,
 				redirect: false,
-				callbackUrl
+				callbackUrl,
 			});
 
 			if (result?.error) {
@@ -80,7 +79,11 @@ export default function LoginPage() {
 				{error && (
 					<p className="text-sm text-center text-red-500">{error}</p>
 				)}
-				<input type="hidden" name="camp" value={params.camp_url || ""} />
+				<input
+					type="hidden"
+					name="camp"
+					value={params.camp_url || ""}
+				/>
 				<FormGroup>
 					<FormInput
 						label="Přihlašovací jméno"

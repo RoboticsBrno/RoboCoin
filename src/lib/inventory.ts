@@ -6,7 +6,7 @@ export async function syncUserInventory(
 	tx: TransactionClient,
 	userId: number,
 	desiredItemIds: Set<number>,
-	camp_id: number | null,
+	camp_id: number | null
 ) {
 	const currentInventory = await tx.inventory.findMany({
 		where: { user: userId },
@@ -77,7 +77,6 @@ export async function syncUserInventory(
 			},
 			data: { amount: { increment: netChange } },
 		});
-
 	}
 }
 
@@ -85,7 +84,7 @@ export async function syncItemHolders(
 	tx: TransactionClient,
 	itemId: number,
 	desiredUserIds: Set<number>,
-	camp: number,
+	camp: number
 ) {
 	const item = await tx.item.findUnique({
 		where: { id: itemId },
@@ -122,7 +121,7 @@ export async function syncItemHolders(
 				user: userId,
 				item: itemId,
 				quantity: 1,
-				camp
+				camp,
 			})),
 		});
 	}
@@ -141,6 +140,5 @@ export async function syncItemHolders(
 				data: { amount: { increment: itemPrice } },
 			});
 		}
-
 	}
 }

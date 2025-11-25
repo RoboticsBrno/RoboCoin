@@ -47,13 +47,13 @@ export default function Home() {
 			title: "Spravovat úspěchy",
 			description: "Přidávejte, upravujte nebo mažte úspěchy.",
 			href: `${params.camp_url}/org/achievements`,
-			type: "org"
+			type: "org",
 		},
 		{
 			title: "Tabulka úspěchů",
 			description: "Zobrazit tabulku úspěchů.",
 			href: `${params.camp_url}/org/achievement-table`,
-			type: "org"
+			type: "org",
 		},
 	];
 	const adminCards: CardProps[] = [
@@ -61,7 +61,7 @@ export default function Home() {
 			title: "Spravovat uživatele",
 			description: "Spravujte uživatelské účty a oprávnění.",
 			href: `${params.camp_url}/admin/manage-users`,
-			type: "admin"
+			type: "admin",
 		},
 	];
 

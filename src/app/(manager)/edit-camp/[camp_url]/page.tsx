@@ -18,7 +18,9 @@ const editCampSchema = z.object({
 	name: z.string().min(1, { message: "Je vyžadován název" }),
 	name_url: z.string().min(1, { message: "Je vyžadována platná URL" }),
 	description: z.string(),
-	currency: z.string().max(3, { message: "Maximální délka kódu měny jsou 3 znaky" }),
+	currency: z
+		.string()
+		.max(3, { message: "Maximální délka kódu měny jsou 3 znaky" }),
 });
 
 type EditCampSchema = z.infer<typeof editCampSchema>;

@@ -78,9 +78,16 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { DeleteUserRequest, DeleteUserResponse, UpdateUserRequest, User } from "@/types";
+import {
+	DeleteUserRequest,
+	DeleteUserResponse,
+	UpdateUserRequest,
+	User,
+} from "@/types";
 
-export async function GET(req: NextRequest): Promise<NextResponse<User[] | { error: string }>> {
+export async function GET(
+	req: NextRequest
+): Promise<NextResponse<User[] | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -88,7 +95,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<User[] | { err
 	}
 
 	const searchParams = req.nextUrl.searchParams;
-	const campUrl = searchParams.get('camp_url');
+	const campUrl = searchParams.get("camp_url");
 
 	let users: User[] = [];
 
@@ -130,7 +137,10 @@ export async function GET(req: NextRequest): Promise<NextResponse<User[] | { err
 				name: "asc",
 			},
 		});
-		users = usersWithCamps.map(u => ({ ...u, ...u.user_camp_user_camp_userTouser[0] }));
+		users = usersWithCamps.map((u) => ({
+			...u,
+			...u.user_camp_user_camp_userTouser[0],
+		}));
 	} else {
 		const managedCamps = await prisma.user_camp.findMany({
 			where: {
@@ -142,7 +152,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<User[] | { err
 			},
 		});
 
-		const managedCampIds = managedCamps.map(uc => uc.camp);
+		const managedCampIds = managedCamps.map((uc) => uc.camp);
 
 		users = await prisma.user.findMany({
 			where: {
@@ -169,14 +179,17 @@ export async function GET(req: NextRequest): Promise<NextResponse<User[] | { err
 	return NextResponse.json(users);
 }
 
-export async function PUT(req: NextRequest): Promise<NextResponse<User | { error: string }>> {
+export async function PUT(
+	req: NextRequest
+): Promise<NextResponse<User | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_admin) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { id, login, name, password, isOrg, isAdmin }: UpdateUserRequest = await req.json();
+	const { id, login, name, password, isOrg, isAdmin }: UpdateUserRequest =
+		await req.json();
 	const camp = session.camp_id;
 
 	if (!id) {
@@ -207,11 +220,11 @@ export async function PUT(req: NextRequest): Promise<NextResponse<User | { error
 		);
 	}
 
-	const data: { login: string, name: string, password: string } = {
+	const data: { login: string; name: string; password: string } = {
 		login,
 		name,
 		password,
-	}
+	};
 
 	if (isAdmin === undefined || isOrg === undefined) {
 		return NextResponse.json(
@@ -220,7 +233,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse<User | { error
 		);
 	}
 
-	const permissions: { is_org: boolean, is_admin: boolean } = {
+	const permissions: { is_org: boolean; is_admin: boolean } = {
 		is_org: isOrg,
 		is_admin: isAdmin,
 	};
@@ -252,7 +265,9 @@ export async function PUT(req: NextRequest): Promise<NextResponse<User | { error
 	}
 }
 
-export async function DELETE(req: NextRequest): Promise<NextResponse<DeleteUserResponse | { error: string }>> {
+export async function DELETE(
+	req: NextRequest
+): Promise<NextResponse<DeleteUserResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session.user.is_admin) {
@@ -270,7 +285,9 @@ export async function DELETE(req: NextRequest): Promise<NextResponse<DeleteUserR
 
 	try {
 		await prisma.user_camp.delete({
-			where: { user_camp: { user: parseInt(id), camp: session.camp_id || -1 } },
+			where: {
+				user_camp: { user: parseInt(id), camp: session.camp_id || -1 },
+			},
 		});
 
 		await prisma.balance.deleteMany({

@@ -32,8 +32,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { CreateCampRequest, CreateCampResponse } from "@/types";
 
-export async function POST(req: NextRequest): Promise<NextResponse<CreateCampResponse | { error: string }>> {
-	const { name, name_url, description, currency }: CreateCampRequest = await req.json();
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<CreateCampResponse | { error: string }>> {
+	const { name, name_url, description, currency }: CreateCampRequest =
+		await req.json();
 
 	const existingCamp = await prisma.camp.findUnique({
 		where: { name_url },
@@ -61,7 +64,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<CreateCampRes
 
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.id) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Unauthorized" },
+				{ status: 401 }
+			);
 		}
 		const user = Number(session.user.id);
 
@@ -83,6 +89,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<CreateCampRes
 		return NextResponse.json({ user, balance }, { status: 201 });
 	} catch (error) {
 		console.error("Error creating camp:", error);
-		return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 });
+		return NextResponse.json(
+			{ error: "An unexpected error occurred." },
+			{ status: 500 }
+		);
 	}
 }

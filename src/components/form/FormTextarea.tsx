@@ -1,12 +1,17 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-interface FormTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
+interface FormTextareaProps
+	extends React.InputHTMLAttributes<HTMLTextAreaElement> {
 	label: string;
 	name: string;
 }
 
-export default function FormTextarea({ label, name, ...props }: FormTextareaProps) {
+export default function FormTextarea({
+	label,
+	name,
+	...props
+}: FormTextareaProps) {
 	const {
 		register,
 		formState: { errors },

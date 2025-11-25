@@ -26,7 +26,9 @@ import { NextResponse } from "next/server";
 import { InventoryItem } from "@/lib/api";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(): Promise<NextResponse<InventoryItem[] | { error: string }>> {
+export async function GET(): Promise<
+	NextResponse<InventoryItem[] | { error: string }>
+> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -34,7 +36,10 @@ export async function GET(): Promise<NextResponse<InventoryItem[] | { error: str
 	}
 
 	if (!session.camp_id) {
-		return NextResponse.json({ error: "Camp not selected" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Camp not selected" },
+			{ status: 400 }
+		);
 	}
 
 	const achievements: InventoryItem[] = await prisma.inventory.findMany({

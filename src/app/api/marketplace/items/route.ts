@@ -49,7 +49,9 @@ import { authOptions } from "@/lib/auth";
 import { CreateMarketplaceItemRequest, Item } from "@/types";
 import { ItemWithUser } from "@/lib/api";
 
-export async function GET(): Promise<NextResponse<ItemWithUser[] | { error: string }>> {
+export async function GET(): Promise<
+	NextResponse<ItemWithUser[] | { error: string }>
+> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -69,14 +71,17 @@ export async function GET(): Promise<NextResponse<ItemWithUser[] | { error: stri
 	return NextResponse.json(items);
 }
 
-export async function POST(req: NextRequest): Promise<NextResponse<Item | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<Item | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const { title, description, price }: CreateMarketplaceItemRequest = await req.json();
+	const { title, description, price }: CreateMarketplaceItemRequest =
+		await req.json();
 
 	if (!title) {
 		return NextResponse.json(

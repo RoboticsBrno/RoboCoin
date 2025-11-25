@@ -38,8 +38,7 @@ export default async function RootLayout({
 						<RoleProvider>
 							<Header />
 							<div className={`container mx-auto p-8 pt-6`}>
-								<ConditionalBackButton />{" "}
-								{children}
+								<ConditionalBackButton /> {children}
 							</div>
 						</RoleProvider>
 					</Provider>

@@ -16,16 +16,14 @@ import { Item } from "@/types";
 const createAchievementSchema = z.object({
 	title: z.string().min(1, { message: "Title is required" }),
 	description: z.string().optional(),
-	price: z
-		.string()
-		.refine(
-			(val) => {
-				if (!val || val === "") return true;
-				const num = Number(val);
-				return !isNaN(num) && num >= 0 && Number.isInteger(num);
-			},
-			{ message: "Price must be a positive number" }
-		),
+	price: z.string().refine(
+		(val) => {
+			if (!val || val === "") return true;
+			const num = Number(val);
+			return !isNaN(num) && num >= 0 && Number.isInteger(num);
+		},
+		{ message: "Price must be a positive number" }
+	),
 });
 
 type CreateAchievementSchema = z.infer<typeof createAchievementSchema>;
@@ -59,13 +57,17 @@ export default function CreateAchievementPage() {
 				body: submitData,
 			});
 
-			showSuccess(`Achievement "${newAchievement.title}" created successfully!`);
+			showSuccess(
+				`Achievement "${newAchievement.title}" created successfully!`
+			);
 			methods.reset(); // Reset the form after successful submission
 		} catch (error) {
 			if (error instanceof FetchError) {
 				showError(error.info.error || "Failed to create achievement");
 			} else {
-				showError("An unexpected error occurred while creating the achievement.");
+				showError(
+					"An unexpected error occurred while creating the achievement."
+				);
 			}
 			console.error("Failed to create achievement:", error);
 		}

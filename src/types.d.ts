@@ -72,9 +72,9 @@ export type Balance = {
 	user: number;
 	amount: number;
 	camp: number | null;
-}
+};
 
-export type CreateCampRequest = Omit<Camp, 'id'>;
+export type CreateCampRequest = Omit<Camp, "id">;
 
 export type CreateCampResponse = {
 	user: number;

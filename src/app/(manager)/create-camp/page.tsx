@@ -17,7 +17,9 @@ const signupSchema = z.object({
 	name: z.string().min(1, { message: "Je vyžadován název" }),
 	name_url: z.string().min(1, { message: "Je vyžadována platná URL" }),
 	description: z.string(),
-	currency: z.string().max(3, { message: "Maximální délka kódu měny jsou 3 znaky" }),
+	currency: z
+		.string()
+		.max(3, { message: "Maximální délka kódu měny jsou 3 znaky" }),
 });
 
 type SignupSchema = z.infer<typeof signupSchema>;
@@ -42,10 +44,15 @@ export default function SignupPage() {
 			window.location.href = "/";
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Vytvoření tábora se nezdařilo. Zkuste to prosím znovu.");
+				showError(
+					error.info.error ||
+						"Vytvoření tábora se nezdařilo. Zkuste to prosím znovu."
+				);
 			} else {
 				console.error("Camp creation failed", error);
-				showError("Vytvoření tábora se nezdařilo. Zkuste to prosím znovu.");
+				showError(
+					"Vytvoření tábora se nezdařilo. Zkuste to prosím znovu."
+				);
 			}
 		}
 	};

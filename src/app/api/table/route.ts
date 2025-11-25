@@ -32,7 +32,9 @@ import { UserItems } from "@/lib/api";
 import { UpdateUserItemsResponse } from "@/types";
 import { Prisma } from "@prisma/client";
 
-export async function POST(req: NextRequest): Promise<NextResponse<UpdateUserItemsResponse | { error: string }>> {
+export async function POST(
+	req: NextRequest
+): Promise<NextResponse<UpdateUserItemsResponse | { error: string }>> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user || !session.user.is_org) {
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<UpdateUserIte
 	try {
 		const allDbItems = await prisma.item.findMany({
 			where: { camp },
-			select: { id: true, title: true, price: true, },
+			select: { id: true, title: true, price: true },
 		});
 		const itemMap = new Map(
 			allDbItems.map((item) => [

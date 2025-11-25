@@ -34,7 +34,8 @@ export default function LoginPage() {
 		setError(null);
 		try {
 			const result = await signIn("credentials", {
-				...data, camp: null,
+				...data,
+				camp: null,
 				redirect: false,
 				callbackUrl: "/",
 			});
@@ -47,7 +48,9 @@ export default function LoginPage() {
 				} else if (result.error === "Invalid password") {
 					setError("Neplatné heslo. Zkuste to prosím znovu.");
 				} else if (result.error === "User is not a manager") {
-					setError("Nemáte oprávnění k přihlášení. Musíte být manažer.");
+					setError(
+						"Nemáte oprávnění k přihlášení. Musíte být manažer."
+					);
 				} else {
 					setError(
 						"Došlo k neznámé chybě. Zkuste to prosím později."
@@ -58,7 +61,9 @@ export default function LoginPage() {
 					window.location.href = "/";
 				} catch (redirectError) {
 					console.error("Error during redirect:", redirectError);
-					setError("Nepodařilo se přesměrovat. Zkuste to prosím později.");
+					setError(
+						"Nepodařilo se přesměrovat. Zkuste to prosím později."
+					);
 				}
 			}
 		} catch (error) {

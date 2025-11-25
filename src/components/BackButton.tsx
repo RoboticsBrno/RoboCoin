@@ -12,7 +12,7 @@ export default function BackButton({ href }: { href?: string }) {
 		} else {
 			router.back();
 		}
-	}
+	};
 
 	return (
 		<div className="mb-2">

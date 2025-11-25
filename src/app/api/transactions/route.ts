@@ -25,7 +25,9 @@ import { NextResponse } from "next/server";
 import { getTransactions, TransactionWithUsers } from "@/lib/transactions";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(): Promise<NextResponse<TransactionWithUsers[] | { error: string }>> {
+export async function GET(): Promise<
+	NextResponse<TransactionWithUsers[] | { error: string }>
+> {
 	const session = await getServerSession(authOptions);
 
 	if (!session?.user) {
