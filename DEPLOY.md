@@ -92,6 +92,7 @@ Clone the application code from its Git repository.
 ```bash
 git clone git@github.com:RoboticsBrno/RoboCoin.git
 cd RoboCoin
+git checkout v3
 ```
 
 ### 2.2. Configure Environment Variables
@@ -100,10 +101,10 @@ The application requires environment variables for the database connection and a
 
 ```bash
 # Copy the example environment file
-cp .example-env .env.local
+cp .example-env .env
 ```
 
-Now, open the `.env.local` file with a text editor (e.g., `vim .env.local`) and fill in the required values:
+Now, open the `.env` file with a text editor (e.g., `vim .env`) and fill in the required values:
 
 - `DATABASE_URL`: This is the connection string for the MariaDB database you just created. The format is:
   `mysql://robocoin_user:your_strong_password@localhost:3306/robocoin`
@@ -112,7 +113,7 @@ Now, open the `.env.local` file with a text editor (e.g., `vim .env.local`) and 
     ```bash
     openssl rand -base64 32
     ```
-    Copy the output of this command into your `.env.local` file.
+    Copy the output of this command into your `.env` file.
 
 ### 2.3. Run the Deployment Script
 

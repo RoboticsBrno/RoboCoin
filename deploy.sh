@@ -13,7 +13,7 @@
 #
 # How to Use:
 #   1.  Clone your repository to the deployment server.
-#   2.  Create a `.env.local` file by copying `.env.example` and filling
+#   2.  Create a `.env` file by copying `.env.example` and filling
 #       in your production database URL and NextAuth secret.
 #   3.  Make this script executable by running: chmod +x deploy.sh
 #   4.  Run the script: ./deploy.sh
@@ -25,9 +25,9 @@ set -e
 echo "Setting up environment..."
 
 # Check if the .env.local file exists. If not, exit with an error.
-if [ ! -f .env.local ]; then
-    echo "Error: .env.local file not found!"
-    echo "Please copy .env.example to .env.local and fill in your production values."
+if [ ! -f .env ]; then
+    echo "Error: .env file not found!"
+    echo "Please copy .env.example to .env and fill in your production values."
     exit 1
 fi
 
