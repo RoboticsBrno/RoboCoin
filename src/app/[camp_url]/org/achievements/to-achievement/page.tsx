@@ -16,212 +16,212 @@ import { useToast } from "@/components/Toast";
 import { fetcher, FetchError } from "@/lib/fetch";
 import { User, Item, SyncAchievementResponse } from "@/types";
 
-// Zod schema for the form validation
 const syncSchema = z.object({
-	itemId: z.string().min(1, { message: "Please select an achievement" }),
-	userIds: z.array(z.string()).refine(
-		(arr) => {
-			return arr.every((id) => !isNaN(Number(id)) && Number(id) > 0);
-		},
-		{ message: "All user IDs must be valid numbers" }
-	),
+    itemId: z.string().min(1, { message: "Please select an achievement" }),
+    userIds: z.array(z.string()).refine(
+        (arr) => {
+            return arr.every((id) => !isNaN(Number(id)) && Number(id) > 0);
+        },
+        { message: "All user IDs must be valid numbers" }
+    ),
 });
 
 type SyncSchema = z.infer<typeof syncSchema>;
 
 export default function ManageAchievementUsersPage() {
-	const [users, setUsers] = useState<User[]>([]);
-	const [items, setItems] = useState<Item[]>([]);
-	const [selectedItemId, setSelectedItemId] = useState<string>("");
-	const [isLoading, setIsLoading] = useState(true);
-	const [isOwnersLoading, setIsOwnersLoading] = useState(false);
+    const [users, setUsers] = useState<User[]>([]);
+    const [items, setItems] = useState<Item[]>([]);
+    const [selectedItemId, setSelectedItemId] = useState<string>("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [isOwnersLoading, setIsOwnersLoading] = useState(false);
 
-	const methods = useForm<SyncSchema>({
-		resolver: zodResolver(syncSchema),
-		defaultValues: { itemId: "", userIds: [] },
-	});
-	const {
-		handleSubmit,
-		setValue,
-		watch,
-		formState: { isSubmitting },
-	} = methods;
-	const currentUserIds = watch("userIds");
+    const methods = useForm<SyncSchema>({
+        resolver: zodResolver(syncSchema),
+        defaultValues: { itemId: "", userIds: [] },
+    });
+    const {
+        handleSubmit,
+        setValue,
+        watch,
+        formState: { isSubmitting },
+    } = methods;
+    const currentUserIds = watch("userIds");
 
-	const { showError, showSuccess } = useToast();
+    const { showError, showSuccess } = useToast();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const [users, items] = await Promise.all([
-					fetcher<User[]>("/api/users"),
-					fetcher<Item[]>("/api/items"),
-				]);
-				setUsers(users);
-				setItems(items);
-			} catch (error) {
-				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch data");
-				} else {
-					showError("Failed to fetch data");
-				}
-				console.error("Failed to fetch data:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-		fetchData();
-	}, [showError]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [users, items] = await Promise.all([
+                    fetcher<User[]>("/api/users"),
+                    fetcher<Item[]>("/api/items"),
+                ]);
+                setUsers(users);
+                setItems(items);
+            } catch (error) {
+                if (error instanceof FetchError) {
+                    showError(error.info.error || "Failed to fetch data");
+                } else {
+                    showError("Failed to fetch data");
+                }
+                console.error("Failed to fetch data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, [showError]);
 
-	useEffect(() => {
-		if (!selectedItemId) {
-			setValue("userIds", []);
-			return;
-		}
+    useEffect(() => {
+        if (!selectedItemId) {
+            setValue("userIds", []);
+            return;
+        }
 
-		const fetchItemOwners = async () => {
-			setIsOwnersLoading(true);
-			try {
-				const ownerIds = await fetcher<number[]>(
-					`/api/inventory/item/${selectedItemId}`
-				);
-				setValue(
-					"userIds",
-					ownerIds.map((id) => id.toString())
-				);
-			} catch (error) {
-				if (error instanceof FetchError) {
-					showError(
-						error.info.error || "Failed to fetch item owners"
-					);
-				} else {
-					showError("Failed to fetch item owners");
-				}
-				console.error("Failed to fetch item owners:", error);
-			} finally {
-				setIsOwnersLoading(false);
-			}
-		};
+        const fetchItemOwners = async () => {
+            setIsOwnersLoading(true);
+            try {
+                const ownerIds = await fetcher<number[]>(
+                    `/api/inventory/item/${selectedItemId}`
+                );
+                setValue(
+                    "userIds",
+                    ownerIds.map((id) => id.toString())
+                );
+            } catch (error) {
+                if (error instanceof FetchError) {
+                    showError(
+                        error.info.error || "Failed to fetch item owners"
+                    );
+                } else {
+                    showError("Failed to fetch item owners");
+                }
+                console.error("Failed to fetch item owners:", error);
+            } finally {
+                setIsOwnersLoading(false);
+            }
+        };
 
-		fetchItemOwners();
-	}, [selectedItemId, setValue, showError]);
+        fetchItemOwners();
+    }, [selectedItemId, setValue, showError]);
 
-	const onFormSubmit = async (data: SyncSchema) => {
-		try {
-			const submitData = {
-				itemId: data.itemId,
-				userIds: data.userIds.map((id) => Number(id)), // Convert to numbers here
-			};
-			await fetcher<SyncAchievementResponse>(
-				"/api/inventory/to-achievement",
-				{
-					method: "POST",
-					body: submitData,
-				}
-			);
+    const onFormSubmit = async (data: SyncSchema) => {
+        try {
+            const submitData = {
+                itemId: data.itemId,
+                userIds: data.userIds.map((id) => Number(id)), // Convert to numbers here
+            };
+            await fetcher<SyncAchievementResponse>(
+                "/api/inventory/to-achievement",
+                {
+                    method: "POST",
+                    body: submitData,
+                }
+            );
 
-			showSuccess("Achievement owners updated successfully!");
-			setValue("itemId", ""); // Reset item selection
-			setSelectedItemId("");
-		} catch (error) {
-			if (error instanceof FetchError) {
-				showError(
-					error.info.error || "Failed to sync achievement owners"
-				);
-			} else {
-				showError(
-					"An unexpected error occurred while updating owners."
-				);
-			}
-		}
-	};
+            showSuccess("Držitelé úspěchů byli úspěšně synchronizováni!");
+            setValue("itemId", ""); // Reset item selection
+            setSelectedItemId("");
+        } catch (error) {
+            if (error instanceof FetchError) {
+                showError(
+                    error.info.error || "Failed to sync achievement owners"
+                );
+            } else {
+                showError(
+                    "An unexpected error occurred while updating owners."
+                );
+            }
+        }
+    };
 
-	if (isLoading) {
-		return <Loader />;
-	}
+    if (isLoading) {
+        return <Loader />;
+    }
 
-	return (
-		<div>
-			<FormProvider {...methods}>
-				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-					<FormTitle>Manage Achievement Owners</FormTitle>
-					<FormSubtitle>
-						Select an achievement to manage which users own it.
-					</FormSubtitle>
+    return (
+        <div>
+            <FormProvider {...methods}>
+                <FormContainer onSubmit={handleSubmit(onFormSubmit)}>
+                    <FormTitle>Přidejte uživatele k úspechu</FormTitle>
+                    <FormSubtitle>
+                        Vyberte úspěch a poté vyberte uživatele, kteří by jej měli
+                        vlastnit.
+                    </FormSubtitle>
 
-					<FormGroup>
-						<FormSelect
-							label="Achievement"
-							name="itemId"
-							options={items.map((item) => ({
-								value: item.id.toString(),
-								label: item.title,
-							}))}
-							onChange={(e) => setSelectedItemId(e.target.value)}
-						/>
-					</FormGroup>
+                    <FormGroup>
+                        <FormSelect
+                            label="Úspěch"
+                            name="itemId"
+                            options={items.map((item) => ({
+                                value: item.id.toString(),
+                                label: item.title,
+                            }))}
+                            onChange={(e) => setSelectedItemId(e.target.value)}
+                        />
+                    </FormGroup>
 
-					<FormGroup>
-						<label className="block text-sm font-medium text-gray-300">
-							Users {isOwnersLoading ? "(loading)" : ""}
-						</label>
-						{!selectedItemId ? (
-							<p className="text-gray-500 text-sm mt-1">
-								Please select an achievement to see its owners.
-							</p>
-						) : (
-							<UserOptions
-								items={users}
-								currentUserIds={currentUserIds} // Keep as string[]
-								setValue={setValue}
-							/>
-						)}
-					</FormGroup>
+                    <FormGroup>
+                        <label className="block text-sm font-medium text-gray-300">
+                            Uživatelé {isOwnersLoading ? "(načítá se)" : ""}
+                        </label>
+                        {!selectedItemId ? (
+                            <p className="text-gray-500 text-sm mt-1">
+                                Nejprve vyberte úspěch pro zobrazení jeho vlastníků.
+                            </p>
+                        ) : (
+                            <UserOptions
+                                items={users}
+                                currentUserIds={currentUserIds} // Keep as string[]
+                                setValue={setValue}
+                            />
+                        )}
+                    </FormGroup>
 
-					<FormSubmit isLoading={isSubmitting}>
-						Update Owners
-					</FormSubmit>
-				</FormContainer>
-			</FormProvider>
-		</div>
-	);
+                    <FormSubmit isLoading={isSubmitting}>
+                        Aktualizovat držitele úspěchu
+                    </FormSubmit>
+                </FormContainer>
+            </FormProvider>
+        </div>
+    );
 }
 
 function UserOptions({
-	items,
-	currentUserIds,
-	setValue,
+    items,
+    currentUserIds,
+    setValue,
 }: {
-	items: User[];
-	currentUserIds: string[] | undefined;
-	setValue: UseFormSetValue<{ itemId: string; userIds: string[] }>;
+    items: User[];
+    currentUserIds: string[] | undefined;
+    setValue: UseFormSetValue<{ itemId: string; userIds: string[] }>;
 }) {
-	return (
-		<div className="mt-2 grid grid-cols-2 gap-4">
-			{items.map((item) => (
-				<FormCheckbox
-					key={item.id}
-					id={`item-${item.id}`}
-					label={item.name}
-					name="itemIds"
-					value={item.id.toString()}
-					checked={currentUserIds?.includes(item.id.toString())} // Convert to string for comparison
-					onChange={(e) => {
-						const checked = e.target.checked;
-						const currentIds = currentUserIds || [];
-						const itemIdString = item.id.toString(); // Convert to string
+    return (
+        <div className="mt-2 grid grid-cols-2 gap-4">
+            {items.map((item) => (
+                <FormCheckbox
+                    key={item.id}
+                    id={`item-${item.id}`}
+                    label={item.name}
+                    name="itemIds"
+                    value={item.id.toString()}
+                    checked={currentUserIds?.includes(item.id.toString())} // Convert to string for comparison
+                    onChange={(e) => {
+                        const checked = e.target.checked;
+                        const currentIds = currentUserIds || [];
+                        const itemIdString = item.id.toString(); // Convert to string
 
-						if (checked) {
-							setValue("userIds", [...currentIds, itemIdString]);
-						} else {
-							setValue(
-								"userIds",
-								currentIds.filter((id) => id !== itemIdString)
-							);
-						}
-					}}
-				/>
-			))}
-		</div>
-	);
+                        if (checked) {
+                            setValue("userIds", [...currentIds, itemIdString]);
+                        } else {
+                            setValue(
+                                "userIds",
+                                currentIds.filter((id) => id !== itemIdString)
+                            );
+                        }
+                    }}
+                />
+            ))}
+        </div>
+    );
 }
