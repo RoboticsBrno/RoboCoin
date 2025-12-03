@@ -10,10 +10,10 @@ export const getApiDocs = async () => {
 				version: "1.0",
 			},
 			tags: [
-                {
-                    name: "Admin",
-                    description: "Operations for administrators",
-                },
+				{
+					name: "Admin",
+					description: "Operations for administrators",
+				},
 				{
 					name: "Achievements",
 					description: "Operations related to user achievements",

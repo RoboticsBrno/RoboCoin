@@ -63,12 +63,12 @@ export default function Home() {
 			href: `${params.camp_url}/admin/manage-users`,
 			type: "admin",
 		},
-        {
-            title: "Přehledy systému",
-            description: "Zobrazit systémové přehledy a statistiky.",
-            href: `${params.camp_url}/admin/system-reports`,
-            type: "admin",
-        },
+		{
+			title: "Přehledy systému",
+			description: "Zobrazit systémové přehledy a statistiky.",
+			href: `${params.camp_url}/admin/system-reports`,
+			type: "admin",
+		},
 	];
 
 	return (

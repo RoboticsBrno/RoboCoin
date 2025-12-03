@@ -131,22 +131,22 @@ Once a Manager is logged in, they gain access to tools for creating and managing
 
 ### 2.4. Add Co-Managers
 
--   **URL:** `/(manager)/add-managers/[camp_url]`
--   **Purpose:** To grant or revoke camp management permissions to other Global Managers for a specific camp.
--   **User Flow:** The manager selects a camp and navigates to the "Manage Managers" page. They are presented with a list of all Global Managers in the system.
+- **URL:** `/(manager)/add-managers/[camp_url]`
+- **Purpose:** To grant or revoke camp management permissions to other Global Managers for a specific camp.
+- **User Flow:** The manager selects a camp and navigates to the "Manage Managers" page. They are presented with a list of all Global Managers in the system.
 
 #### Manage Managers Form (`/add-managers/[camp_url]`)
 
--   **Title:** "Spravovat manažery tábora" (Manage Camp Managers)
--   **Subtitle:** "Vyberte uživatele, kterým chcete udělit oprávnění manažera pro tento tábor." (Select users to whom you want to grant manager permissions for this camp.)
--   **Form Inputs:**
-    -   **User Checkbox Group:** A list of checkboxes, one for each registered Global Manager.
-        -   Each checkbox is labeled with the manager's name and login (e.g., "John Doe (johndoe)").
-        -   The manager who is currently logged in has their own checkbox checked and disabled, as they cannot remove themselves.
-        -   `name`: `selectedUsers`
--   **Actions:**
-    -   **SubmitButton:** "Aktualizovat manažery" (Update Managers). This action saves the new set of managers for the camp.
--   **Data Loading:** The form fetches a list of all managers and pre-selects those already assigned to the current camp.
+- **Title:** "Spravovat manažery tábora" (Manage Camp Managers)
+- **Subtitle:** "Vyberte uživatele, kterým chcete udělit oprávnění manažera pro tento tábor." (Select users to whom you want to grant manager permissions for this camp.)
+- **Form Inputs:**
+    - **User Checkbox Group:** A list of checkboxes, one for each registered Global Manager.
+        - Each checkbox is labeled with the manager's name and login (e.g., "John Doe (johndoe)").
+        - The manager who is currently logged in has their own checkbox checked and disabled, as they cannot remove themselves.
+        - `name`: `selectedUsers`
+- **Actions:**
+    - **SubmitButton:** "Aktualizovat manažery" (Update Managers). This action saves the new set of managers for the camp.
+- **Data Loading:** The form fetches a list of all managers and pre-selects those already assigned to the current camp.
 
 ### 2.5. Manager: Assign Users to Camp
 
@@ -270,6 +270,7 @@ These pages are for the regular users/participants of a camp, available after lo
     - **Add:** Relists the item on the marketplace.
 
 ##### Marketplace Item Page (`/[camp_url]/(user)/marketplace/item/[id]`)
+
 - **Purpose:** To display the details of a single item for sale on the marketplace and allow users to purchase it.
 - **Content:**
     - **Title:** The item's title.
@@ -282,6 +283,7 @@ These pages are for the regular users/participants of a camp, available after lo
 These features are for camp-level organizers (`is_org`), who are responsible for managing the camp's economy and user engagement. They are accessible from the main camp dashboard.
 
 #### 3.3.1. Achievement Table
+
 - **URL:** `/[camp_url]/org/achievement-table`
 - **Purpose:** A powerful tool for bulk-managing which users have been awarded which achievements (or items).
 - **User Flow:** The administrator is presented with a large table where rows represent users and columns represent achievements/items. They can check or uncheck boxes to grant or revoke items in bulk.
@@ -295,6 +297,7 @@ These features are for camp-level organizers (`is_org`), who are responsible for
     - **Submit Button:** "Uložit změny" (Save Changes).
 
 #### 3.3.2. Manage Achievements
+
 - **URL:** `/[camp_url]/org/achievements`
 - **Purpose:** A navigation page for managing camp achievements.
 - **Content:** This page provides links to more specific actions.
@@ -304,6 +307,7 @@ These features are for camp-level organizers (`is_org`), who are responsible for
     - **Přiřadit uživatele k úspěchu (Assign Users to Achievement):** Links to `.../to-achievement`.
 
 ##### Create New Achievement (`.../org/achievements/new`)
+
 - **Purpose:** To define a new achievement that can be awarded to users.
 - **Form Inputs:**
     - **Title:** The name of the achievement (e.g., "First Place in Hackathon"). `required`
@@ -313,6 +317,7 @@ These features are for camp-level organizers (`is_org`), who are responsible for
     - **Submit Button:** "Create Achievement".
 
 ##### Grant Achievements to User (`.../org/achievements/to-user`)
+
 - **Purpose:** To grant or revoke multiple achievements for a single user.
 - **User Flow:** The admin first selects a user from a dropdown. The form then loads all available achievements, with checkboxes indicating which ones the selected user currently possesses.
 - **Form Inputs:**
@@ -322,6 +327,7 @@ These features are for camp-level organizers (`is_org`), who are responsible for
     - **Submit Button:** "Update Achievements".
 
 ##### Assign Users to Achievement (`.../org/achievements/to-achievement`)
+
 - **Purpose:** To grant or revoke a single achievement for multiple users at once.
 - **User Flow:** The admin first selects an achievement from a dropdown. The form then loads all camp users, with checkboxes indicating which users currently have that achievement.
 - **Form Inputs:**
@@ -419,6 +425,7 @@ The UI is built with React and Next.js, using a set of reusable components found
 ## 5. General UI Structure
 
 The application maintains a consistent structure defined in the root layout (`src/app/layout.tsx`).
+
 - **Global Header:** A persistent `Header` component is displayed at the top of all pages, likely containing the main application title, navigation, and user/balance information.
 - **Back Button:** A `ConditionalBackButton` component is present, which provides a navigation button to go back to the previous page where appropriate.
 - **Camp-Specific Roles:** The layout for individual camps (`src/app/[camp_url]/layout.tsx`) contains logic to dynamically update the user's session with their specific roles for that camp (e.g., `is_admin`, `is_org`). This allows the UI throughout the camp to adapt and show the correct controls for that user's permission level.
@@ -426,11 +433,13 @@ The application maintains a consistent structure defined in the root layout (`sr
 ## 6. Other Pages
 
 ### 6.1. API Documentation
+
 - **URL:** `/api-docs`
 - **Purpose:** To provide developers with interactive documentation for the application's backend REST API.
 - **Implementation:** The page uses the `swagger-ui-react` library to render a standard, full-featured Swagger UI interface based on an OpenAPI specification generated by the backend.
 
 ### 6.2. Unauthorized Access
+
 - **URL:** `/unauthorized`
 - **Purpose:** A simple, static page that is displayed whenever a user attempts to access a resource or page for which they do not have the required permissions.
 - **Content:** Displays a "Neoprávněný přístup" (Unauthorized Access) error message.

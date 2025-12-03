@@ -7,26 +7,26 @@ import { fetcher } from "@/lib/fetch";
 import { BalanceResponse } from "@/types";
 
 export function useBalance() {
-    const { data: session, update } = useSession();
-    const updateRef = useRef(update);
+	const { data: session, update } = useSession();
+	const updateRef = useRef(update);
 
-    useEffect(() => {
-        updateRef.current = update;
-    });
+	useEffect(() => {
+		updateRef.current = update;
+	});
 
-    const { data, isLoading, mutate } = useSWR<BalanceResponse>(
-        "/api/balance",
-        fetcher,
-        {
-            refreshInterval: 5 * 60 * 1000,
-        }
-    );
+	const { data, isLoading, mutate } = useSWR<BalanceResponse>(
+		"/api/balance",
+		fetcher,
+		{
+			refreshInterval: 5 * 60 * 1000,
+		}
+	);
 
-    useEffect(() => {
-        if (data && data.balance !== session?.user?.balance) {
-            updateRef.current({ balance: data.balance || undefined });
-        }
-    }, [data, session?.user?.balance]);
+	useEffect(() => {
+		if (data && data.balance !== session?.user?.balance) {
+			updateRef.current({ balance: data.balance || undefined });
+		}
+	}, [data, session?.user?.balance]);
 
-    return { balance: session?.user?.balance, isLoading, mutate };
+	return { balance: session?.user?.balance, isLoading, mutate };
 }

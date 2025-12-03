@@ -14,110 +14,110 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { Item } from "@/types";
 
 const createAchievementSchema = z.object({
-    title: z.string().min(1, { message: "Title is required" }),
-    description: z.string().optional(),
-    price: z.string().refine(
-        (val) => {
-            if (!val || val === "") return true;
-            const num = Number(val);
-            return !isNaN(num) && num >= 0 && Number.isInteger(num);
-        },
-        { message: "Price must be a positive number" }
-    ),
+	title: z.string().min(1, { message: "Title is required" }),
+	description: z.string().optional(),
+	price: z.string().refine(
+		(val) => {
+			if (!val || val === "") return true;
+			const num = Number(val);
+			return !isNaN(num) && num >= 0 && Number.isInteger(num);
+		},
+		{ message: "Price must be a positive number" }
+	),
 });
 
 type CreateAchievementSchema = z.infer<typeof createAchievementSchema>;
 
 export default function CreateAchievementPage() {
-    const methods = useForm<CreateAchievementSchema>({
-        resolver: zodResolver(createAchievementSchema),
-        defaultValues: {
-            title: "",
-            description: "",
-            price: "",
-        },
-    });
-    const {
-        handleSubmit,
-        formState: { isSubmitting },
-    } = methods;
+	const methods = useForm<CreateAchievementSchema>({
+		resolver: zodResolver(createAchievementSchema),
+		defaultValues: {
+			title: "",
+			description: "",
+			price: "",
+		},
+	});
+	const {
+		handleSubmit,
+		formState: { isSubmitting },
+	} = methods;
 
-    const { showError, showSuccess } = useToast();
+	const { showError, showSuccess } = useToast();
 
-    const onFormSubmit = async (data: CreateAchievementSchema) => {
-        try {
-            const submitData = {
-                title: data.title,
-                description: data.description,
-                ...(data.price &&
-                    data.price !== "" && { price: Number(data.price) }),
-            };
-            const newAchievement = await fetcher<Item>("/api/items", {
-                method: "POST",
-                body: submitData,
-            });
+	const onFormSubmit = async (data: CreateAchievementSchema) => {
+		try {
+			const submitData = {
+				title: data.title,
+				description: data.description,
+				...(data.price &&
+					data.price !== "" && { price: Number(data.price) }),
+			};
+			const newAchievement = await fetcher<Item>("/api/items", {
+				method: "POST",
+				body: submitData,
+			});
 
-            showSuccess(
-                `Achievement "${newAchievement.title}" created successfully!`
-            );
-            methods.reset(); // Reset the form after successful submission
-        } catch (error) {
-            if (error instanceof FetchError) {
-                showError(error.info.error || "Failed to create achievement");
-            } else {
-                showError(
-                    "An unexpected error occurred while creating the achievement."
-                );
-            }
-            console.error("Failed to create achievement:", error);
-        }
-    };
+			showSuccess(
+				`Achievement "${newAchievement.title}" created successfully!`
+			);
+			methods.reset(); // Reset the form after successful submission
+		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to create achievement");
+			} else {
+				showError(
+					"An unexpected error occurred while creating the achievement."
+				);
+			}
+			console.error("Failed to create achievement:", error);
+		}
+	};
 
-    return (
-        <div>
-            <FormProvider {...methods}>
-                <FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-                    <FormTitle>Vytvořit nový úspěch</FormTitle>
-                    <FormSubtitle>
-                        Vyplňte následující formulář pro vytvoření nového úspěchu, který
-                        mohou uživatelé získat.
-                    </FormSubtitle>
+	return (
+		<div>
+			<FormProvider {...methods}>
+				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
+					<FormTitle>Vytvořit nový úspěch</FormTitle>
+					<FormSubtitle>
+						Vyplňte následující formulář pro vytvoření nového
+						úspěchu, který mohou uživatelé získat.
+					</FormSubtitle>
 
-                    <FormGroup>
-                        <FormInput
-                            label="Název"
-                            id="title"
-                            name="title"
-                            type="text"
-                            placeholder="např. Mistr kempování"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Název"
+							id="title"
+							name="title"
+							type="text"
+							placeholder="např. Mistr kempování"
+						/>
+					</FormGroup>
 
-                    <FormGroup>
-                        <FormInput
-                            label="Popis"
-                            id="description"
-                            name="description"
-                            type="text"
-                            placeholder="např. Dokončete všechny kempové aktivity."
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Popis"
+							id="description"
+							name="description"
+							type="text"
+							placeholder="např. Dokončete všechny kempové aktivity."
+						/>
+					</FormGroup>
 
-                    <FormGroup>
-                        <FormInput
-                            label="Hodnota"
-                            id="price"
-                            name="price"
-                            type="number"
-                            placeholder="0"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Hodnota"
+							id="price"
+							name="price"
+							type="number"
+							placeholder="0"
+						/>
+					</FormGroup>
 
-                    <FormSubmit isLoading={isSubmitting}>
-                        Vytvořit úspěch
-                    </FormSubmit>
-                </FormContainer>
-            </FormProvider>
-        </div>
-    );
+					<FormSubmit isLoading={isSubmitting}>
+						Vytvořit úspěch
+					</FormSubmit>
+				</FormContainer>
+			</FormProvider>
+		</div>
+	);
 }

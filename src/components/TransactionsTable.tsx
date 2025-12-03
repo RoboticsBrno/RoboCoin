@@ -8,13 +8,13 @@ import Button from "./Button";
 interface TransactionsTableProps {
 	transactions: TransactionWithUsers[];
 	userId: number;
-    onRefund?: (transactionId: number) => void;
+	onRefund?: (transactionId: number) => void;
 }
 
 export default function TransactionsTable({
 	transactions,
 	userId,
-    onRefund,
+	onRefund,
 }: TransactionsTableProps) {
 	const processedTransactions = useMemo(() => {
 		return transactions.map((tx) => ({
@@ -24,7 +24,7 @@ export default function TransactionsTable({
 				tx.sender == userId
 					? tx.user_transaction_receiverTouser
 					: tx.user_transaction_senderTouser,
-            isRefund: tx.description?.startsWith("Refund of transaction"),
+			isRefund: tx.description?.startsWith("Refund of transaction"),
 		}));
 	}, [transactions, userId]);
 
@@ -49,12 +49,17 @@ export default function TransactionsTable({
 							+ ${tx.amount.toFixed(2)}
 						</p>
 					)}
-                    {tx.isRefund && <p className="text-yellow-400 text-sm mt-2">Refunded</p>}
-                    {onRefund && !tx.isRefund && (
-                        <Button onClick={() => onRefund(tx.id)} className="mt-4">
-                            Refund
-                        </Button>
-                    )}
+					{tx.isRefund && (
+						<p className="text-yellow-400 text-sm mt-2">Refunded</p>
+					)}
+					{onRefund && !tx.isRefund && (
+						<Button
+							onClick={() => onRefund(tx.id)}
+							className="mt-4"
+						>
+							Refund
+						</Button>
+					)}
 				</Card>
 			))}
 		</div>

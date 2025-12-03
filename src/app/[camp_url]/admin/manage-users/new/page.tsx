@@ -15,116 +15,117 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { SignupResponse } from "@/types";
 
 const createUserSchema = z.object({
-    login: z.string().min(1, { message: "Login is required" }),
-    name: z.string().min(1, { message: "Name is required" }),
-    password: z
-        .string()
-        .min(6, { message: "Password must be at least 6 characters" }),
-    isOrg: z.boolean(),
-    isAdmin: z.boolean(),
+	login: z.string().min(1, { message: "Login is required" }),
+	name: z.string().min(1, { message: "Name is required" }),
+	password: z
+		.string()
+		.min(6, { message: "Password must be at least 6 characters" }),
+	isOrg: z.boolean(),
+	isAdmin: z.boolean(),
 });
 
 type CreateAchievementSchema = z.infer<typeof createUserSchema>;
 
 export default function CreateUserPage() {
-    const methods = useForm<CreateAchievementSchema>({
-        resolver: zodResolver(createUserSchema),
-        defaultValues: {
-            login: "",
-            name: "",
-            password: "",
-            isOrg: false,
-            isAdmin: false,
-        },
-    });
-    const {
-        handleSubmit,
-        formState: { isSubmitting },
-    } = methods;
+	const methods = useForm<CreateAchievementSchema>({
+		resolver: zodResolver(createUserSchema),
+		defaultValues: {
+			login: "",
+			name: "",
+			password: "",
+			isOrg: false,
+			isAdmin: false,
+		},
+	});
+	const {
+		handleSubmit,
+		formState: { isSubmitting },
+	} = methods;
 
-    const { showError, showSuccess } = useToast();
+	const { showError, showSuccess } = useToast();
 
-    const onFormSubmit = async (data: CreateAchievementSchema) => {
-        try {
-            const newUser = await fetcher<SignupResponse>("/api/signup", {
-                method: "POST",
-                body: data,
-            });
+	const onFormSubmit = async (data: CreateAchievementSchema) => {
+		try {
+			const newUser = await fetcher<SignupResponse>("/api/signup", {
+				method: "POST",
+				body: data,
+			});
 
-            showSuccess(`Uživatel "${newUser.user.name}" úspěšně vytvořen.`);
-            methods.reset();
-        } catch (error) {
-            if (error instanceof FetchError) {
-                showError(error.info.error || "Failed to create user");
-            } else {
-                showError("An unexpected error occurred while creating user.");
-            }
-        }
-    };
+			showSuccess(`Uživatel "${newUser.user.name}" úspěšně vytvořen.`);
+			methods.reset();
+		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || "Failed to create user");
+			} else {
+				showError("An unexpected error occurred while creating user.");
+			}
+		}
+	};
 
-    return (
-        <div>
-            <FormProvider {...methods}>
-                <FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-                    <FormTitle>Vytořit nového uživatele</FormTitle>
-                    <FormSubtitle>
-                        Vyplňte následující formulář pro vytvoření nového uživatele.
-                    </FormSubtitle>
+	return (
+		<div>
+			<FormProvider {...methods}>
+				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
+					<FormTitle>Vytořit nového uživatele</FormTitle>
+					<FormSubtitle>
+						Vyplňte následující formulář pro vytvoření nového
+						uživatele.
+					</FormSubtitle>
 
-                    <FormGroup>
-                        <FormInput
-                            label="Login"
-                            id="login"
-                            name="login"
-                            type="text"
-                            placeholder="e.g., 'jirkavacha'"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Login"
+							id="login"
+							name="login"
+							type="text"
+							placeholder="e.g., 'jirkavacha'"
+						/>
+					</FormGroup>
 
-                    <FormGroup>
-                        <FormInput
-                            label="Jméno"
-                            id="name"
-                            name="name"
-                            type="text"
-                            placeholder="e.g., 'Jirka Vacha'"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Jméno"
+							id="name"
+							name="name"
+							type="text"
+							placeholder="e.g., 'Jirka Vacha'"
+						/>
+					</FormGroup>
 
-                    <FormGroup>
-                        <FormInput
-                            label="Heslo"
-                            id="password"
-                            name="password"
-                            type="password"
-                            autoComplete="new-password"
-                            placeholder="Enter a secure password"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormInput
+							label="Heslo"
+							id="password"
+							name="password"
+							type="password"
+							autoComplete="new-password"
+							placeholder="Enter a secure password"
+						/>
+					</FormGroup>
 
-                    <FormGroup>
-                        <FormCheckbox
-                            label="Je organizátor"
-                            id="isOrg"
-                            name="isOrg"
-                            type="checkbox"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormCheckbox
+							label="Je organizátor"
+							id="isOrg"
+							name="isOrg"
+							type="checkbox"
+						/>
+					</FormGroup>
 
-                    <FormGroup>
-                        <FormCheckbox
-                            label="Je administrátor"
-                            id="isAdmin"
-                            name="isAdmin"
-                            type="checkbox"
-                        />
-                    </FormGroup>
+					<FormGroup>
+						<FormCheckbox
+							label="Je administrátor"
+							id="isAdmin"
+							name="isAdmin"
+							type="checkbox"
+						/>
+					</FormGroup>
 
-                    <FormSubmit isLoading={isSubmitting}>
-                        Vytvořit uživatele
-                    </FormSubmit>
-                </FormContainer>
-            </FormProvider>
-        </div>
-    );
+					<FormSubmit isLoading={isSubmitting}>
+						Vytvořit uživatele
+					</FormSubmit>
+				</FormContainer>
+			</FormProvider>
+		</div>
+	);
 }

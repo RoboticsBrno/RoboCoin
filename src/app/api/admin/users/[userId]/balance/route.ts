@@ -42,59 +42,65 @@ import { authOptions } from "@/lib/auth";
  *         description: Camp not found.
  */
 export async function GET(
-    request: Request,
-    { params }: { params: Promise<{ userId: string }> }
+	request: Request,
+	{ params }: { params: Promise<{ userId: string }> }
 ) {
-    const awaitedParams = await params;
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user.is_admin) {
-        return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
-            status: 403,
-        });
-    }
+	const awaitedParams = await params;
+	const session = await getServerSession(authOptions);
+	if (!session || !session.user.is_admin) {
+		return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+			status: 403,
+		});
+	}
 
-    const userId = Number(awaitedParams.userId);
-    if (isNaN(userId)) {
-        return new NextResponse(JSON.stringify({ error: "Invalid user ID" }), {
-            status: 400,
-        });
-    }
+	const userId = Number(awaitedParams.userId);
+	if (isNaN(userId)) {
+		return new NextResponse(JSON.stringify({ error: "Invalid user ID" }), {
+			status: 400,
+		});
+	}
 
-    const { searchParams } = new URL(request.url);
-    const camp_url = searchParams.get("camp_url");
+	const { searchParams } = new URL(request.url);
+	const camp_url = searchParams.get("camp_url");
 
-    if (!camp_url) {
-        return new NextResponse(JSON.stringify({ error: "Camp URL is required" }), {
-            status: 400,
-        });
-    }
+	if (!camp_url) {
+		return new NextResponse(
+			JSON.stringify({ error: "Camp URL is required" }),
+			{
+				status: 400,
+			}
+		);
+	}
 
-    try {
-        const camp = await prisma.camp.findUnique({
-            where: { name_url: camp_url },
-        });
+	try {
+		const camp = await prisma.camp.findUnique({
+			where: { name_url: camp_url },
+		});
 
-        if (!camp) {
-            return new NextResponse(JSON.stringify({ error: "Camp not found" }), {
-                status: 404,
-            });
-        }
+		if (!camp) {
+			return new NextResponse(
+				JSON.stringify({ error: "Camp not found" }),
+				{
+					status: 404,
+				}
+			);
+		}
 
-        const balance = await prisma.balance.findFirst({
-            where: {
-                user: userId,
-                camp: camp.id,
-            },
-        });
+		const balance = await prisma.balance.findFirst({
+			where: {
+				user: userId,
+				camp: camp.id,
+			},
+		});
 
-        return NextResponse.json(balance || { amount: 0 });
-    } catch (error) {
-        console.error("Error fetching balance:", error);
-        return new NextResponse(
-            JSON.stringify({ error: "Internal server error" }),
-            {
-                status: 500,
-            }
-        );
-    }
+		return NextResponse.json(balance || { amount: 0 });
+	} catch (error) {
+		console.error("Error fetching balance:", error);
+		return new NextResponse(
+			JSON.stringify({ error: "Internal server error" }),
+			{
+				status: 500,
+			}
+		);
+	}
 }
