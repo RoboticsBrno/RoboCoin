@@ -15,6 +15,7 @@ import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
 import { fetcher, FetchError } from "@/lib/fetch";
 import { User, Item, SyncAchievementResponse } from "@/types";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 const syncSchema = z.object({
 	itemId: z.string().min(1, { message: "Please select an achievement" }),
@@ -34,7 +35,7 @@ export default function ManageAchievementUsersPage() {
 	const [selectedItemId, setSelectedItemId] = useState<string>("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [isOwnersLoading, setIsOwnersLoading] = useState(false);
-
+	const campCurrency = useCurrencySymbol();
 	const methods = useForm<SyncSchema>({
 		resolver: zodResolver(syncSchema),
 		defaultValues: { itemId: "", userIds: [] },
@@ -155,7 +156,7 @@ export default function ManageAchievementUsersPage() {
 							name="itemId"
 							options={items.map((item) => ({
 								value: item.id.toString(),
-								label: item.title,
+								label: item.title + ` (${item.price} ${campCurrency})`,
 							}))}
 							onChange={(e) => setSelectedItemId(e.target.value)}
 						/>

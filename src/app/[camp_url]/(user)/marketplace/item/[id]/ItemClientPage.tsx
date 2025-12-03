@@ -8,6 +8,7 @@ import PageTitle from "@/components/PageTitle";
 import { useBalance } from "@/hooks/useBalance";
 import { ItemWithUser } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 interface ItemPageClientProps {
 	id: string;
 }
@@ -18,6 +19,8 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	const [loading, setLoading] = useState(true);
 	const [isBuying, setIsBuying] = useState(false);
 	const [bought, setBought] = useState(false);
+
+	const campCurrency = useCurrencySymbol();
 
 	const { balance, mutate } = useBalance();
 	const { showError, showSuccess } = useToast();
@@ -49,7 +52,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 		setIsBuying(true);
 
 		if (!item) {
-			showError("Item not found");
+			showError("Položka nebyla nalezena");
 			setIsBuying(false);
 			return;
 		}
@@ -67,7 +70,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 			showError(errorData.error || "Failed to purchase item");
 			console.error("Error purchasing item:", errorData.error);
 		} else {
-			showSuccess("Item purchased successfully!");
+			showSuccess("Položka byla úspěšně zakoupena");
 			setBought(true);
 			mutate();
 		}
@@ -82,7 +85,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	if (!item) {
 		return (
 			<div className="bg-red-900 border-red-700 text-red-200 relative p-4 my-4 border-l-4 rounded-md shadow-lg">
-				Item not found
+				Položka nebyla nalezena
 			</div>
 		);
 	}
@@ -90,7 +93,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 	if (!balance && balance !== 0) {
 		return (
 			<div className="bg-red-900 border-red-700 text-red-200 relative p-4 my-4 border-l-4 rounded-md shadow-lg">
-				Failed to fetch balance
+				Nepodařilo se načíst váš zůstatek. Zkuste to prosím znovu
 			</div>
 		);
 	}
@@ -107,16 +110,16 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 							<div className="text-lg">
 								<span className="font-bold">
 									{" "}
-									Description:{" "}
+									Popis:{" "}
 								</span>{" "}
 								{item.description}
 							</div>
 							<div className="text-lg">
-								<span className="font-bold"> Price: </span> $
-								{item.price.toFixed(2)}
+								<span className="font-bold"> Cena: </span>
+								{item.price} {campCurrency}
 							</div>
 							<div className="text-lg">
-								<span className="font-bold"> Owner: </span>{" "}
+								<span className="font-bold"> Nabízí: </span>{" "}
 								{item.user.name}
 							</div>
 						</>
@@ -131,13 +134,13 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 										onClick={handleBuy}
 										disabled={!canAfford || isBuying}
 									>
-										{isBuying ? "Processing..." : "Buy Now"}
+										{isBuying ? "Pracuji..." : "Koupit"}
 									</Button>
 								)}
 								{!canAfford && (
 									<p className="text-red-500 text-sm mt-2">
-										You don&apos;t have enough balance to
-										buy this item.
+										Nemáte dostatek prostředků na
+										zakoupení této položky.
 									</p>
 								)}
 							</div>

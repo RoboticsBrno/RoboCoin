@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Card from "@/components/card/Card";
 import { TransactionWithUsers } from "@/lib/transactions";
 import Button from "./Button";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 interface TransactionsTableProps {
 	transactions: TransactionWithUsers[];
@@ -16,6 +17,8 @@ export default function TransactionsTable({
 	userId,
 	onRefund,
 }: TransactionsTableProps) {
+	const campCurrency = useCurrencySymbol();
+
 	const processedTransactions = useMemo(() => {
 		return transactions.map((tx) => ({
 			...tx,
@@ -42,11 +45,11 @@ export default function TransactionsTable({
 					)}
 					{tx.isOutgoing ? (
 						<p className="text-red-400 font-bold">
-							- ${tx.amount.toFixed(2)}
+							- {tx.amount} {campCurrency}
 						</p>
 					) : (
 						<p className="text-green-400 font-bold">
-							+ ${tx.amount.toFixed(2)}
+							+ {tx.amount} {campCurrency}
 						</p>
 					)}
 					{tx.isRefund && (

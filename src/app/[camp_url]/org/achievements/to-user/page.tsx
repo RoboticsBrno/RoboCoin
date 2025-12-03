@@ -16,6 +16,7 @@ import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
 import { fetcher, FetchError } from "@/lib/fetch";
 import { User, Item, SyncUserInventoryResponse } from "@/types";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 const syncSchema = z.object({
 	userId: z.string().min(1, { message: "Please select a user" }),
@@ -90,7 +91,7 @@ export default function ManageUserAchievementsPage() {
 				setValue(
 					"itemIds",
 					ownedItemIds.map((id) => id.toString())
-				); // Convert to strings for the form
+				);
 			} catch (error) {
 				if (error instanceof FetchError) {
 					showError(
@@ -112,7 +113,7 @@ export default function ManageUserAchievementsPage() {
 		try {
 			const submitData = {
 				userId: data.userId,
-				itemIds: data.itemIds.map((id) => Number(id)), // Convert to numbers for API
+				itemIds: data.itemIds.map((id) => Number(id)),
 			};
 
 			await fetcher<SyncUserInventoryResponse>("/api/inventory/to-user", {
@@ -198,13 +199,14 @@ function ItemOptions({
 	currentItemIds: string[] | undefined;
 	setValue: UseFormSetValue<{ userId: string; itemIds: string[] }>;
 }) {
+	const campCurrency = useCurrencySymbol();
 	return (
 		<div className="mt-2 grid grid-cols-2 gap-4">
 			{items.map((item) => (
 				<FormCheckbox
 					key={item.id}
 					id={`item-${item.id}`}
-					label={`${item.title} (${item.price})`}
+					label={`${item.title} (${item.price} ${campCurrency})`}
 					name="itemIds"
 					value={item.id.toString()}
 					checked={currentItemIds?.includes(item.id.toString())}

@@ -20,11 +20,8 @@ const createItemSchema = z.object({
 	file: z.any().optional(),
 
 	price: z
-
 		.string()
-
 		.min(1, { message: "Je vyžadována cena" })
-
 		.refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
 			message: "Cena musí být kladné číslo",
 		}),
@@ -39,7 +36,6 @@ export default function AddItemPage() {
 
 	const {
 		handleSubmit,
-
 		formState: { isSubmitting },
 	} = methods;
 
@@ -49,7 +45,6 @@ export default function AddItemPage() {
 		try {
 			const submitData = {
 				...data,
-
 				price: Number(data.price),
 			};
 
@@ -68,7 +63,7 @@ export default function AddItemPage() {
 
 				showSuccess(`Předmět "${newItem.title}" byl úspěšně vytvořen!`);
 
-				methods.reset(); // Reset the form after successful submission
+				methods.reset();
 			} else {
 				const errorData = await response.json();
 

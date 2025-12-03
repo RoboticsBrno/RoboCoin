@@ -1,5 +1,6 @@
 import Card from "@/components/card/Card";
 import Button from "@/components/Button";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 export default function Item({
 	title,
@@ -20,11 +21,13 @@ export default function Item({
 	onRemove?: () => void;
 	onAdd?: () => void;
 }) {
+	const campCurrency = useCurrencySymbol();
+
 	return (
 		<Card href={href}>
 			<h3 className="text-lg font-semibold">{title}</h3>
 			<p className="text-sm text-gray-500">{description}</p>
-			<p className="text-lg font-bold mt-2">${price.toFixed(2)}</p>
+			<p className="text-lg font-bold mt-2">{price} {campCurrency}</p>
 			{type === "bought" && (
 				<h5 className="text-sm text-gray-400 mt-2">
 					Koupil: {user || "Neznámý"}
@@ -32,7 +35,7 @@ export default function Item({
 			)}
 			{type === "offered" && (
 				<h5 className="text-sm text-gray-400 mt-2">
-					Nabídl: {user || "Neznámý"}
+					Nabízí: {user || "Neznámý"}
 				</h5>
 			)}
 			{type === "up" && (

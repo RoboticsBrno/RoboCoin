@@ -11,6 +11,7 @@ import { Balance, Item } from "@/types";
 import { TransactionWithUsers } from "@/lib/transactions";
 import TransactionsTable from "@/components/TransactionsTable";
 import Card from "@/components/card/Card";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 interface UserReportData {
 	user: UserSelect;
@@ -26,6 +27,8 @@ export default function Page() {
 	const userId = params.user_id as string;
 	const [data, setData] = useState<UserReportData | null>(null);
 	const [loading, setLoading] = useState(true);
+
+	const campCurrency = useCurrencySymbol();
 
 	const { showError, showSuccess } = useToast();
 
@@ -115,15 +118,15 @@ export default function Page() {
 
 	const userRoles = data?.user
 		? [
-				data.user.user_camp_user_camp_userTouser[0].is_admin
-					? "Admin"
-					: null,
-				data.user.user_camp_user_camp_userTouser[0].is_org
-					? "Org"
-					: null,
-			]
-				.filter(Boolean)
-				.join(", ")
+			data.user.user_camp_user_camp_userTouser[0].is_admin
+				? "Admin"
+				: null,
+			data.user.user_camp_user_camp_userTouser[0].is_org
+				? "Org"
+				: null,
+		]
+			.filter(Boolean)
+			.join(", ")
 		: "";
 
 	return (
@@ -150,10 +153,10 @@ export default function Page() {
 							</Card>
 							<Card>
 								<h2 className="text-xl font-semibold text-white mb-2">
-									Balance
+									Zůstatek
 								</h2>
 								<p className="text-green-400 font-bold text-3xl">
-									{data.balance.amount.toFixed(2)}
+									{data.balance.amount} {campCurrency}
 								</p>
 							</Card>
 						</div>
@@ -183,7 +186,7 @@ export default function Page() {
 													{item.description}
 												</p>
 												<p className="text-green-400 font-bold mt-2">
-													{item.price.toFixed(2)}
+													{item.price} {campCurrency}
 												</p>
 											</Card>
 										))}
@@ -210,9 +213,7 @@ export default function Page() {
 														}
 													</p>
 													<p className="text-green-400 font-bold mt-2">
-														{achievement.price.toFixed(
-															2
-														)}
+														{achievement.price} {campCurrency}
 													</p>
 												</Card>
 											)
