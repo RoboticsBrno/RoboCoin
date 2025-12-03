@@ -5,11 +5,15 @@ interface CardProps {
 	href?: string;
 	classReplacement?: string;
 	children?: React.ReactNode;
+	hover?: boolean;
 }
 
-export default function Card({ href, children, classReplacement }: CardProps) {
+export default function Card({ href, children, classReplacement, hover = true }: CardProps) {
 	let className =
-		"bg-gray-800 hover:bg-gray-700 text-white border border-gray-700";
+		"bg-gray-800 text-white border border-gray-700";
+	if (hover) {
+		className += " hover:bg-gray-700"
+	}
 	if (classReplacement) {
 		className = classReplacement;
 	}

@@ -11,11 +11,12 @@ import { Balance, Item } from "@/types";
 import { TransactionWithUsers } from "@/lib/transactions";
 import TransactionsTable from "@/components/TransactionsTable";
 import Card from "@/components/card/Card";
+import Button from "@/components/Button";
 import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 interface UserReportData {
 	user: UserSelect;
-	balance: Balance;
+	balance: number;
 	transactions: TransactionWithUsers[];
 	inventory: Item[];
 	achievements: Item[];
@@ -31,6 +32,50 @@ export default function Page() {
 	const campCurrency = useCurrencySymbol();
 
 	const { showError, showSuccess } = useToast();
+
+	const [balanceAmount, setBalanceAmount] = useState<number>(0);
+
+	const handleBalanceUpdate = async (type: "add" | "subtract" | "set", amount: number) => {
+		if (isNaN(amount) || !Number.isInteger(amount)) {
+			showError("Please enter a valid integer amount.");
+			return;
+		}
+
+		if (amount < 0) {
+			showError("Amount cannot be negative.");
+			return;
+		}
+
+		if (type !== 'set' && amount === 0) {
+			showError("Amount for add/subtract must be greater than 0.");
+			return;
+		}
+
+		try {
+			const updatedBalance: { amount: number } = await fetcher(`/api/admin/users/${userId}/balance`, {
+				method: "PUT",
+				body: JSON.stringify({ type, amount, campUrl }),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			showSuccess(`Balance updated: ${type} ${amount} ${campCurrency}`);
+			if (data) {
+				setData({
+					...data,
+					balance: updatedBalance.amount
+				});
+			}
+			setBalanceAmount(0);
+		} catch (error) {
+			if (error instanceof FetchError) {
+				showError(error.info.error || `Failed to ${type} balance`);
+			} else {
+				showError(`An unexpected error occurred while ${type}ing balance.`);
+			}
+			console.error(`Error ${type}ing balance:`, error);
+		}
+	};
 
 	const fetchUserData = async () => {
 		if (!campUrl || !userId) return;
@@ -64,7 +109,7 @@ export default function Page() {
 			if (foundUser) {
 				setData({
 					user: foundUser,
-					balance: balanceData,
+					balance: balanceData.amount,
 					transactions: transactionsData,
 					inventory: inventoryData,
 					achievements: achievementsData,
@@ -138,7 +183,7 @@ export default function Page() {
 				) : data ? (
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
 						<div className="md:col-span-1 space-y-8">
-							<Card>
+							<Card hover={false}>
 								<h2 className="text-xl font-semibold text-white mb-2">
 									{data.user.name}
 								</h2>
@@ -151,13 +196,34 @@ export default function Page() {
 									</p>
 								)}
 							</Card>
-							<Card>
+							<Card hover={false}>
 								<h2 className="text-xl font-semibold text-white mb-2">
 									Zůstatek
 								</h2>
 								<p className="text-green-400 font-bold text-3xl">
-									{data.balance.amount} {campCurrency}
+									{data.balance} {campCurrency}
 								</p>
+								{userRoles !== "" ? (
+									<div className="mt-4">
+										<div className="flex space-y-4 flex-col">
+											<input
+												className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+												id="balanceAmount"
+												name="balanceAmount"
+												type="number"
+												value={balanceAmount}
+												onChange={(e) => setBalanceAmount(Number(e.target.value))}
+												placeholder="Amount"
+												min="0"
+											/>
+											<div className="flex space-x-4">
+												<Button variant="success" onClick={() => handleBalanceUpdate("add", balanceAmount)}>Add</Button>
+												<Button variant="warning" onClick={() => handleBalanceUpdate("subtract", balanceAmount)}>Subtract</Button>
+												<Button variant="danger" onClick={() => handleBalanceUpdate("set", balanceAmount)}>Set</Button>
+											</div>
+										</div>
+									</div>
+								) : (<></>)}
 							</Card>
 						</div>
 						<div className="md:col-span-2 space-y-8">
