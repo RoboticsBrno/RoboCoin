@@ -245,3 +245,19 @@ export type Achievement = {
 	price: number;
 	quantity: number;
 };
+
+export type UserExtremesResponse = {
+	amount: number;
+	user_balance_userTouser: {
+		id: number,
+		login: string,
+		name: string,
+	}
+};
+
+export type UserExtremes = {
+	id: number;
+	name: string;
+	login: string;
+	balance: number;
+};

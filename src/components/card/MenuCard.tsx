@@ -7,6 +7,7 @@ interface CardProps {
 	title: string;
 	description: string;
 	type?: "org" | "admin";
+	hover?: boolean;
 }
 
 export default function MenuCard({
@@ -14,6 +15,7 @@ export default function MenuCard({
 	title,
 	description,
 	type,
+	hover = true,
 }: CardProps) {
 	const { is_org, is_admin } = useUserRole();
 
@@ -24,15 +26,24 @@ export default function MenuCard({
 	let descriptionClass = "text-gray-400";
 	if (type === "org") {
 		className =
-			"bg-blue-600 hover:bg-blue-700 text-white border border-blue-700";
+			"bg-blue-600 text-white border border-blue-700";
+		if (hover) {
+			className += " hover:bg-blue-700";
+		}
 		descriptionClass = "text-gray-300";
 	} else if (type === "admin") {
 		className =
-			"bg-red-600 hover:bg-red-700 text-white border border-red-700";
+			"bg-red-600 text-white border border-red-700";
+		if (hover) {
+			className += " hover:bg-red-700";
+		}
 		descriptionClass = "text-gray-200";
 	} else {
 		className =
-			"bg-gray-800 hover:bg-gray-700 text-white border border-gray-700";
+			"bg-gray-800 text-white border border-gray-700";
+		if (hover) {
+			className += " hover:bg-gray-700";
+		}
 	}
 
 	return (
