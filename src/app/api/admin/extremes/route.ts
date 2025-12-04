@@ -67,6 +67,16 @@ export async function GET(): Promise<NextResponse> {
 	const wealthiest = await prisma.balance.findMany({
 		where: {
 			camp: campId,
+			user_balance_userTouser: {
+				user_camp_user_camp_userTouser: {
+					none: {
+						OR: [
+							{ is_admin: true },
+							{ is_org: true }
+						],
+					}
+				}
+			}
 		},
 		select: {
 			amount: true,
@@ -86,6 +96,16 @@ export async function GET(): Promise<NextResponse> {
 	const poorest = await prisma.balance.findMany({
 		where: {
 			camp: campId,
+			user_balance_userTouser: {
+				user_camp_user_camp_userTouser: {
+					none: {
+						OR: [
+							{ is_admin: true },
+							{ is_org: true }
+						],
+					}
+				}
+			}
 		},
 		select: {
 			amount: true,
