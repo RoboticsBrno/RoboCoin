@@ -7,7 +7,7 @@ import MenuCard from "@/components/card/MenuCard";
 import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 import { UserSelect } from "@/lib/api";
 import { fetcher, FetchError } from "@/lib/fetch";
-import { UserExtremes, UserExtremesResponse } from "@/types";
+import { UserExtremes } from "@/types";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

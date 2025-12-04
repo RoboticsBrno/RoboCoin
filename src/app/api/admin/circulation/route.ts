@@ -25,7 +25,6 @@
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { fallbackModeToFallbackField } from "next/dist/lib/fallback";
 import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {

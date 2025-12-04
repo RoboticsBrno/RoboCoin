@@ -105,7 +105,7 @@ export default function Page() {
 			]);
 
 			const foundUser = userData.find((u) => u.id === Number(userId));
-
+			console.log(transactionsData);
 			if (foundUser) {
 				setData({
 					user: foundUser,
