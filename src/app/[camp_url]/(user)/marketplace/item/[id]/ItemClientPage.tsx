@@ -108,10 +108,7 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 					{item && (
 						<>
 							<div className="text-lg">
-								<span className="font-bold">
-									{" "}
-									Popis:{" "}
-								</span>{" "}
+								<span className="font-bold"> Popis: </span>{" "}
 								{item.description}
 							</div>
 							<div className="text-lg">
@@ -139,8 +136,8 @@ export default function ItemPageClient({ id }: ItemPageClientProps) {
 								)}
 								{!canAfford && (
 									<p className="text-red-500 text-sm mt-2">
-										Nemáte dostatek prostředků na
-										zakoupení této položky.
+										Nemáte dostatek prostředků na zakoupení
+										této položky.
 									</p>
 								)}
 							</div>

@@ -8,11 +8,15 @@ interface CardProps {
 	hover?: boolean;
 }
 
-export default function Card({ href, children, classReplacement, hover = true }: CardProps) {
-	let className =
-		"bg-gray-800 text-white border border-gray-700";
+export default function Card({
+	href,
+	children,
+	classReplacement,
+	hover = true,
+}: CardProps) {
+	let className = "bg-gray-800 text-white border border-gray-700";
 	if (hover) {
-		className += " hover:bg-gray-700"
+		className += " hover:bg-gray-700";
 	}
 	if (classReplacement) {
 		className = classReplacement;

@@ -27,7 +27,9 @@ export default function Item({
 		<Card href={href}>
 			<h3 className="text-lg font-semibold">{title}</h3>
 			<p className="text-sm text-gray-500">{description}</p>
-			<p className="text-lg font-bold mt-2">{price} {campCurrency}</p>
+			<p className="text-lg font-bold mt-2">
+				{price} {campCurrency}
+			</p>
 			{type === "bought" && (
 				<h5 className="text-sm text-gray-400 mt-2">
 					Koupil: {user || "Neznámý"}

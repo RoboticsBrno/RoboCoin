@@ -213,11 +213,12 @@ export async function PUT(
 		);
 	}
 
-	const data: { login: string; name: string; password: string | undefined } = {
-		login,
-		name,
-		password,
-	};
+	const data: { login: string; name: string; password: string | undefined } =
+		{
+			login,
+			name,
+			password,
+		};
 
 	if (isAdmin === undefined || isOrg === undefined) {
 		return NextResponse.json(

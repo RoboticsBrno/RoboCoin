@@ -35,7 +35,10 @@ export async function GET(): Promise<NextResponse> {
 	}
 
 	if (!session.camp_id) {
-		return NextResponse.json({ error: "Camp not specified, invalid session" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Camp not specified, invalid session" },
+			{ status: 400 }
+		);
 	}
 	const campId = session.camp_id;
 
@@ -47,17 +50,17 @@ export async function GET(): Promise<NextResponse> {
 		},
 		select: {
 			user: true,
-		}
-	})
+		},
+	});
 
-	const campUserIds = campUsers.map(user => user.user);
+	const campUserIds = campUsers.map((user) => user.user);
 
 	const balances = await prisma.balance.findMany({
 		where: {
 			camp: campId,
 			user: {
-				in: campUserIds
-			}
+				in: campUserIds,
+			},
 		},
 		select: {
 			amount: true,

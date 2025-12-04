@@ -156,7 +156,9 @@ export default function ManageAchievementUsersPage() {
 							name="itemId"
 							options={items.map((item) => ({
 								value: item.id.toString(),
-								label: item.title + ` (${item.price} ${campCurrency})`,
+								label:
+									item.title +
+									` (${item.price} ${campCurrency})`,
 							}))}
 							onChange={(e) => setSelectedItemId(e.target.value)}
 						/>

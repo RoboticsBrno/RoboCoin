@@ -35,7 +35,10 @@ export default function Page() {
 
 	const [balanceAmount, setBalanceAmount] = useState<number>(0);
 
-	const handleBalanceUpdate = async (type: "add" | "subtract" | "set", amount: number) => {
+	const handleBalanceUpdate = async (
+		type: "add" | "subtract" | "set",
+		amount: number
+	) => {
 		if (isNaN(amount) || !Number.isInteger(amount)) {
 			showError("Please enter a valid integer amount.");
 			return;
@@ -46,24 +49,27 @@ export default function Page() {
 			return;
 		}
 
-		if (type !== 'set' && amount === 0) {
+		if (type !== "set" && amount === 0) {
 			showError("Amount for add/subtract must be greater than 0.");
 			return;
 		}
 
 		try {
-			const updatedBalance: { amount: number } = await fetcher(`/api/admin/users/${userId}/balance`, {
-				method: "PUT",
-				body: JSON.stringify({ type, amount, campUrl }),
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			const updatedBalance: { amount: number } = await fetcher(
+				`/api/admin/users/${userId}/balance`,
+				{
+					method: "PUT",
+					body: JSON.stringify({ type, amount, campUrl }),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 			showSuccess(`Balance updated: ${type} ${amount} ${campCurrency}`);
 			if (data) {
 				setData({
 					...data,
-					balance: updatedBalance.amount
+					balance: updatedBalance.amount,
 				});
 			}
 			setBalanceAmount(0);
@@ -71,7 +77,9 @@ export default function Page() {
 			if (error instanceof FetchError) {
 				showError(error.info.error || `Failed to ${type} balance`);
 			} else {
-				showError(`An unexpected error occurred while ${type}ing balance.`);
+				showError(
+					`An unexpected error occurred while ${type}ing balance.`
+				);
 			}
 			console.error(`Error ${type}ing balance:`, error);
 		}
@@ -163,15 +171,15 @@ export default function Page() {
 
 	const userRoles = data?.user
 		? [
-			data.user.user_camp_user_camp_userTouser[0].is_admin
-				? "Admin"
-				: null,
-			data.user.user_camp_user_camp_userTouser[0].is_org
-				? "Org"
-				: null,
-		]
-			.filter(Boolean)
-			.join(", ")
+				data.user.user_camp_user_camp_userTouser[0].is_admin
+					? "Admin"
+					: null,
+				data.user.user_camp_user_camp_userTouser[0].is_org
+					? "Org"
+					: null,
+			]
+				.filter(Boolean)
+				.join(", ")
 		: "";
 
 	return (
@@ -212,18 +220,54 @@ export default function Page() {
 												name="balanceAmount"
 												type="number"
 												value={balanceAmount}
-												onChange={(e) => setBalanceAmount(Number(e.target.value))}
+												onChange={(e) =>
+													setBalanceAmount(
+														Number(e.target.value)
+													)
+												}
 												placeholder="Amount"
 												min="0"
 											/>
 											<div className="flex space-x-4">
-												<Button variant="success" onClick={() => handleBalanceUpdate("add", balanceAmount)}>Add</Button>
-												<Button variant="warning" onClick={() => handleBalanceUpdate("subtract", balanceAmount)}>Subtract</Button>
-												<Button variant="danger" onClick={() => handleBalanceUpdate("set", balanceAmount)}>Set</Button>
+												<Button
+													variant="success"
+													onClick={() =>
+														handleBalanceUpdate(
+															"add",
+															balanceAmount
+														)
+													}
+												>
+													Add
+												</Button>
+												<Button
+													variant="warning"
+													onClick={() =>
+														handleBalanceUpdate(
+															"subtract",
+															balanceAmount
+														)
+													}
+												>
+													Subtract
+												</Button>
+												<Button
+													variant="danger"
+													onClick={() =>
+														handleBalanceUpdate(
+															"set",
+															balanceAmount
+														)
+													}
+												>
+													Set
+												</Button>
 											</div>
 										</div>
 									</div>
-								) : (<></>)}
+								) : (
+									<></>
+								)}
 							</Card>
 						</div>
 						<div className="md:col-span-2 space-y-8">
@@ -279,7 +323,8 @@ export default function Page() {
 														}
 													</p>
 													<p className="text-green-400 font-bold mt-2">
-														{achievement.price} {campCurrency}
+														{achievement.price}{" "}
+														{campCurrency}
 													</p>
 												</Card>
 											)

@@ -16,7 +16,8 @@ export default function Page() {
 	const campUrl = params.camp_url;
 	const [users, setUsers] = useState<UserSelect[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [currencyInCirculation, setCurrencyInCirculation] = useState<number>(0);
+	const [currencyInCirculation, setCurrencyInCirculation] =
+		useState<number>(0);
 	const [wealthiestUsers, setWealthiestUsers] = useState<UserExtremes[]>([]);
 	const [poorestUsers, setPoorestUsers] = useState<UserExtremes[]>([]);
 	const campCurrency = useCurrencySymbol();
@@ -32,9 +33,31 @@ export default function Page() {
 				const data = await fetcher<UserSelect[]>(
 					`/api/users?camp_url=${campUrl}`
 				);
-				let users = data.filter((user) => user.user_camp_user_camp_userTouser[0].is_admin).sort((a, b) => a.id - b.id);
-				users = users.concat(data.filter((user) => user.user_camp_user_camp_userTouser[0].is_org && !user.user_camp_user_camp_userTouser[0].is_admin).sort((a, b) => a.id - b.id));
-				users = users.concat(data.filter((user) => !user.user_camp_user_camp_userTouser[0].is_admin && !user.user_camp_user_camp_userTouser[0].is_org).sort((a, b) => a.id - b.id));
+				let users = data
+					.filter(
+						(user) =>
+							user.user_camp_user_camp_userTouser[0].is_admin
+					)
+					.sort((a, b) => a.id - b.id);
+				users = users.concat(
+					data
+						.filter(
+							(user) =>
+								user.user_camp_user_camp_userTouser[0].is_org &&
+								!user.user_camp_user_camp_userTouser[0].is_admin
+						)
+						.sort((a, b) => a.id - b.id)
+				);
+				users = users.concat(
+					data
+						.filter(
+							(user) =>
+								!user.user_camp_user_camp_userTouser[0]
+									.is_admin &&
+								!user.user_camp_user_camp_userTouser[0].is_org
+						)
+						.sort((a, b) => a.id - b.id)
+				);
 				setUsers(users);
 			} catch (error) {
 				if (error instanceof FetchError) {
@@ -66,7 +89,7 @@ export default function Page() {
 				if (error instanceof FetchError) {
 					showError(
 						error.info.error ||
-						"Failed to fetch currency in circulation"
+							"Failed to fetch currency in circulation"
 					);
 				} else {
 					showError(
@@ -129,19 +152,26 @@ export default function Page() {
 								<span>Nejbohatší uživatelé:</span>
 								<ul className="mt-4 space-y-2">
 									{wealthiestUsers.map((user) => (
-										<li key={user.id} className="text-green-400">
-											{user.name} ({user.login}): {user.balance} {campCurrency}
+										<li
+											key={user.id}
+											className="text-green-400"
+										>
+											{user.name} ({user.login}):{" "}
+											{user.balance} {campCurrency}
 										</li>
 									))}
-
 								</ul>
 							</div>
 							<div>
 								<span>Nejchudší uživatelé:</span>
 								<ul className="mt-4 space-y-2">
 									{poorestUsers.map((user) => (
-										<li key={user.id} className="text-red-400">
-											{user.name} ({user.login}): {user.balance} {campCurrency}
+										<li
+											key={user.id}
+											className="text-red-400"
+										>
+											{user.name} ({user.login}):{" "}
+											{user.balance} {campCurrency}
 										</li>
 									))}
 								</ul>
@@ -168,7 +198,7 @@ export default function Page() {
 										.is_admin
 										? "admin"
 										: user.user_camp_user_camp_userTouser[0]
-											.is_org
+													.is_org
 											? "org"
 											: undefined
 								}
@@ -176,7 +206,7 @@ export default function Page() {
 						))
 					)}
 				</div>
-			</div >
+			</div>
 		</>
 	);
 }

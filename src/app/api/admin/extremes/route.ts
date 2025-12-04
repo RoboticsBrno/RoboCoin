@@ -60,7 +60,10 @@ export async function GET(): Promise<NextResponse> {
 	}
 
 	if (!session.camp_id) {
-		return NextResponse.json({ error: "Camp not specified, invalid session" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Camp not specified, invalid session" },
+			{ status: 400 }
+		);
 	}
 	const campId = session.camp_id;
 
@@ -70,13 +73,10 @@ export async function GET(): Promise<NextResponse> {
 			user_balance_userTouser: {
 				user_camp_user_camp_userTouser: {
 					none: {
-						OR: [
-							{ is_admin: true },
-							{ is_org: true }
-						],
-					}
-				}
-			}
+						OR: [{ is_admin: true }, { is_org: true }],
+					},
+				},
+			},
 		},
 		select: {
 			amount: true,
@@ -85,13 +85,13 @@ export async function GET(): Promise<NextResponse> {
 					id: true,
 					login: true,
 					name: true,
-				}
-			}
+				},
+			},
 		},
 		orderBy: {
-			amount: 'desc'
+			amount: "desc",
 		},
-		take: 5
+		take: 5,
 	});
 	const poorest = await prisma.balance.findMany({
 		where: {
@@ -99,13 +99,10 @@ export async function GET(): Promise<NextResponse> {
 			user_balance_userTouser: {
 				user_camp_user_camp_userTouser: {
 					none: {
-						OR: [
-							{ is_admin: true },
-							{ is_org: true }
-						],
-					}
-				}
-			}
+						OR: [{ is_admin: true }, { is_org: true }],
+					},
+				},
+			},
 		},
 		select: {
 			amount: true,
@@ -114,23 +111,22 @@ export async function GET(): Promise<NextResponse> {
 					id: true,
 					login: true,
 					name: true,
-				}
-			}
+				},
+			},
 		},
 		orderBy: {
-			amount: 'asc'
+			amount: "asc",
 		},
-		take: 5
+		take: 5,
 	});
-
 
 	const wealthiestData: UserExtremes[] = wealthiest.map((item) => {
 		return {
 			balance: item.amount,
 			id: item.user_balance_userTouser.id,
 			login: item.user_balance_userTouser.login,
-			name: item.user_balance_userTouser.name
-		}
+			name: item.user_balance_userTouser.name,
+		};
 	});
 
 	const poorestData: UserExtremes[] = poorest.map((item) => {
@@ -138,9 +134,12 @@ export async function GET(): Promise<NextResponse> {
 			balance: item.amount,
 			id: item.user_balance_userTouser.id,
 			login: item.user_balance_userTouser.login,
-			name: item.user_balance_userTouser.name
-		}
+			name: item.user_balance_userTouser.name,
+		};
 	});
 
-	return NextResponse.json({ wealthiest: wealthiestData, poorest: poorestData }, { status: 200 });
+	return NextResponse.json(
+		{ wealthiest: wealthiestData, poorest: poorestData },
+		{ status: 200 }
+	);
 }

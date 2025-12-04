@@ -24,7 +24,9 @@ export default function AchievementTablePage() {
 	const [initialUserItems, setInitialUserItems] = useState<UserItems>({});
 	const [existingItems, setExistingItems] = useState<Set<string>>(new Set());
 	const [existingUsers, setExistingUsers] = useState<Set<string>>(new Set());
-	const [userNames, setUserNames] = useState<Record<string, string | null>>({});
+	const [userNames, setUserNames] = useState<Record<string, string | null>>(
+		{}
+	);
 	const [itemPrices, setItemPrices] = useState<Record<string, number>>({});
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -262,7 +264,7 @@ function UserItemsList({
 			if (error instanceof FetchError) {
 				showError(
 					error.info.error ||
-					"Nepodařilo se aktualizovat předměty uživatelů."
+						"Nepodařilo se aktualizovat předměty uživatelů."
 				);
 			} else {
 				showError(
@@ -310,7 +312,10 @@ function UserItemsList({
 										className={`px-3 py-3.5 text-left text-sm font-semibold ${!existingItems.has(item) ? "text-red-500" : "text-white"} ${hovered.col === colIndex ? "bg-gray-700" : ""}`}
 									>
 										<div className="flex flex-col items-center justify-between">
-											<span>{item} ({itemPrices[item]} {campCurrency})</span>
+											<span>
+												{item} ({itemPrices[item]}{" "}
+												{campCurrency})
+											</span>
 											{existingItems.has(item) && (
 												<div className="flex gap-1">
 													<button
@@ -388,20 +393,23 @@ function UserItemsList({
 									{itemHeaders.map((item, colIndex) => (
 										<td
 											key={item}
-											className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center ${!existingItems.has(item) ||
+											className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center ${
+												!existingItems.has(item) ||
 												!existingUsers.has(user)
-												? "cursor-not-allowed bg-gray-800"
-												: `cursor-pointer ${userItems[user][
-													item
-												]
-													? "bg-green-800"
-													: "bg-red-800"
-												}`
-												} ${hovered.row === rowIndex &&
-													hovered.col === colIndex
+													? "cursor-not-allowed bg-gray-800"
+													: `cursor-pointer ${
+															userItems[user][
+																item
+															]
+																? "bg-green-800"
+																: "bg-red-800"
+														}`
+											} ${
+												hovered.row === rowIndex &&
+												hovered.col === colIndex
 													? "brightness-125"
 													: ""
-												}`}
+											}`}
 											onMouseEnter={() =>
 												setHovered({
 													row: rowIndex,

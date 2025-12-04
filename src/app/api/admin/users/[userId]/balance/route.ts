@@ -156,7 +156,10 @@ export async function GET(
  *       500:
  *         description: Internal server error.
  */
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
+export async function PUT(
+	req: NextRequest,
+	{ params }: { params: Promise<{ userId: string }> }
+) {
 	const session = await getServerSession(authOptions);
 
 	if (!session) {
@@ -176,13 +179,27 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ user
 	const { type, amount, campUrl } = JSON.parse(await req.json());
 
 	if (!["add", "subtract", "set"].includes(type)) {
-		return NextResponse.json({ error: "Invalid type specified" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "Invalid type specified" },
+			{ status: 400 }
+		);
 	}
-	if (amount === undefined || typeof amount !== 'number' || !Number.isInteger(amount) || amount < 0) {
-		return NextResponse.json({ error: "Invalid amount: must be a non-negative integer." }, { status: 400 });
+	if (
+		amount === undefined ||
+		typeof amount !== "number" ||
+		!Number.isInteger(amount) ||
+		amount < 0
+	) {
+		return NextResponse.json(
+			{ error: "Invalid amount: must be a non-negative integer." },
+			{ status: 400 }
+		);
 	}
 	if (!campUrl) {
-		return NextResponse.json({ error: "campUrl is required" }, { status: 400 });
+		return NextResponse.json(
+			{ error: "campUrl is required" },
+			{ status: 400 }
+		);
 	}
 
 	try {
@@ -192,36 +209,42 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ user
 		});
 
 		if (!camp) {
-			return NextResponse.json({ error: "Camp not found" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Camp not found" },
+				{ status: 404 }
+			);
 		}
 
 		const currentBalance = await prisma.balance.findFirst({
 			where: {
 				user: numericUserId,
-				camp: camp.id
-			}
+				camp: camp.id,
+			},
 		});
 
 		let newAmount: number;
 
-		if (type === 'set') {
+		if (type === "set") {
 			newAmount = amount;
-		} else if (type === 'add') {
+		} else if (type === "add") {
 			newAmount = (currentBalance?.amount || 0) + amount;
 		} else {
 			newAmount = (currentBalance?.amount || 0) - amount;
 		}
 
 		if (newAmount < 0) {
-			return NextResponse.json({ error: "Resulting balance cannot be negative." }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Resulting balance cannot be negative." },
+				{ status: 400 }
+			);
 		}
 
 		const updatedBalance = await prisma.balance.upsert({
 			where: {
 				user_camp: {
 					user: numericUserId,
-					camp: camp.id
-				}
+					camp: camp.id,
+				},
 			},
 			update: {
 				amount: newAmount,
@@ -232,15 +255,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ user
 				amount: newAmount,
 			},
 			select: {
-				amount: true
-			}
+				amount: true,
+			},
 		});
 
 		return NextResponse.json(updatedBalance, { status: 200 });
-
 	} catch (error) {
 		console.error("Error updating balance:", error);
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 }
+		);
 	}
 }
-

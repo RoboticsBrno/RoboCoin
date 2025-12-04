@@ -23,8 +23,10 @@ export default function TransactionsTable({
 		const refundedIds = new Set<number>();
 		const refundTransactions = new Set<number>();
 
-		transactions.forEach(tx => {
-			const refundMatch = tx.description?.match(/Vratka transakce #(\d+)/);
+		transactions.forEach((tx) => {
+			const refundMatch = tx.description?.match(
+				/Vratka transakce #(\d+)/
+			);
 			if (refundMatch) {
 				const originalTxId = parseInt(refundMatch[1], 10);
 				refundedIds.add(originalTxId);
@@ -50,7 +52,7 @@ export default function TransactionsTable({
 		<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 			{processedTransactions.map((tx) => (
 				<Card key={tx.id}>
-					<div className="flex flex-col justify-between h-full" >
+					<div className="flex flex-col justify-between h-full">
 						<div>
 							<h2 className="text-xl font-semibold text-white mb-2">
 								{tx.peer?.name || "Neznámý uživatel"}
@@ -70,7 +72,9 @@ export default function TransactionsTable({
 								</p>
 							)}
 							{tx.isRefunded && (
-								<p className="text-yellow-400 text-sm mt-2">Vráceno</p>
+								<p className="text-yellow-400 text-sm mt-2">
+									Vráceno
+								</p>
 							)}
 							{onRefund && !tx.isRefunded && !tx.isRefund && (
 								<Button

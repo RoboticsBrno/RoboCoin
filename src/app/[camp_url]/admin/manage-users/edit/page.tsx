@@ -27,7 +27,8 @@ const editUserSchema = z.object({
 	password: z
 		.string()
 		.min(6, { message: "Password must be at least 6 characters" })
-		.or(z.literal("")),
+		.or(z.literal(""))
+		.optional(),
 	isOrg: z.boolean(),
 	isAdmin: z.boolean(),
 });

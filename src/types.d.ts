@@ -249,10 +249,10 @@ export type Achievement = {
 export type UserExtremesResponse = {
 	amount: number;
 	user_balance_userTouser: {
-		id: number,
-		login: string,
-		name: string,
-	}
+		id: number;
+		login: string;
+		name: string;
+	};
 };
 
 export type UserExtremes = {
