@@ -213,14 +213,7 @@ export async function PUT(
 		);
 	}
 
-	if (!password) {
-		return NextResponse.json(
-			{ error: "Password is required" },
-			{ status: 400 }
-		);
-	}
-
-	const data: { login: string; name: string; password: string } = {
+	const data: { login: string; name: string; password: string | undefined } = {
 		login,
 		name,
 		password,
