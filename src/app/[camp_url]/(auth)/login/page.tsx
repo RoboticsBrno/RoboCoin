@@ -106,7 +106,7 @@ export default function LoginPage() {
 				<p className="text-sm text-center text-gray-400">
 					Nemáte účet?{" "}
 					<Link
-						href="/signup"
+						href={`/${params.camp_url}/signup`}
 						className="font-medium text-indigo-500 hover:text-indigo-400"
 					>
 						Zaregistrujte se

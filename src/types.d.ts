@@ -200,6 +200,7 @@ export type SignupRequest = {
 	password: string;
 	isOrg?: boolean;
 	isAdmin?: boolean;
+	camp_url: string;
 };
 
 export type SignupResponse = {

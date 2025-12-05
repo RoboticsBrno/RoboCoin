@@ -114,13 +114,14 @@ export const getApiDocs = async () => {
 					},
 					SignupRequest: {
 						type: "object",
-						required: ["login", "name", "password"],
+						required: ["login", "name", "password", "camp_url"],
 						properties: {
 							login: { type: "string" },
 							name: { type: "string" },
 							password: { type: "string" },
 							isOrg: { type: "boolean" },
 							isAdmin: { type: "boolean" },
+							camp_url: { type: "string" },
 						},
 					},
 					SignupResponse: {

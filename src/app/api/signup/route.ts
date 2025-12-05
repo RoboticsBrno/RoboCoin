@@ -32,7 +32,7 @@ import { SignupRequest, SignupResponse, User, Balance } from "@/types";
 export async function POST(
 	req: NextRequest
 ): Promise<NextResponse<SignupResponse | { error: string }>> {
-	const { login, name, password, isOrg, isAdmin }: SignupRequest =
+	const { login, name, password, isOrg, isAdmin, camp_url }: SignupRequest =
 		await req.json();
 
 	const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,6 +51,21 @@ export async function POST(
 		);
 	}
 
+	if (!camp_url) {
+		return NextResponse.json(
+			{ error: "Camp URL is required" },
+			{ status: 400 }
+		);
+	}
+	const camp = await prisma.camp.findUnique({
+		where: { name_url: camp_url },
+	});
+
+	if (!camp) {
+		return NextResponse.json({ error: "Camp not found" }, { status: 404 });
+	}
+	const camp_id = camp.id;
+
 	let is_org = false;
 	let is_admin = false;
 	const session = await getServerSession(authOptions);
@@ -67,8 +82,6 @@ export async function POST(
 				password: hashedPassword,
 			},
 		});
-
-		const camp_id = session?.camp_id || -1;
 
 		await prisma.user_camp.create({
 			data: {

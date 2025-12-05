@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useForm, FormProvider } from "react-hook-form";
@@ -14,13 +14,12 @@ import FormInput from "@/components/form/FormInput";
 import FormSubmit from "@/components/form/FormSubmit";
 import { useToast } from "@/components/Toast";
 import { fetcher, FetchError } from "@/lib/fetch";
-import { ManagerSignupResponse } from "@/types";
+import { SignupResponse } from "@/types";
 
 const signupSchema = z.object({
 	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
 	name: z.string().min(1, { message: "Je vyžadováno jméno" }),
 	password: z.string().min(6, { message: "Heslo musí mít alespoň 6 znaků" }),
-	isManager: z.boolean().optional(),
 });
 
 type SignupSchema = z.infer<typeof signupSchema>;
@@ -29,9 +28,6 @@ export default function SignupPage() {
 	const router = useRouter();
 	const methods = useForm<SignupSchema>({
 		resolver: zodResolver(signupSchema),
-		defaultValues: {
-			isManager: true,
-		},
 	});
 	const { showError } = useToast();
 	const {
@@ -39,24 +35,27 @@ export default function SignupPage() {
 		formState: { isSubmitting },
 	} = methods;
 
+	const params = useParams();
+
 	const onFormSubmit = async (data: SignupSchema) => {
 		try {
-			await fetcher<ManagerSignupResponse>("/api/manager/signup", {
+			await fetcher<SignupResponse>("/api/signup", {
 				method: "POST",
-				body: data,
+				body: { ...data, camp_url: params.camp_url as string },
 			});
 
 			const result = await signIn("credentials", {
 				login: data.login,
 				password: data.password,
+				camp: params.camp_url as string,
 				redirect: false,
-				callbackUrl: "/",
+				callbackUrl: "/" + params.camp_url,
 			});
 
 			if (result?.ok) {
-				window.location.href = "/";
+				window.location.href = `/${params.camp_url}`;
 			} else {
-				router.push("/login");
+				router.push(`/${params.camp_url}/login`);
 			}
 		} catch (error) {
 			if (error instanceof FetchError) {
@@ -71,8 +70,7 @@ export default function SignupPage() {
 	return (
 		<FormProvider {...methods}>
 			<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-				<input type="hidden" name="isManager" value="true" />
-				<FormTitle>Vytvořit manažerský účet</FormTitle>
+				<FormTitle>Vytvořit účet</FormTitle>
 				<FormSubtitle>
 					Připojte se k nám! Pro začátek prosím vyplňte své údaje.
 				</FormSubtitle>
@@ -107,7 +105,7 @@ export default function SignupPage() {
 				<p className="text-sm text-center text-gray-400">
 					Máte již účet?{" "}
 					<Link
-						href="/login"
+						href={`/${params.camp_url}/login`}
 						className="font-medium text-indigo-500 hover:text-indigo-400"
 					>
 						Přihlásit se
