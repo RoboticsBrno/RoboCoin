@@ -63,7 +63,12 @@ export async function middleware(req: NextRequest) {
 				return NextResponse.redirect(url);
 			}
 
-			if ((isManagerPath || pathname == "/") && !isManager) {
+			if (
+				(isManagerPath || pathname == "/") &&
+				!isManager &&
+				!isAdminPath &&
+				!isOrgPath
+			) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/unauthorized";
 				return NextResponse.redirect(url);
