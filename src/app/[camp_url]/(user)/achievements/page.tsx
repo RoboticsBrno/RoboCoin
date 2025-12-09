@@ -7,6 +7,7 @@ import Loader from "@/components/Loader";
 import { useToast } from "@/components/Toast";
 import { fetcher, FetchError } from "@/lib/fetch";
 import { InventoryItem } from "@/lib/api";
+import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 interface Achievement {
 	id: number;
@@ -19,7 +20,7 @@ interface Achievement {
 export default function AchievementsPage() {
 	const [achievements, setAchievements] = useState<Achievement[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-
+	const campCurrency = useCurrencySymbol();
 	const { showError } = useToast();
 
 	useEffect(() => {
@@ -74,7 +75,7 @@ export default function AchievementsPage() {
 									"Popis není k dispozici"}
 							</p>
 							<p className="text-green-400 font-bold">
-								Hodnota: {achievement.price.toFixed(2)}
+								{achievement.price} {campCurrency}
 							</p>
 						</Card>
 					))}
