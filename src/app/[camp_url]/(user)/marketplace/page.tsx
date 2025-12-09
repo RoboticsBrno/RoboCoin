@@ -6,7 +6,8 @@ import Loader from "@/components/Loader";
 import PageTitle from "@/components/PageTitle";
 import { useToast } from "@/components/Toast";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface MarketplaceItem {
 	id: number;
@@ -14,6 +15,7 @@ interface MarketplaceItem {
 	description: string;
 	price: number;
 	user: {
+		id: string;
 		name: string;
 	};
 }
@@ -22,7 +24,8 @@ export default function MarketplacePage() {
 	const [loading, setLoading] = useState(true);
 	const [offers, setOffers] = useState<MarketplaceItem[]>([]);
 
-	const { showError, showInfo } = useToast();
+	const { showError, showInfo, showSuccess } = useToast();
+	const { data: session } = useSession();
 
 	const params = useParams();
 	const campUrl = params.camp_url;
@@ -44,31 +47,63 @@ export default function MarketplacePage() {
 		},
 	];
 
-	useEffect(() => {
-		const fetchMarketplaceItems = async () => {
-			setLoading(true);
-			try {
-				const response = await fetch("/api/marketplace/items");
-				if (response.ok) {
-					const data = await response.json();
-					setOffers(data);
-					if (data.length === 0) {
-						showInfo(
-							"Na tržišti nejsou aktuálně k dispozici žádné předměty."
-						);
-					}
-				} else {
-					showError("Nepodařilo se načíst předměty z tržiště.");
-				}
-				setLoading(false);
-			} catch (error) {
-				showError("Při načítání předmětů došlo k neočekávané chybě.");
-				console.error(error);
-				setLoading(false);
+	const fetchMarketplaceItems = async () => {
+		setLoading(true);
+		try {
+			const response = await fetch("/api/marketplace/items");
+			if (response.ok) {
+				const data = await response.json();
+				setOffers(data);
+				// The info message for no offers will now be handled by filteredOffers check
+				// if (data.length === 0) {
+				// 	showInfo(
+				// 		"Na tržišti nejsou aktuálně k dispozici žádné předměty."
+				// 	);
+				// }
+			} else {
+				showError("Nepodařilo se načíst předměty z tržiště.");
 			}
-		};
+			setLoading(false);
+		} catch (error) {
+			showError("Při načítání předmětů došlo k neočekávané chybě.");
+			console.error(error);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
 		fetchMarketplaceItems();
 	}, [showError, showInfo]);
+
+	const handleBuy = async (itemId: number) => {
+		try {
+			const response = await fetch("/api/marketplace/buy", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ itemId }),
+			});
+
+			if (response.ok) {
+				showSuccess("Předmět byl úspěšně zakoupen.");
+				fetchMarketplaceItems();
+			} else {
+				const data = await response.json();
+				showError(data.error || "Při nákupu předmětu došlo k chybě.");
+			}
+		} catch (error) {
+			showError("Při nákupu předmětu došlo k neočekávané chybě.");
+			console.error(error);
+		}
+	};
+
+	const filteredOffers = useMemo(() => {
+		if (!session?.user) {
+			return offers;
+		}
+		return offers.filter((offer) => offer.user.id != session.user.id);
+	}, [offers, session?.user]);
 
 	return (
 		<>
@@ -88,20 +123,25 @@ export default function MarketplacePage() {
 			</h2>
 			{loading ? (
 				<Loader />
-			) : (
+			) : filteredOffers.length > 0 ? (
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-					{offers.map((offer) => (
+					{filteredOffers.map((offer) => (
 						<Item
 							key={offer.id}
 							title={offer.title}
 							description={offer.description}
 							price={offer.price}
-							href={`/${campUrl}/marketplace/item/${offer.id}`}
 							type="offered"
 							user={offer.user.name}
+							onBuy={() => handleBuy(offer.id)}
 						/>
 					))}
 				</div>
+			) : (
+				<p className="text-center text-gray-400">
+					Na tržišti nejsou aktuálně k dispozici žádné předměty, které
+					byste si mohli koupit.
+				</p>
 			)}
 		</>
 	);

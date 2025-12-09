@@ -1,108 +1,92 @@
-/**
- * @swagger
- * /api/marketplace/buy:
- *   post:
- *     summary: Buy an item from the marketplace
- *     tags: [Marketplace]
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/BuyItemRequest'
- *     responses:
- *       200:
- *         description: Purchase successful
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/BuyItemResponse'
- *       400:
- *         description: Invalid item ID or insufficient funds
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Item not found
- *       500:
- *         description: Transaction failed
- */
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { transferBalance } from "@/lib/balance";
-import { BuyItemRequest, BuyItemResponse } from "@/types";
+import { authOptions } from "@/lib/auth";
 
-export async function POST(
-	req: NextRequest
-): Promise<NextResponse<BuyItemResponse | { error: string }>> {
+export async function POST(req: NextRequest) {
 	const session = await getServerSession(authOptions);
 
-	if (!session) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	if (!session?.user) {
+		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const { id: itemId }: BuyItemRequest = await req.json();
+	const { itemId } = await req.json();
 
-	if (!itemId || isNaN(itemId)) {
+	if (!itemId) {
+		return NextResponse.json(
+			{ error: "Item ID is required" },
+			{ status: 400 }
+		);
+	}
+
+	const parsedItemId = parseInt(String(itemId), 10);
+	if (isNaN(parsedItemId)) {
 		return NextResponse.json({ error: "Invalid item ID" }, { status: 400 });
 	}
 
-	const buyerId = parseInt(session.user.id);
-
 	try {
-		const item = await prisma.item.findUnique({
-			where: { id: itemId },
-		});
-
-		if (!item) {
-			return NextResponse.json(
-				{ error: "Item not found" },
-				{ status: 404 }
-			);
-		}
-
-		if (!item.on_marketplace) {
-			return NextResponse.json(
-				{ error: "Item is not for sale" },
-				{ status: 400 }
-			);
-		}
-
-		const buyerBalance = await prisma.balance.findUnique({
-			where: { user_camp: { user: buyerId, camp: item.camp } },
-		});
-
-		if (!buyerBalance || buyerBalance.amount < item.price) {
-			return NextResponse.json(
-				{ error: "Insufficient funds" },
-				{ status: 400 }
-			);
-		}
-
 		await prisma.$transaction(async (tx) => {
-			await tx.item.update({
-				where: { id: item.id },
-				data: { owner: buyerId, on_marketplace: false },
+			const item = await tx.item.findUnique({
+				where: { id: parsedItemId },
 			});
+
+			if (!item || !item.on_marketplace) {
+				throw new Error("Item not found or not on marketplace");
+			}
+
+			const buyerId = parseInt(session.user.id);
+			const sellerId = item.owner;
+
+			if (buyerId === sellerId) {
+				throw new Error("Cannot buy your own item");
+			}
+
+			const buyerBalance = await tx.balance.findUnique({
+				where: {
+					user_camp: { user: buyerId, camp: session.camp_id || -1 },
+				},
+			});
+
+			if (!buyerBalance || buyerBalance.amount < item.price) {
+				throw new Error("Insufficient balance");
+			}
 
 			await transferBalance(
 				tx,
 				buyerId,
-				item.owner,
+				sellerId,
 				item.price,
-				`Purchase of ${item.title}`,
+				`Nákup předmětu: ${item.title}`,
 				session.camp_id || -1
 			);
+
+			await tx.item.update({
+				where: { id: parsedItemId },
+				data: {
+					on_marketplace: false,
+					owner: buyerId,
+				},
+			});
+
+			await tx.inventory.create({
+				data: {
+					user: buyerId,
+					item: parsedItemId,
+					quantity: 1,
+					camp: session.camp_id || -1,
+				},
+			});
 		});
 
 		return NextResponse.json({ success: true });
 	} catch (error) {
-		console.error("Transaction failed:", error);
+		console.error("Failed to buy item:", error);
+		if (error instanceof Error) {
+			return NextResponse.json({ error: error.message }, { status: 400 });
+		}
 		return NextResponse.json(
-			{ error: "Transaction failed" },
+			{ error: "Failed to buy item" },
 			{ status: 500 }
 		);
 	}
