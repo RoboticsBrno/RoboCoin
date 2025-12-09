@@ -36,9 +36,6 @@ export default function OffersPage() {
 			if (upResponse.ok) {
 				const data = await upResponse.json();
 				setOffersUp(data);
-				if (data.length === 0) {
-					showInfo("Žádné položky nejsou aktuálně na prodej.");
-				}
 			} else {
 				showError("Failed to fetch offers that are up.");
 			}
@@ -46,9 +43,6 @@ export default function OffersPage() {
 			if (soldResponse.ok) {
 				const data = await soldResponse.json();
 				setOffersSold(data);
-				if (data.length === 0) {
-					showInfo("Žádné položky nebyly prodány.");
-				}
 			} else {
 				showError("Failed to fetch sold offers.");
 			}
@@ -56,9 +50,6 @@ export default function OffersPage() {
 			if (downResponse.ok) {
 				const data = await downResponse.json();
 				setOffersDown(data);
-				if (data.length === 0) {
-					showInfo("Žádné položky nejsou staženy z tržiště.");
-				}
 			} else {
 				console.error("Failed to fetch items down from marketplace.");
 				showError("Failed to fetch items down from marketplace.");
@@ -91,16 +82,16 @@ export default function OffersPage() {
 
 	return (
 		<>
-			<PageTitle>Your Offers</PageTitle>
+			<PageTitle>Vaše nabídky</PageTitle>
 			{loading ? (
 				<Loader />
 			) : (
 				<>
-					{offersUp.length > 0 && (
-						<>
-							<h1 className="text-2xl font-bold mb-4">
-								Předměty na prodej
-							</h1>
+					<>
+						<h1 className="text-2xl font-bold mb-4">
+							Předměty na prodej
+						</h1>
+						{offersUp.length > 0 ? (
 							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 								{offersUp.map((offer) => (
 									<Item
@@ -112,13 +103,14 @@ export default function OffersPage() {
 									/>
 								))}
 							</div>
-						</>
-					)}
-					{offersSold.length > 0 && (
-						<>
-							<h1 className="text-2xl font-bold mt-8 mb-4">
-								Prodané předměty
-							</h1>
+						) : (
+							<p>Žádné položky nejsou aktuálně na prodej.</p>
+						)}
+
+						<h1 className="text-2xl font-bold mt-8 mb-4">
+							Prodané předměty
+						</h1>
+						{offersSold.length > 0 ? (
 							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 								{offersSold.map((offer) => (
 									<Item
@@ -131,13 +123,14 @@ export default function OffersPage() {
 									/>
 								))}
 							</div>
-						</>
-					)}
-					{offersDown.length > 0 && (
-						<>
-							<h1 className="text-2xl font-bold mt-8 mb-4">
-								Předměty stažené z tržiště
-							</h1>
+						) : (
+							<p>Žádné položky nebyly prodány.</p>
+						)}
+
+						<h1 className="text-2xl font-bold mt-8 mb-4">
+							Předměty stažené z tržiště
+						</h1>
+						{offersDown.length > 0 ? (
 							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 								{offersDown.map((offer) => (
 									<Item
@@ -149,8 +142,10 @@ export default function OffersPage() {
 									/>
 								))}
 							</div>
-						</>
-					)}
+						) : (
+							<p>Žádné položky nejsou staženy z tržiště.</p>
+						)}
+					</>
 				</>
 			)}
 		</>
