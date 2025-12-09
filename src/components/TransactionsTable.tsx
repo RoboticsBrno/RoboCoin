@@ -5,6 +5,7 @@ import Card from "@/components/card/Card";
 import { TransactionWithUsers } from "@/lib/transactions";
 import Button from "./Button";
 import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 
 interface TransactionsTableProps {
 	transactions: TransactionWithUsers[];
@@ -54,9 +55,17 @@ export default function TransactionsTable({
 				<Card key={tx.id}>
 					<div className="flex flex-col justify-between h-full">
 						<div>
-							<h2 className="text-xl font-semibold text-white mb-2">
-								{tx.peer?.name || "Neznámý uživatel"}
-							</h2>
+							{tx.isOutgoing ? (
+								<h2 className="text-xl font-semibold text-white mb-2 flex items-center">
+									<ArrowUpRight className="mr-2 text-red-400" />
+									{tx.peer?.name || "Neznámý uživatel"}
+								</h2>
+							) : (
+								<h2 className="text-xl font-semibold text-white mb-2 flex items-center">
+									<ArrowDownLeft className="mr-2 text-green-400" />
+									{tx.peer?.name || "Neznámý uživatel"}
+								</h2>
+							)}
 							{tx.description && (
 								<p className="text-gray-400 mb-4">
 									{tx.description || "Popis není k dispozici"}
