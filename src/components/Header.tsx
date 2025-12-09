@@ -28,8 +28,8 @@ export default function Header() {
 
 	return (
 		<header className="bg-gray-800 shadow-md">
-			<nav className="container mx-auto px-6 py-3 flex max-md:flex-wrap justify-between items-center">
-				<div className="text-white">
+			<nav className="container mx-auto px-6 py-3 flex max-md:flex-col justify-between items-center">
+				<div className="text-white max-md:w-full">
 					<Link
 						href={campUrl ? `/${campUrl}` : "/"}
 						className="text-2xl font-bold text-indigo-500"
@@ -45,7 +45,7 @@ export default function Header() {
 						</Link>
 					)}
 				</div>
-				<div className="flex items-center space-x-4">
+				<div className="flex items-center space-x-4 max-md:w-full justify-between">
 					{name ? (
 						<>
 							<span className="text-gray-300">{name}</span>
