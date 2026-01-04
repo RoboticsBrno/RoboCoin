@@ -13,6 +13,7 @@ import FormCheckbox from "@/components/form/FormCheckbox";
 import { useToast } from "@/components/Toast";
 import { fetcher, FetchError } from "@/lib/fetch";
 import { SignupResponse } from "@/types";
+import { useSession } from "next-auth/react";
 
 const createUserSchema = z.object({
 	login: z.string().min(1, { message: "Login is required" }),
@@ -22,12 +23,14 @@ const createUserSchema = z.object({
 		.min(6, { message: "Password must be at least 6 characters" }),
 	isOrg: z.boolean(),
 	isAdmin: z.boolean(),
+	camp_url: z.string(),
 });
 
-type CreateAchievementSchema = z.infer<typeof createUserSchema>;
+type CreateUserSchema = z.infer<typeof createUserSchema>;
 
 export default function CreateUserPage() {
-	const methods = useForm<CreateAchievementSchema>({
+	const { data: session } = useSession();
+	const methods = useForm<CreateUserSchema>({
 		resolver: zodResolver(createUserSchema),
 		defaultValues: {
 			login: "",
@@ -35,6 +38,7 @@ export default function CreateUserPage() {
 			password: "",
 			isOrg: false,
 			isAdmin: false,
+			camp_url: session?.camp_url || "",
 		},
 	});
 	const {
@@ -44,7 +48,7 @@ export default function CreateUserPage() {
 
 	const { showError, showSuccess } = useToast();
 
-	const onFormSubmit = async (data: CreateAchievementSchema) => {
+	const onFormSubmit = async (data: CreateUserSchema) => {
 		try {
 			const newUser = await fetcher<SignupResponse>("/api/signup", {
 				method: "POST",
