@@ -61,10 +61,10 @@ export default function Page() {
 				setUsers(users);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch users");
+					showError(error.info.error || "Nepodařilo se načíst uživatele");
 				} else {
 					showError(
-						"An unexpected error occurred while fetching users."
+						"Při načítání uživatelů došlo k neočekávané chybě."
 					);
 				}
 				console.error("Error fetching users:", error);
@@ -87,13 +87,12 @@ export default function Page() {
 				setCurrencyInCirculation(data.total);
 			} catch (error) {
 				if (error instanceof FetchError) {
+									showError(
+										error.info.error ||
+										"Nepodařilo se načíst měnu v oběhu"
+									);				} else {
 					showError(
-						error.info.error ||
-							"Failed to fetch currency in circulation"
-					);
-				} else {
-					showError(
-						"An unexpected error occurred while fetching currency in circulation."
+						"Při načítání měny v oběhu došlo k neočekávané chybě."
 					);
 				}
 				console.error("Error fetching currency in circulation:", error);
@@ -116,10 +115,10 @@ export default function Page() {
 				setPoorestUsers(data.poorest);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch extremes");
+					showError(error.info.error || "Nepodařilo se načíst extrémy");
 				} else {
 					showError(
-						"An unexpected error occurred while fetching extremes."
+						"Při načítání extrémů došlo k neočekávané chybě."
 					);
 				}
 				console.error("Error fetching extremes:", error);

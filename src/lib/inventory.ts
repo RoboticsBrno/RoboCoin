@@ -92,7 +92,7 @@ export async function syncItemHolders(
 	});
 
 	if (!item) {
-		throw new Error(`Item with ID ${itemId} not found.`);
+		throw new Error(`Položka s ID ${itemId} nebyla nalezena.`);
 	}
 	const itemPrice = item.price;
 

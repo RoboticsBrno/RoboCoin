@@ -40,17 +40,17 @@ export default function Page() {
 		amount: number
 	) => {
 		if (isNaN(amount) || !Number.isInteger(amount)) {
-			showError("Please enter a valid integer amount.");
+			showError("Zadejte prosím platné celé číslo.");
 			return;
 		}
 
 		if (amount < 0) {
-			showError("Amount cannot be negative.");
+			showError("Částka nemůže být záporná.");
 			return;
 		}
 
 		if (type !== "set" && amount === 0) {
-			showError("Amount for add/subtract must be greater than 0.");
+			showError("Částka pro přičtení/odečtení musí být větší než 0.");
 			return;
 		}
 
@@ -65,7 +65,7 @@ export default function Page() {
 					},
 				}
 			);
-			showSuccess(`Balance updated: ${type} ${amount} ${campCurrency}`);
+			showSuccess(`Zůstatek aktualizován: ${type} ${amount} ${campCurrency}`);
 			if (data) {
 				setData({
 					...data,
@@ -75,13 +75,13 @@ export default function Page() {
 			setBalanceAmount(0);
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || `Failed to ${type} balance`);
+				showError(error.info.error || `Nepodařilo se ${type} zůstatek`);
 			} else {
 				showError(
-					`An unexpected error occurred while ${type}ing balance.`
+					`Při ${type} zůstatku došlo k neočekávané chybě.`
 				);
 			}
-			console.error(`Error ${type}ing balance:`, error);
+			console.error(`Chyba při ${type} zůstatku:`, error);
 		}
 	};
 
@@ -127,11 +127,9 @@ export default function Page() {
 			}
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to fetch user data");
+				showError(error.info.error || "Nepodařilo se načíst data uživatele");
 			} else {
-				showError(
-					"An unexpected error occurred while fetching user data."
-				);
+									showError("Při načítání dat uživatele došlo k neočekávané chybě.");
 			}
 			console.error("Error fetching user data:", error);
 		} finally {
@@ -141,7 +139,7 @@ export default function Page() {
 
 	const handleRefund = async (transactionId: number) => {
 		if (
-			window.confirm("Are you sure you want to refund this transaction?")
+			window.confirm("Opravdu chcete vrátit tuto transakci?")
 		) {
 			try {
 				await fetcher(
@@ -150,17 +148,17 @@ export default function Page() {
 						method: "POST",
 					}
 				);
-				showSuccess("Transaction refunded successfully.");
+				showSuccess("Transakce byla úspěšně vrácena.");
 				fetchUserData();
 			} catch (error) {
 				if (error instanceof FetchError) {
 					showError(
-						error.info.error || "Failed to refund transaction"
+						error.info.error || "Nepodařilo se vrátit transakci"
 					);
 				} else {
-					showError("An unexpected error occurred while refunding.");
+					showError("Při vracení peněz došlo k neočekávané chybě.");
 				}
-				console.error("Error refunding transaction:", error);
+				console.error("Chyba při vracení transakce:", error);
 			}
 		}
 	};
@@ -225,7 +223,7 @@ export default function Page() {
 														Number(e.target.value)
 													)
 												}
-												placeholder="Amount"
+												placeholder="Částka"
 												min="0"
 											/>
 											<div className="flex space-x-4">
@@ -238,7 +236,7 @@ export default function Page() {
 														)
 													}
 												>
-													Add
+													Přidat
 												</Button>
 												<Button
 													variant="warning"
@@ -249,7 +247,7 @@ export default function Page() {
 														)
 													}
 												>
-													Subtract
+													Odečíst
 												</Button>
 												<Button
 													variant="danger"
@@ -260,7 +258,7 @@ export default function Page() {
 														)
 													}
 												>
-													Set
+													Nastavit
 												</Button>
 											</div>
 										</div>
@@ -331,7 +329,7 @@ export default function Page() {
 										)}
 									</div>
 								) : (
-									<p>No achievements earned.</p>
+									<p>Nezískal žádné úspěchy.</p>
 								)}
 							</div>
 						</div>

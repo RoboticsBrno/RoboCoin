@@ -22,11 +22,11 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { User } from "@/types";
 
 const editUserSchema = z.object({
-	login: z.string().min(1, { message: "Login is required" }),
-	name: z.string().min(1, { message: "Name is required" }),
+	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
+	name: z.string().min(1, { message: "Je vyžadováno jméno" }),
 	password: z
 		.string()
-		.min(6, { message: "Password must be at least 6 characters" })
+		.min(6, { message: "Heslo musí mít alespoň 6 znaků" })
 		.or(z.literal(""))
 		.optional(),
 	isOrg: z.boolean(),
@@ -76,10 +76,10 @@ export default function EditUserPage() {
 				setUsers(filteredData);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch users");
+					showError(error.info.error || "Nepodařilo se načíst uživatele");
 				} else {
 					showError(
-						"An unexpected error occurred while fetching users."
+						"Při načítání uživatelů došlo k neočekávané chybě."
 					);
 				}
 				console.error("Error fetching users:", error);
@@ -153,10 +153,9 @@ export default function EditUserPage() {
 			setUsers(usersData);
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to update user");
+				showError(error.info.error || "Nepodařilo se aktualizovat uživatele");
 			} else {
-				showError("An unexpected error occurred while updating user.");
-			}
+									showError("Při aktualizaci uživatele došlo k neočekávané chybě.");			}
 		}
 	};
 
@@ -201,7 +200,7 @@ export default function EditUserPage() {
 									id="login"
 									name="login"
 									type="text"
-									placeholder="e.g., 'jirkavacha'"
+									placeholder="např. 'jirkavacha'"
 								/>
 							</FormGroup>
 
@@ -211,7 +210,7 @@ export default function EditUserPage() {
 									id="name"
 									name="name"
 									type="text"
-									placeholder="e.g., 'Jirka Vacha'"
+									placeholder="např. 'Jirka Vacha'"
 								/>
 							</FormGroup>
 
@@ -222,7 +221,7 @@ export default function EditUserPage() {
 									name="password"
 									type="password"
 									autoComplete="new-password"
-									placeholder="Enter a new password (optional)"
+									placeholder="Zadejte nové heslo (volitelné)"
 								/>
 							</FormGroup>
 

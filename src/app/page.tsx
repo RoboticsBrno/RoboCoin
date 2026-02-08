@@ -43,12 +43,12 @@ export default function Home() {
 				const response = await fetch(`/api/manager/my-camps`);
 				if (!response.ok) {
 					showError("Nepodařilo se načíst tábory");
-					throw new Error("Failed to fetch camps");
+					throw new Error("Nepodařilo se načíst tábory");
 				}
 				const data = await response.json();
 				setCamps(data);
 			} catch (error) {
-				console.error("Error fetching camps:", error);
+				console.error("Chyba při načítání táborů:", error);
 				showError("Při načítání táborů došlo k neočekávané chybě.");
 			} finally {
 				setLoading(false);

@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 import { DeleteUserResponse } from "@/types";
 
 const deleteUserSchema = z.object({
-	userId: z.string().min(1, { message: "User is required" }),
+	userId: z.string().min(1, { message: "Je vyžadován uživatel" }),
 });
 
 type DeleteUserSchema = z.infer<typeof deleteUserSchema>;
@@ -59,10 +59,10 @@ export default function DeleteUserPage() {
 				setUsers(filteredData);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch users");
+					showError(error.info.error || "Nepodařilo se načíst uživatele");
 				} else {
 					showError(
-						"An unexpected error occurred while fetching users."
+						"Při načítání uživatelů došlo k neočekávané chybě."
 					);
 					console.error(error);
 				}
@@ -82,7 +82,7 @@ export default function DeleteUserPage() {
 					body: { id: data.userId },
 				}
 			);
-			showSuccess("User deleted successfully!");
+			showSuccess("Uživatel byl úspěšně smazán!");
 			setSelectedUserId("");
 			const usersData = await fetcher<UserSelect[]>(
 				`/api/users?camp_url=${camp_url}`
@@ -91,11 +91,10 @@ export default function DeleteUserPage() {
 			methods.reset();
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to delete user");
-				console.error("Delete user error:", error.info);
+				showError(error.info.error || "Nepodařilo se smazat uživatele");
+				console.error("Chyba při mazání uživatele:", error.info);
 			} else {
-				showError("An unexpected error occurred while deleting user.");
-			}
+									showError("Při mazání uživatele došlo k neočekávané chybě.");			}
 		}
 	};
 

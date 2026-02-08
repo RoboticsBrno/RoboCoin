@@ -7,7 +7,7 @@ export async function transferBalance(
 	fromId: number,
 	toId: number,
 	amount: number,
-	description: string = "Balance transfer",
+	description: string = "Převod zůstatku",
 	camp: number
 ) {
 	const fromBalance = await tx.balance.findUnique({
@@ -15,7 +15,7 @@ export async function transferBalance(
 	});
 
 	if (!fromBalance || fromBalance.amount < amount) {
-		throw new Error("Insufficient funds");
+		throw new Error("Nedostatek prostředků");
 	}
 
 	await tx.transaction.create({

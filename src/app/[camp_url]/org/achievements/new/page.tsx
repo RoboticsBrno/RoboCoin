@@ -14,7 +14,7 @@ import { fetcher, FetchError } from "@/lib/fetch";
 import { Item } from "@/types";
 
 const createAchievementSchema = z.object({
-	title: z.string().min(1, { message: "Title is required" }),
+	title: z.string().min(1, { message: "Je vyžadován název" }),
 	description: z.string().optional(),
 	price: z.string().refine(
 		(val) => {
@@ -22,7 +22,7 @@ const createAchievementSchema = z.object({
 			const num = Number(val);
 			return !isNaN(num) && num >= 0 && Number.isInteger(num);
 		},
-		{ message: "Price must be a positive number" }
+		{ message: "Cena musí být kladné celé číslo" }
 	),
 });
 
@@ -58,18 +58,18 @@ export default function CreateAchievementPage() {
 			});
 
 			showSuccess(
-				`Achievement "${newAchievement.title}" created successfully!`
+				`Úspěch "${newAchievement.title}" byl úspěšně vytvořen!`
 			);
 			methods.reset(); // Reset the form after successful submission
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to create achievement");
+				showError(error.info.error || "Nepodařilo se vytvořit úspěch");
 			} else {
 				showError(
-					"An unexpected error occurred while creating the achievement."
+					"Při vytváření úspěchu došlo k neočekávané chybě."
 				);
 			}
-			console.error("Failed to create achievement:", error);
+			console.error("Nepodařilo se vytvořit úspěch:", error);
 		}
 	};
 

@@ -19,12 +19,12 @@ import { User, Item, SyncUserInventoryResponse } from "@/types";
 import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 const syncSchema = z.object({
-	userId: z.string().min(1, { message: "Please select a user" }),
+	userId: z.string().min(1, { message: "Prosím vyberte uživatele" }),
 	itemIds: z.array(z.string()).refine(
 		(arr) => {
 			return arr.every((id) => !isNaN(Number(id)) && Number(id) > 0);
 		},
-		{ message: "All item IDs must be valid numbers" }
+		{ message: "Všechna ID předmětů musí být platná čísla" }
 	),
 });
 
@@ -64,11 +64,11 @@ export default function ManageUserAchievementsPage() {
 				setItems(items);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch data");
+					showError(error.info.error || "Nepodařilo se načíst data");
 				} else {
-					showError("Failed to fetch data");
+					showError("Nepodařilo se načíst data");
 				}
-				console.error("Failed to fetch data:", error);
+				console.error("Nepodařilo se načíst data:", error);
 			} finally {
 				setIsLoading(false);
 			}
@@ -95,12 +95,12 @@ export default function ManageUserAchievementsPage() {
 			} catch (error) {
 				if (error instanceof FetchError) {
 					showError(
-						error.info.error || "Failed to fetch user inventory"
+						error.info.error || "Nepodařilo se načíst inventář uživatele"
 					);
 				} else {
-					showError("Failed to fetch user inventory");
+					showError("Nepodařilo se načíst inventář uživatele");
 				}
-				console.error("Failed to fetch user inventory:", error);
+				console.error("Nepodařilo se načíst inventář uživatele:", error);
 			} finally {
 				setIsInventoryLoading(false);
 			}
@@ -121,18 +121,18 @@ export default function ManageUserAchievementsPage() {
 				body: submitData,
 			});
 
-			showSuccess("Achievements updated successfully!");
+			showSuccess("Úspěchy úspěšně aktualizovány!");
 			setValue("userId", "");
 			setSelectedUserId("");
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to sync achievements");
+				showError(error.info.error || "Nepodařilo se synchronizovat úspěchy");
 			} else {
 				showError(
-					"An unexpected error occurred while updating achievements."
+					"Při aktualizaci úspěchů došlo k neočekávané chybě."
 				);
 			}
-			console.error("An unexpected error occurred:", error);
+			console.error("Došlo k neočekávané chybě:", error);
 		}
 	};
 

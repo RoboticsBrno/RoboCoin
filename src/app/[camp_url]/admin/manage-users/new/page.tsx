@@ -16,11 +16,11 @@ import { SignupResponse } from "@/types";
 import { useSession } from "next-auth/react";
 
 const createUserSchema = z.object({
-	login: z.string().min(1, { message: "Login is required" }),
-	name: z.string().min(1, { message: "Name is required" }),
+	login: z.string().min(1, { message: "Je vyžadováno přihlašovací jméno" }),
+	name: z.string().min(1, { message: "Je vyžadováno jméno" }),
 	password: z
 		.string()
-		.min(6, { message: "Password must be at least 6 characters" }),
+		.min(6, { message: "Heslo musí mít alespoň 6 znaků" }),
 	isOrg: z.boolean(),
 	isAdmin: z.boolean(),
 	camp_url: z.string(),
@@ -59,9 +59,9 @@ export default function CreateUserPage() {
 			methods.reset();
 		} catch (error) {
 			if (error instanceof FetchError) {
-				showError(error.info.error || "Failed to create user");
+				showError(error.info.error || "Nepodařilo se vytvořit uživatele");
 			} else {
-				showError("An unexpected error occurred while creating user.");
+				showError("Při vytváření uživatele došlo k neočekávané chybě.");
 			}
 		}
 	};
@@ -70,7 +70,7 @@ export default function CreateUserPage() {
 		<div>
 			<FormProvider {...methods}>
 				<FormContainer onSubmit={handleSubmit(onFormSubmit)}>
-					<FormTitle>Vytořit nového uživatele</FormTitle>
+					<FormTitle>Vytvořit nového uživatele</FormTitle>
 					<FormSubtitle>
 						Vyplňte následující formulář pro vytvoření nového
 						uživatele.
@@ -82,7 +82,7 @@ export default function CreateUserPage() {
 							id="login"
 							name="login"
 							type="text"
-							placeholder="e.g., 'jirkavacha'"
+							placeholder="např. 'jirkavacha'"
 						/>
 					</FormGroup>
 
@@ -92,7 +92,7 @@ export default function CreateUserPage() {
 							id="name"
 							name="name"
 							type="text"
-							placeholder="e.g., 'Jirka Vacha'"
+							placeholder="např. 'Jirka Vacha'"
 						/>
 					</FormGroup>
 
@@ -103,7 +103,7 @@ export default function CreateUserPage() {
 							name="password"
 							type="password"
 							autoComplete="new-password"
-							placeholder="Enter a secure password"
+							placeholder="Zadejte bezpečné heslo"
 						/>
 					</FormGroup>
 

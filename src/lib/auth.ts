@@ -26,8 +26,8 @@ export const authOptions: AuthOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.login || !credentials?.password) {
-					console.error("Invalid credentials provided.");
-					throw new Error("Invalid credentials");
+					console.error("Byly poskytnuty neplatné přihlašovací údaje.");
+					throw new Error("Neplatné přihlašovací údaje");
 				}
 
 				let user;
@@ -60,28 +60,28 @@ export const authOptions: AuthOptions = {
 					});
 					if (!camp_user) {
 						console.error(
-							"Camp user not found for user:",
+							"Uživatel tábora nenalezen pro uživatele:",
 							user?.id,
 							"and camp:",
 							camp?.id
 						);
-						throw new Error("Camp user not found");
+						throw new Error("Uživatel tábora nenalezen");
 					}
 				}
 
 				if (!user) {
 					console.error(
-						"User not found for login:",
+						"Uživatel nenalezen pro přihlašovací jméno:",
 						credentials.login
 					);
-					throw new Error("User not found");
+					throw new Error("Uživatel nenalezen");
 				}
 
 				if (
 					(credentials.camp === "null" || !credentials.camp) &&
 					!user.is_manager
 				) {
-					throw new Error("User is not a manager");
+					throw new Error("Uživatel není manažer");
 				}
 
 				const users_camps = await prisma.user_camp.findMany({
@@ -106,10 +106,10 @@ export const authOptions: AuthOptions = {
 
 				if (!isValid) {
 					console.error(
-						"Invalid password for user:",
+						"Neplatné heslo pro uživatele:",
 						credentials.login
 					);
-					throw new Error("Invalid password");
+					throw new Error("Neplatné heslo");
 				}
 
 				let balance = null;

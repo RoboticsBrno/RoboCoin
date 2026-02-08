@@ -9,7 +9,7 @@ export class FetchError extends Error {
 	info: { error: string };
 
 	constructor(status: number, info: { error: string }) {
-		super(`Request failed with status ${status}`);
+		super(`Požadavek selhal se stavem ${status}`);
 		this.status = status;
 		this.info = info;
 	}

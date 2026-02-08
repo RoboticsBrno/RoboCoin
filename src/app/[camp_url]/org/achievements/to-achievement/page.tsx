@@ -18,12 +18,12 @@ import { User, Item, SyncAchievementResponse } from "@/types";
 import { useCurrencySymbol } from "@/hooks/useCurrencySymbol";
 
 const syncSchema = z.object({
-	itemId: z.string().min(1, { message: "Please select an achievement" }),
+	itemId: z.string().min(1, { message: "Prosím vyberte úspěch" }),
 	userIds: z.array(z.string()).refine(
 		(arr) => {
 			return arr.every((id) => !isNaN(Number(id)) && Number(id) > 0);
 		},
-		{ message: "All user IDs must be valid numbers" }
+		{ message: "Všechna ID uživatelů musí být platná čísla" }
 	),
 });
 
@@ -61,11 +61,11 @@ export default function ManageAchievementUsersPage() {
 				setItems(items);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					showError(error.info.error || "Failed to fetch data");
+					showError(error.info.error || "Nepodařilo se načíst data");
 				} else {
-					showError("Failed to fetch data");
+					showError("Nepodařilo se načíst data");
 				}
-				console.error("Failed to fetch data:", error);
+				console.error("Nepodařilo se načíst data:", error);
 			} finally {
 				setIsLoading(false);
 			}
@@ -92,10 +92,10 @@ export default function ManageAchievementUsersPage() {
 			} catch (error) {
 				if (error instanceof FetchError) {
 					showError(
-						error.info.error || "Failed to fetch item owners"
+						error.info.error || "Nepodařilo se načíst vlastníky předmětu"
 					);
 				} else {
-					showError("Failed to fetch item owners");
+					showError("Nepodařilo se načíst vlastníky předmětu");
 				}
 				console.error("Failed to fetch item owners:", error);
 			} finally {
@@ -126,13 +126,12 @@ export default function ManageAchievementUsersPage() {
 		} catch (error) {
 			if (error instanceof FetchError) {
 				showError(
-					error.info.error || "Failed to sync achievement owners"
+					error.info.error || "Nepodařilo se synchronizovat držitele úspěchů"
 				);
 			} else {
-				showError(
-					"An unexpected error occurred while updating owners."
-				);
-			}
+							showError(
+								"Při aktualizaci vlastníků došlo k neočekávané chybě."
+							);			}
 		}
 	};
 

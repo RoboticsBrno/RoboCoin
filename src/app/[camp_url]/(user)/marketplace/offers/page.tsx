@@ -37,26 +37,26 @@ export default function OffersPage() {
 				const data = await upResponse.json();
 				setOffersUp(data);
 			} else {
-				showError("Failed to fetch offers that are up.");
+				showError("Nepodařilo se načíst nabídky, které jsou k dispozici.");
 			}
 
 			if (soldResponse.ok) {
 				const data = await soldResponse.json();
 				setOffersSold(data);
 			} else {
-				showError("Failed to fetch sold offers.");
+				showError("Nepodařilo se načíst prodané nabídky.");
 			}
 
 			if (downResponse.ok) {
 				const data = await downResponse.json();
 				setOffersDown(data);
 			} else {
-				console.error("Failed to fetch items down from marketplace.");
-				showError("Failed to fetch items down from marketplace.");
+				console.error("Nepodařilo se načíst položky stažené z tržiště.");
+				showError("Nepodařilo se načíst položky stažené z tržiště.");
 			}
 		} catch (error) {
-			showError("An unexpected error occurred while fetching items.");
-			console.error("Error fetching offers:", error);
+			showError("Při načítání položek došlo k neočekávané chybě.");
+			console.error("Chyba při načítání nabídek:", error);
 		} finally {
 			setLoading(false);
 		}

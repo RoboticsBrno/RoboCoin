@@ -41,7 +41,7 @@ export default function CampLayout({
 			if (error instanceof FetchError) {
 				router.push("/unauthorized");
 			} else {
-				console.error("Error updating session with camp data:", error);
+				console.error("Chyba při aktualizaci session s daty tábora:", error);
 			}
 		}
 	}, [campUrl, router, session?.user, update]);
