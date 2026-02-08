@@ -43,7 +43,7 @@ export async function GET(): Promise<
 	}
 
 	const achievements: InventoryItem[] = await prisma.inventory.findMany({
-		where: { user: parseInt(session.user.id), camp: session.camp_id },
+		where: { user: parseInt(session.user.id), camp: session.camp_id, item_inventory_itemToitem: { from_marketplace: false } },
 		include: {
 			item_inventory_itemToitem: true,
 		},
