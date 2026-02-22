@@ -29,7 +29,7 @@ export async function GET() {
 	if (!session) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
-
+    console.log(parseInt(session.user.id));
 	const items = await prisma.item.findMany({
 		where: {
 			on_marketplace: false,

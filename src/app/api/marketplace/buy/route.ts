@@ -58,7 +58,8 @@ export async function POST(req: NextRequest) {
 				sellerId,
 				item.price,
 				`Nákup předmětu: ${item.title}`,
-				session.camp_id || -1
+				session.camp_id || -1,
+                item.id
 			);
 
 			await tx.item.update({

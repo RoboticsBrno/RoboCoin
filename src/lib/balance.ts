@@ -8,7 +8,8 @@ export async function transferBalance(
 	toId: number,
 	amount: number,
 	description: string = "Převod zůstatku",
-	camp: number
+	camp: number,
+    item?: number
 ) {
 	const fromBalance = await tx.balance.findUnique({
 		where: { user_camp: { user: fromId, camp } },
@@ -22,6 +23,7 @@ export async function transferBalance(
 		data: {
 			sender: fromId,
 			receiver: toId,
+            item: item ?? null,
 			amount,
 			created_at: new Date(),
 			description,
