@@ -278,7 +278,7 @@ function UserItemsList({
 	return (
 		<div className="mt-6">
 			<div className="flex justify-between items-center mb-4">
-				<PageTitle>Předměty uživatelů</PageTitle>
+				<div className="grow"></div>
 				<div className="flex gap-2">
 					<Button onClick={handleSelectAll} type="button">
 						Vybrat vše
